@@ -45,5 +45,16 @@
     <Image Include="vampireSample.ico">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="MainMenu.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="gameMusic.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="menuMusic.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
   </ItemGroup>
 </Project>

@@ -1,10 +1,72 @@
 ﻿// vampireSample.cpp : Defines the entry point for the application.
 //
-
+#include <windows.h>
+#include <gdiplus.h>
+#include <iostream>
+#include <map>
+#pragma comment(lib, "gdiplus.lib")
+#include <vector>
+#include <string>
+#include <stdlib.h>
+#include <mmsystem.h>
+#pragma comment(lib, "winmm.lib")
 #include "framework.h"
 #include "vampireSample.h"
 
+class Hero {
+
+};
+
+
+using namespace Gdiplus;
+using namespace std;
+
+Image* menu_image = nullptr;
+POINT p;
+ULONG_PTR gdiplusToken;  // Для инициализации GDI+
+enum class gameState_ {
+    MainMenu, game, pause
+};
+const wchar_t* musicPath = nullptr;
+gameState_  gameState = gameState_::MainMenu;
+int playButtonX1 = 803;
+int playButtonX2 = 1116;
+int playButtonY1 = 499;
+int playButtonY2 = 643;
+bool init = false;
 #define MAX_LOADSTRING 100
+
+void InitMenu() {
+    Image menuImage(LR"(MainMenu.png)");
+    menu_image = menuImage.GetThumbnailImage(1920, 1030, nullptr, nullptr);
+    musicPath = L"menuMusic.wav";
+    PlaySound(musicPath, NULL, SND_ASYNC | SND_LOOP | SND_FILENAME);
+    init = true;
+}
+void InitGame() {
+    musicPath = L"gameMusic.wav";
+    PlaySound(musicPath, NULL, SND_ASYNC | SND_LOOP | SND_FILENAME);
+    init = true;
+}
+void Clear() {
+    PlaySound(NULL, NULL, 0);
+}
+void DrawMenu(Graphics &graphics) {
+    if (menu_image)
+        graphics.DrawImage(menu_image, 0, 0);
+}
+bool mouseClickedInRect(float x1, float x2, float y1, float y2)
+{
+    GetCursorPos(&p);
+    int mouseX = p.x;
+    int mouseY = p.y;
+    bool insideX = (mouseX >= x1 && mouseX <= x2);
+    bool insideY = (mouseY >= y1 && mouseY <= y2);
+
+    bool leftPressed = (GetAsyncKeyState(VK_LBUTTON) & 0x8000) != 0;
+
+    return insideX && insideY && leftPressed;
+}
 
 // Global Variables:
 HINSTANCE hInst;                                // current instance
@@ -25,7 +87,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
 
-    // TODO: Place code here.
+    GdiplusStartupInput gdiplusStartupInput;
+    GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
 
     // Initialize global strings
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
@@ -76,7 +139,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_VAMPIRESAMPLE));
     wcex.hCursor        = LoadCursor(nullptr, IDC_ARROW);
     wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+1);
-    wcex.lpszMenuName   = MAKEINTRESOURCEW(IDC_VAMPIRESAMPLE);
+    wcex.lpszMenuName   = NULL;
     wcex.lpszClassName  = szWindowClass;
     wcex.hIconSm        = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
 
@@ -105,7 +168,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
       return FALSE;
    }
 
-   ShowWindow(hWnd, nCmdShow);
+   ShowWindow(hWnd, SW_MAXIMIZE);
    UpdateWindow(hWnd);
 
    return TRUE;
@@ -125,6 +188,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
     {
+    case WM_CREATE: {
+        SetTimer(hWnd, 1, 100, NULL);
+        
+        break;
+    }
+    
     case WM_COMMAND:
         {
             int wmId = LOWORD(wParam);
@@ -142,14 +211,57 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             }
         }
         break;
+
     case WM_PAINT:
         {
-            PAINTSTRUCT ps;
-            HDC hdc = BeginPaint(hWnd, &ps);
-            // TODO: Add any drawing code that uses hdc here...
-            EndPaint(hWnd, &ps);
+        PAINTSTRUCT ps;
+        HDC hdc = BeginPaint(hWnd, &ps);
+        RECT rect;
+        GetClientRect(hWnd, &rect);
+        int width = rect.right - rect.left;
+        int height = rect.bottom - rect.top;
+
+        HDC hdcMem = CreateCompatibleDC(hdc);
+        HBITMAP hbmMem = CreateCompatibleBitmap(hdc, width, height);
+        SelectObject(hdcMem, hbmMem);
+
+        Graphics graphics(hdcMem);
+        graphics.Clear(Color::White);
+
+        if (gameState == gameState_::MainMenu && !init) {
+            InitMenu();
+        }
+        if (gameState == gameState_::game && !init) {
+            InitGame();
+        }
+        
+
+        if (gameState == gameState_::MainMenu) {
+            DrawMenu(graphics);
+        }
+
+        BitBlt(hdc, 0, 0, width, height, hdcMem, 0, 0, SRCCOPY);
+        DeleteObject(hbmMem);
+        DeleteDC(hdcMem);
+        EndPaint(hWnd, &ps);
+        
+        
         }
         break;
+
+    case WM_TIMER: {
+        InvalidateRect(hWnd, nullptr, FALSE);
+        
+    }
+    case WM_LBUTTONDBLCLK: {
+        if (mouseClickedInRect(playButtonX1, playButtonX2, playButtonY1, playButtonY2)) { 
+            gameState = gameState_::game; 
+            Clear();
+            init = false;
+        }
+    }
+    break;
+
     case WM_DESTROY:
         PostQuitMessage(0);
         break;
@@ -158,6 +270,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     }
     return 0;
 }
+
 
 // Message handler for about box.
 INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
