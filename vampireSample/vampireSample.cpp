@@ -22,15 +22,17 @@ ULONG_PTR gdiplusToken;  // Для инициализации GDI+
 
 #define MAX_LOADSTRING 100
 
-void InitMenu(int width,int height) {
+Hero bennet(0, 5, currentDirection_::state, { L"heroLeft.png", L"heroState.png", L"heroRight.png" }, 100.0f);
+
+void InitMenu(int width, int height) {
 
     Image menuImage(LR"(MainMenu.png)");
     menu_image = menuImage.GetThumbnailImage(width, height, nullptr, nullptr);
     musicPath = L"menuMusic.wav";
-    playButtonX1 = int(width*0.42f);
-    playButtonX2 = int(width*0.58f);
-    playButtonY1 = int(height*0.55f);
-    playButtonY2 = int(height*0.65f);
+    playButtonX1 = int(width * 0.42f);
+    playButtonX2 = int(width * 0.58f);
+    playButtonY1 = int(height * 0.55f);
+    playButtonY2 = int(height * 0.65f);
     PlaySound(musicPath, NULL, SND_ASYNC | SND_LOOP | SND_FILENAME);
     init = true;
 }
@@ -42,18 +44,17 @@ void InitGame() {
 void Clear() {
     PlaySound(NULL, NULL, 0);
 }
-void DrawMenu(Graphics &graphics) {
+void DrawMenu(Graphics& graphics) {
     if (menu_image)
         graphics.DrawImage(menu_image, 0, 0);
 }
-void DrawHero() {
+void DrawMap(Graphics& graphics) {
+    Image mapImage(mm[bennet.currentMapID].mapImage);
 
-}
-void DrawEnemys() {
-
-}
-void DrawSpels() {
-
+    map_image = mapImage.GetThumbnailImage(2000, 2000, nullptr, nullptr);
+    if (map_image) {
+        graphics.DrawImage(map_image, (int)mm[bennet.currentMapID].posX, (int)mm[bennet.currentMapID].posY);
+    }
 }
 
 bool mouseClickedInRect(float x1, float x2, float y1, float y2)
@@ -81,9 +82,9 @@ LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
-                     _In_opt_ HINSTANCE hPrevInstance,
-                     _In_ LPWSTR    lpCmdLine,
-                     _In_ int       nCmdShow)
+    _In_opt_ HINSTANCE hPrevInstance,
+    _In_ LPWSTR    lpCmdLine,
+    _In_ int       nCmdShow)
 {
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
@@ -97,7 +98,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     MyRegisterClass(hInstance);
 
     // Perform application initialization:
-    if (!InitInstance (hInstance, nCmdShow))
+    if (!InitInstance(hInstance, nCmdShow))
     {
         return FALSE;
     }
@@ -116,7 +117,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         }
     }
 
-    return (int) msg.wParam;
+    return (int)msg.wParam;
 }
 
 
@@ -132,17 +133,17 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 
     wcex.cbSize = sizeof(WNDCLASSEX);
 
-    wcex.style          = CS_HREDRAW | CS_VREDRAW;
-    wcex.lpfnWndProc    = WndProc;
-    wcex.cbClsExtra     = 0;
-    wcex.cbWndExtra     = 0;
-    wcex.hInstance      = hInstance;
-    wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_VAMPIRESAMPLE));
-    wcex.hCursor        = LoadCursor(nullptr, IDC_ARROW);
-    wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+1);
-    wcex.lpszMenuName   = NULL;
-    wcex.lpszClassName  = szWindowClass;
-    wcex.hIconSm        = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
+    wcex.style = CS_HREDRAW | CS_VREDRAW;
+    wcex.lpfnWndProc = WndProc;
+    wcex.cbClsExtra = 0;
+    wcex.cbWndExtra = 0;
+    wcex.hInstance = hInstance;
+    wcex.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_VAMPIRESAMPLE));
+    wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
+    wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+    wcex.lpszMenuName = NULL;
+    wcex.lpszClassName = szWindowClass;
+    wcex.hIconSm = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
 
     return RegisterClassExW(&wcex);
 }
@@ -159,20 +160,20 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 //
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
-   hInst = hInstance; // Store instance handle in our global variable
+    hInst = hInstance; // Store instance handle in our global variable
 
-   HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
+    HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
+        CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
 
-   if (!hWnd)
-   {
-      return FALSE;
-   }
+    if (!hWnd)
+    {
+        return FALSE;
+    }
 
-   ShowWindow(hWnd, SW_MAXIMIZE);
-   UpdateWindow(hWnd);
+    ShowWindow(hWnd, SW_MAXIMIZE);
+    UpdateWindow(hWnd);
 
-   return TRUE;
+    return TRUE;
 }
 
 //
@@ -190,31 +191,30 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     switch (message)
     {
     case WM_CREATE: {
-        SetTimer(hWnd, 1, 100, NULL);
-        
+        SetTimer(hWnd, 1, 10, NULL);  // Увеличили частоту таймера
         break;
     }
-    
+
     case WM_COMMAND:
+    {
+        int wmId = LOWORD(wParam);
+        // Parse the menu selections:
+        switch (wmId)
         {
-            int wmId = LOWORD(wParam);
-            // Parse the menu selections:
-            switch (wmId)
-            {
-            case IDM_ABOUT:
-                DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
-                break;
-            case IDM_EXIT:
-                DestroyWindow(hWnd);
-                break;
-            default:
-                return DefWindowProc(hWnd, message, wParam, lParam);
-            }
+        case IDM_ABOUT:
+            DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
+            break;
+        case IDM_EXIT:
+            DestroyWindow(hWnd);
+            break;
+        default:
+            return DefWindowProc(hWnd, message, wParam, lParam);
         }
-        break;
+    }
+    break;
 
     case WM_PAINT:
-        {
+    {
         PAINTSTRUCT ps;
         HDC hdc = BeginPaint(hWnd, &ps);
         RECT rect;
@@ -229,39 +229,49 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         Graphics graphics(hdcMem);
         graphics.Clear(Color::White);
 
-        if (gameState == gameState_::MainMenu && !init) {
-            InitMenu(width,height);
-        }
-        if (gameState == gameState_::game && !init) {
-            InitGame();
-        }
-        
-
         if (gameState == gameState_::MainMenu) {
+            if (!init) {
+                InitMenu(width, height);
+            }
             DrawMenu(graphics);
         }
+        if (gameState == gameState_::game) {
+            if (!init) {
+                InitGame();
+            }
+            DrawMap(graphics);
+            bennet.drawHero(graphics, width, height);
+        }
+
 
         BitBlt(hdc, 0, 0, width, height, hdcMem, 0, 0, SRCCOPY);
         DeleteObject(hbmMem);
         DeleteDC(hdcMem);
         EndPaint(hWnd, &ps);
-        
-        
-        }
         break;
+    }
 
     case WM_TIMER: {
+        if (gameState == gameState_::game) {
+            bennet.move();  // Движение обрабатывается в таймере
+        }
         InvalidateRect(hWnd, nullptr, FALSE);
-        
+        break;
     }
-    case WM_LBUTTONDBLCLK: {
-        if (mouseClickedInRect(playButtonX1, playButtonX2, playButtonY1, playButtonY2)) { 
-            gameState = gameState_::game; 
+
+    case WM_LBUTTONDOWN: {
+        if (mouseClickedInRect(playButtonX1, playButtonX2, playButtonY1, playButtonY2)) {
+            gameState = gameState_::game;
             Clear();
             init = false;
         }
+        break;
     }
-    break;
+
+    case WM_KEYDOWN: {
+        // Движение убрано отсюда - теперь обрабатывается в таймере
+        break;
+    }
 
     case WM_DESTROY:
         PostQuitMessage(0);
