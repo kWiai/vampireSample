@@ -12,34 +12,25 @@
 #pragma comment(lib, "winmm.lib")
 #include "framework.h"
 #include "vampireSample.h"
-
-class Hero {
-
-};
-
+#include "global.h"
 
 using namespace Gdiplus;
 using namespace std;
 
-Image* menu_image = nullptr;
-POINT p;
 ULONG_PTR gdiplusToken;  // Для инициализации GDI+
-enum class gameState_ {
-    MainMenu, game, pause
-};
-const wchar_t* musicPath = nullptr;
-gameState_  gameState = gameState_::MainMenu;
-int playButtonX1 = 803;
-int playButtonX2 = 1116;
-int playButtonY1 = 499;
-int playButtonY2 = 643;
-bool init = false;
+
+
 #define MAX_LOADSTRING 100
 
-void InitMenu() {
+void InitMenu(int width,int height) {
+
     Image menuImage(LR"(MainMenu.png)");
-    menu_image = menuImage.GetThumbnailImage(1920, 1030, nullptr, nullptr);
+    menu_image = menuImage.GetThumbnailImage(width, height, nullptr, nullptr);
     musicPath = L"menuMusic.wav";
+    playButtonX1 = int(width*0.42f);
+    playButtonX2 = int(width*0.58f);
+    playButtonY1 = int(height*0.55f);
+    playButtonY2 = int(height*0.65f);
     PlaySound(musicPath, NULL, SND_ASYNC | SND_LOOP | SND_FILENAME);
     init = true;
 }
@@ -55,6 +46,16 @@ void DrawMenu(Graphics &graphics) {
     if (menu_image)
         graphics.DrawImage(menu_image, 0, 0);
 }
+void DrawHero() {
+
+}
+void DrawEnemys() {
+
+}
+void DrawSpels() {
+
+}
+
 bool mouseClickedInRect(float x1, float x2, float y1, float y2)
 {
     GetCursorPos(&p);
@@ -229,7 +230,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         graphics.Clear(Color::White);
 
         if (gameState == gameState_::MainMenu && !init) {
-            InitMenu();
+            InitMenu(width,height);
         }
         if (gameState == gameState_::game && !init) {
             InitGame();
