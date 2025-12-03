@@ -38,7 +38,6 @@ public:
     std::chrono::steady_clock::time_point lastUpdate;
     float moveSpeed;
 
-    // Конструктор
     Hero(int mapID, int s, currentDirection_ dir, walkImages images, float speed = 100.0f)
         : currentMapID(mapID), step(s), currentDirection(dir), imageSet(images),
         moveSpeed(speed), lastUpdate(std::chrono::steady_clock::now()) {
@@ -49,13 +48,11 @@ public:
         float deltaTime = std::chrono::duration<float>(now - lastUpdate).count();
         lastUpdate = now;
 
-        // Ограничим deltaTime чтобы избежать рывков при долгих паузах
         if (deltaTime > 0.1f) deltaTime = 0.1f;
 
         float moveAmount = moveSpeed * deltaTime;
         bool isMoving = false;
 
-        // Диагональное движение (обрабатываем все клавиши одновременно)
         if (GetAsyncKeyState(VK_RIGHT) & 0x8000) {
             mm[currentMapID].posX -= moveAmount;
             currentDirection = currentDirection_::right;

@@ -29,10 +29,10 @@ void InitMenu(int width, int height) {
     Image menuImage(LR"(MainMenu.png)");
     menu_image = menuImage.GetThumbnailImage(width, height, nullptr, nullptr);
     musicPath = L"menuMusic.wav";
-    playButtonX1 = int(width * 0.42f);
+    playButtonX1 = int(width * 0.43f);
     playButtonX2 = int(width * 0.58f);
-    playButtonY1 = int(height * 0.55f);
-    playButtonY2 = int(height * 0.65f);
+    playButtonY1 = int(height * 0.47f);
+    playButtonY2 = int(height * 0.58f);
     PlaySound(musicPath, NULL, SND_ASYNC | SND_LOOP | SND_FILENAME);
     init = true;
 }
@@ -47,6 +47,7 @@ void Clear() {
 void DrawMenu(Graphics& graphics) {
     if (menu_image)
         graphics.DrawImage(menu_image, 0, 0);
+        
 }
 void DrawMap(Graphics& graphics) {
     Image mapImage(mm[bennet.currentMapID].mapImage);
@@ -191,7 +192,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     switch (message)
     {
     case WM_CREATE: {
-        SetTimer(hWnd, 1, 10, NULL);  // Увеличили частоту таймера
+        SetTimer(hWnd, 1, 3, NULL);  // Увеличили частоту таймера
         break;
     }
 
@@ -234,6 +235,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 InitMenu(width, height);
             }
             DrawMenu(graphics);
+            for (int i = playButtonX1; i < playButtonX2; i++) {
+                SetPixel(hdc, i, playButtonY1, Color::Black);
+                SetPixel(hdc, i, playButtonY2, Color::Black);
+                
+            }
         }
         if (gameState == gameState_::game) {
             if (!init) {
@@ -260,7 +266,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     }
 
     case WM_LBUTTONDOWN: {
-        if (mouseClickedInRect(playButtonX1, playButtonX2, playButtonY1, playButtonY2)) {
+        if (gameState == gameState_::MainMenu && mouseClickedInRect(playButtonX1, playButtonX2, playButtonY1, playButtonY2)) {
+            
             gameState = gameState_::game;
             Clear();
             init = false;
