@@ -2,7 +2,7 @@
 
 #include "Render.h"
 #include <vector>
-
+#include <memory>
 #include "GameObject.h"
 
 class Game
@@ -23,5 +23,5 @@ private:
     void UpdateGame(float deltaTime);
 
     void RenderGame(Renderer& renderer);
-    std::vector<GameObject*> m_GameObjects;
+    std::vector<std::unique_ptr<GameObject>> m_GameObjects;
 };

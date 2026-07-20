@@ -16,20 +16,20 @@ Game::~Game()
 
 void Game::Init()
 {
-    GameObject* object = new GameObject();
+    auto object = std::make_unique<GameObject>();
 
     object->SetName("TestObject");
 
-    object->SetPosition(200, 150);
+    object->GetTransform().Position = Vector2(200, 150);
 
-    object->SetSize(120, 120);
+    object->GetTransform().Size = Vector2(120, 120);
 
-    m_GameObjects.push_back(object);
+    m_GameObjects.push_back(std::move(object));
 }
 
 void Game::Update(float deltaTime)
 {
-    for (GameObject* object : m_GameObjects)
+    for (const auto& object : m_GameObjects)
     {
         if (object->IsActive())
         {
@@ -40,7 +40,7 @@ void Game::Update(float deltaTime)
 
 void Game::Render(Renderer& renderer)
 {
-    for (GameObject* object : m_GameObjects)
+    for (const auto& object : m_GameObjects)
     {
         if (object->IsActive())
         {
