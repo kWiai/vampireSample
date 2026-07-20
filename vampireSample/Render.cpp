@@ -1,4 +1,6 @@
 #include "Render.h"
+#include "Sprite.h"
+#include "Transform.h"
 
 Renderer::Renderer()
 {
@@ -93,7 +95,29 @@ void Renderer::EndFrame()
         SRCCOPY
     );
 }
+void Renderer::DrawSprite(
+    const Sprite& sprite,
+    const Transform& transform)
+{
+    auto texture = sprite.GetTexture();
 
+    if (!texture)
+        return;
+
+    if (!texture->IsLoaded())
+        return;
+
+    Image* image = texture->GetImage();
+
+    if (!image)
+        return;
+
+    m_Graphics->DrawImage(
+        image,
+        static_cast<INT>(transform.Position.X),
+        static_cast<INT>(transform.Position.Y)
+    );
+}
 Graphics* Renderer::GetGraphics()
 {
     return m_Graphics;

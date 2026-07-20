@@ -11,11 +11,11 @@ public:
 
 public:
 
-    Vector2 Position;
+    Math::Vector2 Position;
 
-    Vector2 Size;
+    Math::Vector2 Size;
 
-    Vector2 Scale;
+    Math::Vector2 Scale;
 
     float Rotation;
 };

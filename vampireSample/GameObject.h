@@ -35,7 +35,7 @@ public:
     T* GetComponent();
 
     template<typename T>
-    T* RemoveComponent();
+    void RemoveComponent();
 
 protected:
 
@@ -79,7 +79,7 @@ T* GameObject::GetComponent()
 }
 
 template<typename T>
-T* GameObject::RemoveComponent()
+void GameObject::RemoveComponent()
 {
     for (auto it = m_Components.begin(); it != m_Components.end(); ++it)
     {

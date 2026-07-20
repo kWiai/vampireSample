@@ -2,7 +2,8 @@
 
 #include <windows.h>
 #include <gdiplus.h>
-
+#include "Sprite.h"
+#include "Transform.h"
 #pragma comment(lib, "gdiplus.lib")
 
 using namespace Gdiplus;
@@ -18,6 +19,9 @@ public:
 
     void BeginFrame();
     void EndFrame();
+    void DrawSprite(
+        const Sprite& sprite,
+        const Transform& transform);
 
     Graphics* GetGraphics();
 

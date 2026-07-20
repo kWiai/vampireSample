@@ -20,8 +20,5 @@ public:
 
 private:
 
-    void UpdateGame(float deltaTime);
-
-    void RenderGame(Renderer& renderer);
-    std::vector<std::unique_ptr<GameObject>> m_GameObjects;
+    std::unique_ptr<GameObject> m_TestObject;
 };

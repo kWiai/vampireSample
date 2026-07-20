@@ -1,7 +1,9 @@
 #include "Game.h"
 
 #include <gdiplus.h>
-
+#include "ResourceManager.h"
+#include "Assets.h"
+#include "SpriteComponent.h"
 using namespace Gdiplus;
 
 Game::Game()
@@ -16,55 +18,39 @@ Game::~Game()
 
 void Game::Init()
 {
-    auto object = std::make_unique<GameObject>();
+    m_TestObject = std::make_unique<GameObject>();
 
-    object->SetName("TestObject");
+    // Настраиваем Transform
+    m_TestObject->GetTransform().Position = Math::Vector2(300.0f, 200.0f);
+    m_TestObject->GetTransform().Size = Math::Vector2(128.0f, 128.0f);
 
-    object->GetTransform().Position = Vector2(200, 150);
+    // Загружаем текстуру
+    auto texture =
+        ResourceManager::LoadTexture(
+            Assets::Textures::PLAYER);
 
-    object->GetTransform().Size = Vector2(120, 120);
+    // Создаем спрайт
+    Sprite sprite;
 
-    m_GameObjects.push_back(std::move(object));
+    sprite.SetTexture(texture);
+
+    // Добавляем компонент
+    auto spriteComponent =
+        m_TestObject->AddComponent<SpriteComponent>();
+
+    // Передаем ему спрайт
+    spriteComponent->SetSprite(sprite);
 }
 
 void Game::Update(float deltaTime)
 {
-    for (const auto& object : m_GameObjects)
-    {
-        if (object->IsActive())
-        {
-            object->Update(deltaTime);
-        }
-    }
+    if (m_TestObject)
+        m_TestObject->Update(deltaTime);
 }
 
 void Game::Render(Renderer& renderer)
 {
-    for (const auto& object : m_GameObjects)
-    {
-        if (object->IsActive())
-        {
-            object->Render(renderer);
-        }
-    }
+    if (m_TestObject)
+        m_TestObject->Render(renderer);
 }
 
-void Game::UpdateGame(float deltaTime)
-{
-    // Пока игровой логики нет
-}
-
-void Game::RenderGame(Renderer& renderer)
-{
-    Graphics* graphics = renderer.GetGraphics();
-
-    SolidBrush brush(Color(255, 255, 0, 0));
-
-    graphics->FillRectangle(
-        &brush,
-        100,
-        100,
-        150,
-        150
-    );
-}
