@@ -123,20 +123,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="framework.h" />
-    <ClInclude Include="Resource.h" />
-    <ClInclude Include="targetver.h" />
-    <ClInclude Include="vampireSample.h" />
+    <ClInclude Include="Application.h" />
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="GameObject.h" />
+    <ClInclude Include="Globals.h" />
+    <ClInclude Include="Render.h" />
+    <ClInclude Include="Time.h" />
+    <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="vampireSample.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="vampireSample.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="small.ico" />
-    <Image Include="vampireSample.ico" />
+    <ClCompile Include="Application.cpp" />
+    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Render.cpp" />
+    <ClCompile Include="Time.cpp" />
+    <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
