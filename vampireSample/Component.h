@@ -2,6 +2,7 @@
 
 class GameObject;
 class Renderer;
+class Transform;
 
 class Component
 {
@@ -17,6 +18,9 @@ public:
     void SetOwner(GameObject* owner);
 
     GameObject* GetOwner() const;
+
+    Transform& GetTransform();
+    const Transform& GetTransform() const;
 
     void SetEnabled(bool enabled);
 

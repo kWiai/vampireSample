@@ -5,6 +5,7 @@
 GameObject::GameObject()
 {
     m_Name = "GameObject";
+    m_Tag = "Default";
     m_IsActive = true;
 }
 
@@ -43,6 +44,16 @@ void GameObject::SetName(const std::string& name)
 const std::string& GameObject::GetName() const
 {
     return m_Name;
+}
+
+void GameObject::SetTag(const std::string& tag)
+{
+    m_Tag = tag;
+}
+
+const std::string& GameObject::GetTag() const
+{
+    return m_Tag;
 }
 
 void GameObject::SetActive(bool active)

@@ -1,5 +1,8 @@
 #include "Component.h"
 
+#include "GameObject.h"
+#include "Transform.h"
+
 Component::Component()
 {
     m_Owner = nullptr;
@@ -34,6 +37,16 @@ void Component::SetOwner(GameObject* owner)
 GameObject* Component::GetOwner() const
 {
     return m_Owner;
+}
+
+Transform& Component::GetTransform()
+{
+    return m_Owner->GetTransform();
+}
+
+const Transform& Component::GetTransform() const
+{
+    return m_Owner->GetTransform();
 }
 
 void Component::SetEnabled(bool enabled)

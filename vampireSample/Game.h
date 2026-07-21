@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 #include "GameObject.h"
+#include "Scene.h"
 
 class Game
 {
@@ -20,5 +21,5 @@ public:
 
 private:
 
-    std::unique_ptr<GameObject> m_TestObject;
+    std::unique_ptr<Scene> m_Scene;
 };

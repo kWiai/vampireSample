@@ -1,5 +1,5 @@
 #include "Application.h"
-
+#include "InputManager.h"
 #include <gdiplus.h>
 
 using namespace Gdiplus;
@@ -30,6 +30,8 @@ int Application::Run(HINSTANCE hInstance, int nCmdShow)
     while (m_IsRunning && m_Window.ProcessMessages())
     {
         Time::Update();
+
+        InputManager::Update();
 
         m_Game.Update(Time::DeltaTime());
 

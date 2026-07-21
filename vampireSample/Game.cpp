@@ -3,6 +3,7 @@
 #include <gdiplus.h>
 #include "ResourceManager.h"
 #include "Assets.h"
+#include "Player.h"
 #include "SpriteComponent.h"
 using namespace Gdiplus;
 
@@ -18,39 +19,28 @@ Game::~Game()
 
 void Game::Init()
 {
-    m_TestObject = std::make_unique<GameObject>();
+    m_Scene = std::make_unique<Scene>();
 
-    // Настраиваем Transform
-    m_TestObject->GetTransform().Position = Math::Vector2(300.0f, 200.0f);
-    m_TestObject->GetTransform().Size = Math::Vector2(128.0f, 128.0f);
+    auto player = std::make_unique<Player>();
 
-    // Загружаем текстуру
-    auto texture =
-        ResourceManager::LoadTexture(
-            Assets::Textures::PLAYER);
+    player->Initialize();
 
-    // Создаем спрайт
-    Sprite sprite;
-
-    sprite.SetTexture(texture);
-
-    // Добавляем компонент
-    auto spriteComponent =
-        m_TestObject->AddComponent<SpriteComponent>();
-
-    // Передаем ему спрайт
-    spriteComponent->SetSprite(sprite);
+    m_Scene->AddGameObject(std::move(player));
+    
 }
 
 void Game::Update(float deltaTime)
 {
-    if (m_TestObject)
-        m_TestObject->Update(deltaTime);
+    if (m_Scene)
+    {
+        m_Scene->Update(deltaTime);
+    }
 }
 
 void Game::Render(Renderer& renderer)
 {
-    if (m_TestObject)
-        m_TestObject->Render(renderer);
+    if (m_Scene)
+    {
+        m_Scene->Render(renderer);
+    }
 }
-

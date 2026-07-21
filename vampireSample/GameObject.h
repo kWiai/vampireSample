@@ -25,6 +25,10 @@ public:
     void SetActive(bool active);
     bool IsActive() const;
 
+    void SetTag(const std::string& tag);
+
+    const std::string& GetTag() const;
+
     Transform& GetTransform();
     const Transform& GetTransform() const;
 
@@ -35,11 +39,16 @@ public:
     T* GetComponent();
 
     template<typename T>
+    bool HasComponent() const;
+
+    template<typename T>
     void RemoveComponent();
 
 protected:
 
     std::string m_Name;
+
+    std::string m_Tag;
 
     Transform m_Transform;
 
@@ -53,7 +62,13 @@ private:
 template<typename T, typename... Args>
 T* GameObject::AddComponent(Args&&... args)
 {
-    auto component = std::make_unique<T>(std::forward<Args>(args)...);
+    if (HasComponent<T>())
+    {
+        return GetComponent<T>();
+    }
+
+    auto component =
+        std::make_unique<T>(std::forward<Args>(args)...);
 
     component->SetOwner(this);
 
@@ -89,4 +104,18 @@ void GameObject::RemoveComponent()
             return;
         }
     }
+}
+
+template<typename T>
+bool GameObject::HasComponent() const
+{
+    for (const auto& component : m_Components)
+    {
+        if (dynamic_cast<T*>(component.get()) != nullptr)
+        {
+            return true;
+        }
+    }
+
+    return false;
 }
