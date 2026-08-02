@@ -17,7 +17,9 @@ public:
     virtual ~GameObject();
 
     virtual void Update(float deltaTime);
-    virtual void Render(Renderer& renderer);
+    void Render(
+        Renderer& renderer,
+        const Camera& camera);
 
     void SetName(const std::string& name);
     const std::string& GetName() const;

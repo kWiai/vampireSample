@@ -16,7 +16,9 @@ public:
     SpriteComponent();
     ~SpriteComponent() override;
 
-    void Render(Renderer& renderer) override;
+    void Render(
+        Renderer& renderer,
+        const Camera& camera);
 
     // Работа со Sprite
     void SetSprite(const Sprite& sprite);

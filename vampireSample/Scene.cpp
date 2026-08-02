@@ -5,7 +5,7 @@
 
 Scene::Scene()
 {
-
+    m_MainCamera = nullptr;
 }
 
 Scene::~Scene()
@@ -15,7 +15,19 @@ Scene::~Scene()
 
 void Scene::Init()
 {
+    auto cameraObject =
+        std::make_unique<GameObject>();
 
+    cameraObject->SetName("MainCamera");
+
+    cameraObject->SetTag("Camera");
+
+    auto cameraComponent =
+        cameraObject->AddComponent<CameraComponent>();
+
+    m_MainCamera = cameraObject.get();
+
+    m_GameObjects.push_back(std::move(cameraObject));
 }
 
 void Scene::AddGameObject(std::unique_ptr<GameObject> object)
@@ -25,22 +37,35 @@ void Scene::AddGameObject(std::unique_ptr<GameObject> object)
 
 void Scene::Update(float deltaTime)
 {
+    // 1. Обновляем все объекты, кроме камеры
     for (auto& object : m_GameObjects)
     {
-        if (object->IsActive())
-        {
-            object->Update(deltaTime);
-        }
+        if (!object->IsActive())
+            continue;
+
+        if (object.get() == m_MainCamera)
+            continue;
+
+        object->Update(deltaTime);
+    }
+
+    // 2. Обновляем камеру последней
+    if (m_MainCamera && m_MainCamera->IsActive())
+    {
+        m_MainCamera->Update(deltaTime);
     }
 }
 
 void Scene::Render(Renderer& renderer)
 {
+    renderer.DrawGrid(GetCamera());
     for (auto& object : m_GameObjects)
     {
         if (object->IsActive())
         {
-            object->Render(renderer);
+            object->Render(
+                renderer,
+                GetCamera());
         }
     }
 }
@@ -83,4 +108,30 @@ std::vector<GameObject*> Scene::FindAllByTag(const std::string& tag)
     }
 
     return result;
+}
+
+Camera& Scene::GetCamera()
+{
+    return GetMainCamera()->GetCamera();
+}
+
+const Camera& Scene::GetCamera() const
+{
+    return m_MainCamera
+        ->GetComponent<CameraComponent>()
+        ->GetCamera();
+}
+
+GameObject* Scene::GetMainCameraObject()
+{
+    return m_MainCamera;
+}
+CameraComponent* Scene::GetMainCamera()
+{
+    if (m_MainCamera == nullptr)
+    {
+        return nullptr;
+    }
+
+    return m_MainCamera->GetComponent<CameraComponent>();
 }

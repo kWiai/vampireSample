@@ -1,6 +1,8 @@
 #include "Render.h"
 #include "Sprite.h"
 #include "Transform.h"
+#include "Camera.h"
+#include <iostream>
 
 Renderer::Renderer()
 {
@@ -97,7 +99,8 @@ void Renderer::EndFrame()
 }
 void Renderer::DrawSprite(
     const Sprite& sprite,
-    const Transform& transform)
+    const Transform& transform,
+    const Camera& camera)
 {
     auto texture = sprite.GetTexture();
 
@@ -112,13 +115,68 @@ void Renderer::DrawSprite(
     if (!image)
         return;
 
+    Math::Vector2 screenPosition =
+        camera.WorldToScreen(
+            transform.Position);
+
+    RectF destination(
+        screenPosition.X,
+        screenPosition.Y,
+        transform.Size.X,
+        transform.Size.Y
+    );
+
     m_Graphics->DrawImage(
         image,
-        static_cast<INT>(transform.Position.X),
-        static_cast<INT>(transform.Position.Y)
+        destination
     );
 }
 Graphics* Renderer::GetGraphics()
 {
     return m_Graphics;
+}
+
+void Renderer::DrawGrid(const Camera& camera, int cellSize)
+{
+    Pen pen(Color(70, 70, 70));
+
+    Math::Vector2 cameraPos = camera.GetPosition();
+
+    int startX = static_cast<int>(cameraPos.X) / cellSize - 1;
+    int endX = startX + 40;
+
+    int startY = static_cast<int>(cameraPos.Y) / cellSize - 1;
+    int endY = startY + 25;
+
+    for (int x = startX; x <= endX; x++)
+    {
+        float worldX = x * cellSize;
+
+        Math::Vector2 a =
+            camera.WorldToScreen(Math::Vector2(worldX, cameraPos.Y));
+
+        m_Graphics->DrawLine(
+            &pen,
+            (REAL)a.X,
+            (REAL)0.0f,
+            (REAL)a.X,
+            (REAL)m_Height
+        );
+    }
+
+    for (int y = startY; y <= endY; y++)
+    {
+        float worldY = y * cellSize;
+
+        Math::Vector2 a =
+            camera.WorldToScreen(Math::Vector2(cameraPos.X, worldY));
+
+        m_Graphics->DrawLine(
+            &pen,
+            (REAL)0.0f,
+            (REAL)a.Y,
+            (REAL)m_Width,
+            (REAL)a.Y
+        );
+    }
 }

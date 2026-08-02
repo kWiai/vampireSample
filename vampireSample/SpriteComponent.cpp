@@ -30,15 +30,15 @@ const Sprite& SpriteComponent::GetSprite() const
     return m_Sprite;
 }
 
-void SpriteComponent::Render(Renderer& renderer)
+void SpriteComponent::Render(Renderer& renderer, const Camera& camera)
 {
     if (GetOwner() == nullptr)
         return;
 
     renderer.DrawSprite(
         m_Sprite,
-        GetOwner()->GetTransform()
-    );
+        GetOwner()->GetTransform(),
+        camera);
 }
 
 void SpriteComponent::LoadTexture(const std::wstring& filePath)

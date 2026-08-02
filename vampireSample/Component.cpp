@@ -24,7 +24,9 @@ void Component::Update(float deltaTime)
 
 }
 
-void Component::Render(Renderer& renderer)
+void Component::Render(
+    Renderer& renderer,
+    const Camera& camera)
 {
 
 }

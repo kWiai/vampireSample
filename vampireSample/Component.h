@@ -3,6 +3,7 @@
 class GameObject;
 class Renderer;
 class Transform;
+class Camera;
 
 class Component
 {
@@ -13,7 +14,9 @@ public:
 
     virtual void Start();
     virtual void Update(float deltaTime);
-    virtual void Render(Renderer& renderer);
+    virtual void Render(
+        Renderer& renderer,
+        const Camera& camera);
 
     void SetOwner(GameObject* owner);
 

@@ -4,6 +4,7 @@
 #include <gdiplus.h>
 #include "Sprite.h"
 #include "Transform.h"
+#include "Camera.h"
 #pragma comment(lib, "gdiplus.lib")
 
 using namespace Gdiplus;
@@ -21,8 +22,9 @@ public:
     void EndFrame();
     void DrawSprite(
         const Sprite& sprite,
-        const Transform& transform);
-
+        const Transform& transform,
+        const Camera& camera);
+    void DrawGrid(const Camera& camera, int cellSize = 64);
     Graphics* GetGraphics();
 
 private:

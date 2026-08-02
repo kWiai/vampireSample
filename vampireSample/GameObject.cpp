@@ -25,13 +25,15 @@ void GameObject::Update(float deltaTime)
     }
 }
 
-void GameObject::Render(Renderer& renderer)
+void GameObject::Render(Renderer& renderer, const Camera& camera)
 {
     for (auto& component : m_Components)
     {
         if (component->IsEnabled())
         {
-            component->Render(renderer);
+            component->Render(
+                renderer,
+                camera);
         }
     }
 }
