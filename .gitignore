@@ -362,3 +362,10 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /vampireSample/player.png
+/vampireSample/grass.png
+/vampireSample/test.map
+/vampireSample/stone.png
+/vampireSample/dirt.png
+/vampireSample/tilemap.png
+/vampireSample/Idle-Sheet.png
+/vampireSample/Walk-Sheet.png
