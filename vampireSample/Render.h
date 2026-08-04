@@ -2,9 +2,13 @@
 
 #include <windows.h>
 #include <gdiplus.h>
+
 #include "Sprite.h"
 #include "Transform.h"
 #include "Camera.h"
+#include "TileSet.h"
+#include "Rectangle.h"
+
 #pragma comment(lib, "gdiplus.lib")
 
 using namespace Gdiplus;
@@ -20,12 +24,31 @@ public:
 
     void BeginFrame();
     void EndFrame();
+
     void DrawSprite(
         const Sprite& sprite,
         const Transform& transform,
         const Camera& camera);
-    void DrawGrid(const Camera& camera, int cellSize = 64);
+
+    void DrawTile(
+        const TileSet& tileSet,
+        int tileId,
+        int tileX,
+        int tileY,
+        const Camera& camera);
+
+    void DrawGrid(
+        const Camera& camera,
+        int cellSize = 64);
+
     Graphics* GetGraphics();
+
+private:
+
+    void DrawTextureRegion(
+        Image* image,
+        const Math::Rectangle& source,
+        const RectF& destination);
 
 private:
 

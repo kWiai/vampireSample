@@ -125,6 +125,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Animation.h" />
+    <ClInclude Include="AnimationComponent.h" />
+    <ClInclude Include="AnimationFrame.h" />
     <ClInclude Include="Application.h" />
     <ClInclude Include="Assets.h" />
     <ClInclude Include="Camera.h" />
@@ -135,6 +138,7 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Globals.h" />
     <ClInclude Include="InputManager.h" />
+    <ClInclude Include="MapLoader.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerControllerComponent.h" />
     <ClInclude Include="Rectangle.h" />
@@ -144,12 +148,18 @@
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="SpriteComponent.h" />
     <ClInclude Include="Texture2D.h" />
+    <ClInclude Include="Tile.h" />
+    <ClInclude Include="TileMap.h" />
+    <ClInclude Include="TileMapComponent.h" />
+    <ClInclude Include="TileSet.h" />
     <ClInclude Include="Time.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Vector2.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Animation.cpp" />
+    <ClCompile Include="AnimationComponent.cpp" />
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraComponent.cpp" />
@@ -159,6 +169,7 @@
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MapLoader.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerControllerComponent.cpp" />
     <ClCompile Include="Rectangle.cpp" />
@@ -168,13 +179,25 @@
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="SpriteComponent.cpp" />
     <ClCompile Include="Texture2D.cpp" />
+    <ClCompile Include="TileMap.cpp" />
+    <ClCompile Include="TileMapComponent.cpp" />
+    <ClCompile Include="TileSet.cpp" />
     <ClCompile Include="Time.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Vector2.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="dirt.png" />
+    <Image Include="grass.png" />
+    <Image Include="Idle-Sheet.png" />
     <Image Include="player.png" />
+    <Image Include="stone.png" />
+    <Image Include="tilemap.png" />
+    <Image Include="Walk-Sheet.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="test.map" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

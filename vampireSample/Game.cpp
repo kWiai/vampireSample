@@ -6,6 +6,8 @@
 #include "Player.h"
 #include "SpriteComponent.h"
 #include "CameraFollowComponent.h"
+#include "TileMapComponent.h"
+#include "MapLoader.h"
 
 using namespace Gdiplus;
 
@@ -22,6 +24,28 @@ Game::~Game()
 void Game::Init()
 {
     m_Scene = std::make_unique<Scene>();
+
+    auto mapObject =
+        std::make_unique<GameObject>();
+
+    auto tileMap =
+        mapObject->AddComponent<TileMapComponent>();
+
+    static TileSet tileSet;
+
+    tileSet.Load(
+        Assets::Textures::TILES,
+        32,
+        32);
+
+    tileMap->SetTileSet(&tileSet);
+
+    MapLoader::Load(
+        "test.map",
+        tileMap->GetTileMap());
+
+    m_Scene->AddGameObject(
+        std::move(mapObject));
 
     // Сначала создаем игрока
     auto player = std::make_unique<Player>();

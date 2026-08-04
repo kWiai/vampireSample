@@ -53,6 +53,7 @@ int Time::FPS()
     return m_FPS;
 }
 
+
 float Time::TotalTime()
 {
     return m_TotalTime;

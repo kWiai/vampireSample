@@ -4,7 +4,9 @@ namespace Assets
 {
     namespace Textures
     {
-        constexpr wchar_t PLAYER[] = L"player.png";
+        constexpr wchar_t PLAYER[] = L"Walk-Sheet.png";
+
+        constexpr wchar_t TILES[] = L"tilemap.png";
 
         constexpr wchar_t HERO[] = L"Resources/Textures/hero.png";
 

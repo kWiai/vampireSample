@@ -3,6 +3,8 @@
 #include "Transform.h"
 #include "Camera.h"
 #include <iostream>
+#include "TileSet.h"
+
 
 Renderer::Renderer()
 {
@@ -44,7 +46,6 @@ Renderer::~Renderer()
 
 bool Renderer::Initialize(HWND hwnd, int width, int height)
 {
-    m_hWnd = hwnd;
 
     m_Width = width;
     m_Height = height;
@@ -74,6 +75,11 @@ bool Renderer::Initialize(HWND hwnd, int width, int height)
         );
 
     m_Graphics = new Graphics(m_BackDC);
+    m_Graphics->SetInterpolationMode(InterpolationModeNearestNeighbor);
+    m_Graphics->SetPixelOffsetMode(PixelOffsetModeHalf);
+    m_Graphics->SetSmoothingMode(SmoothingModeNone);
+    m_Graphics->SetCompositingQuality(CompositingQualityHighSpeed);
+
 
     return true;
 }
@@ -97,6 +103,23 @@ void Renderer::EndFrame()
         SRCCOPY
     );
 }
+void Renderer::DrawTextureRegion(
+    Image* image,
+    const Math::Rectangle& source,
+    const RectF& destination)
+{
+    if (image == nullptr)
+        return;
+
+    m_Graphics->DrawImage(
+        image,
+        destination,
+        source.x,
+        source.y,
+        source.width,
+        source.height,
+        UnitPixel);
+}
 void Renderer::DrawSprite(
     const Sprite& sprite,
     const Transform& transform,
@@ -115,21 +138,75 @@ void Renderer::DrawSprite(
     if (!image)
         return;
 
-    Math::Vector2 screenPosition =
-        camera.WorldToScreen(
-            transform.Position);
+    Math::Vector2 screen =
+        camera.WorldToScreen(transform.Position);
 
     RectF destination(
-        screenPosition.X,
-        screenPosition.Y,
+        screen.X,
+        screen.Y,
         transform.Size.X,
-        transform.Size.Y
-    );
+        transform.Size.Y);
 
-    m_Graphics->DrawImage(
+    Math::Rectangle source;
+
+    if (sprite.GetSourceRect().width == 0 ||
+        sprite.GetSourceRect().height == 0)
+    {
+        source = Math::Rectangle(
+            0,
+            0,
+            static_cast<float>(image->GetWidth()),
+            static_cast<float>(image->GetHeight()));
+    }
+    else
+    {
+        source = sprite.GetSourceRect();
+    }
+
+    DrawTextureRegion(
         image,
-        destination
-    );
+        source,
+        destination);
+}
+void Renderer::DrawTile(
+    const TileSet& tileSet,
+    int tileId,
+    int tileX,
+    int tileY,
+    const Camera& camera)
+{
+    auto texture =
+        tileSet.GetTexture();
+
+    if (!texture)
+        return;
+
+    if (!texture->IsLoaded())
+        return;
+
+    Image* image =
+        texture->GetImage();
+
+    if (!image)
+        return;
+
+    Math::Vector2 world(
+        tileX * tileSet.GetTileWidth(),
+        tileY * tileSet.GetTileHeight());
+
+    Math::Vector2 screen =
+        camera.WorldToScreen(world);
+
+    RectF destination(
+        screen.X,
+        screen.Y,
+        static_cast<float>(tileSet.GetTileWidth()),
+        static_cast<float>(tileSet.GetTileHeight()));
+
+    DrawTextureRegion(
+        image,
+        tileSet.GetSourceRect(tileId),
+        destination);
 }
 Graphics* Renderer::GetGraphics()
 {

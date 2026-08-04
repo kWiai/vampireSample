@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GameObject.h"
+#include "AnimationComponent.h"
 
 class SpriteComponent;
 class PlayerControllerComponent;
@@ -17,4 +18,6 @@ private:
     SpriteComponent* m_SpriteComponent;
 
     PlayerControllerComponent* m_PlayerController;
+
+    AnimationComponent* m_Animation;
 };

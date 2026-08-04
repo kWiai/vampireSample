@@ -39,6 +39,8 @@ int Application::Run(HINSTANCE hInstance, int nCmdShow)
 
         m_Game.Render(m_Renderer);
 
+
+
         m_Renderer.EndFrame();
     }
 

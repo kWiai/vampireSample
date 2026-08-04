@@ -84,6 +84,30 @@
     <ClInclude Include="CameraFollowComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TileSet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Tile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TileMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TileMapComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MapLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationFrame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp">
@@ -152,10 +176,51 @@
     <ClCompile Include="CameraFollowComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TileSet.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TileMap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TileMapComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MapLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimationComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="player.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="grass.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="dirt.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="stone.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="tilemap.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Idle-Sheet.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Walk-Sheet.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="test.map">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
