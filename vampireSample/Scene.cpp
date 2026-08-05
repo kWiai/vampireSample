@@ -43,24 +43,43 @@ Scene::GetGameObjects() const
 
 void Scene::Update(float deltaTime)
 {
-    // 1. Обновляем все объекты, кроме камеры
+    // 1. Логика (ввод, AI, анимации и т.д.)
     for (auto& object : m_GameObjects)
     {
         if (!object->IsActive())
             continue;
 
-        if (object->GetParent() != nullptr)
+        if (object->GetParent())
             continue;
 
         object->Update(deltaTime);
     }
 
+    // 2. Физика компонентов (Rigidbody и т.п.)
+    for (auto& object : m_GameObjects)
+    {
+        if (!object->IsActive())
+            continue;
+
+        if (object->GetParent())
+            continue;
+
+        object->PhysicsUpdate(deltaTime);
+    }
+
+    // 3. Проверка и разрешение столкновений
     m_Physics.Update(*this);
 
-    // 2. Обновляем камеру последней
-    if (m_MainCamera && m_MainCamera->IsActive())
+    // 4. Позднее обновление (камера, следящие системы)
+    for (auto& object : m_GameObjects)
     {
-        m_MainCamera->Update(deltaTime);
+        if (!object->IsActive())
+            continue;
+
+        if (object->GetParent())
+            continue;
+
+        object->LateUpdate(deltaTime);
     }
 }
 

@@ -1,13 +1,15 @@
 #include "PlayerControllerComponent.h"
 
 #include "GameObject.h"
-#include "Transform.h"
 #include "InputManager.h"
 #include "AnimationComponent.h"
+#include "RigidbodyComponent.h"
+#include "Vector2.h"
 
 PlayerControllerComponent::PlayerControllerComponent()
 {
     m_MoveSpeed = 300.0f;
+    m_Rigidbody = nullptr;
 }
 
 PlayerControllerComponent::~PlayerControllerComponent()
@@ -22,33 +24,48 @@ void PlayerControllerComponent::SetMoveSpeed(float speed)
 
 void PlayerControllerComponent::Update(float deltaTime)
 {
-    auto& transform = GetTransform();
+    if (m_Rigidbody == nullptr)
+    {
+        m_Rigidbody =
+            GetOwner()->GetComponent<RigidbodyComponent>();
 
-    bool moving = false;
+        if (m_Rigidbody == nullptr)
+            return;
+    }
+
+    Math::Vector2 direction(0.0f, 0.0f);
 
     if (InputManager::GetKey(Key::W))
     {
-        transform.Position.Y -= m_MoveSpeed * deltaTime;
-        moving = true;
+        direction.Y -= 1.0f;
     }
 
     if (InputManager::GetKey(Key::S))
     {
-        transform.Position.Y += m_MoveSpeed * deltaTime;
-        moving = true;
+        direction.Y += 1.0f;
     }
 
     if (InputManager::GetKey(Key::A))
     {
-        transform.Position.X -= m_MoveSpeed * deltaTime;
-        moving = true;
+        direction.X -= 1.0f;
     }
 
     if (InputManager::GetKey(Key::D))
     {
-        transform.Position.X += m_MoveSpeed * deltaTime;
-        moving = true;
+        direction.X += 1.0f;
     }
+
+    bool moving =
+        direction.X != 0.0f ||
+        direction.Y != 0.0f;
+
+    if (moving)
+    {
+        direction = direction.Normalize();
+    }
+
+    m_Rigidbody->SetVelocity(
+        direction * m_MoveSpeed);
 
     auto animation =
         GetOwner()->GetComponent<AnimationComponent>();

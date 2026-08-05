@@ -10,8 +10,8 @@ public:
     RigidbodyComponent();
     ~RigidbodyComponent() override;
 
-    void Update(float deltaTime) override;
-
+    //void Update(float deltaTime) override;
+    void PhysicsUpdate(float deltaTime) override;
     void SetVelocity(const Math::Vector2& velocity);
     const Math::Vector2& GetVelocity() const;
 

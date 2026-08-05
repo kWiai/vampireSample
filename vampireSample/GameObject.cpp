@@ -41,6 +41,44 @@ void GameObject::Update(float deltaTime)
     }
 }
 
+void GameObject::PhysicsUpdate(float deltaTime)
+{
+    for (auto& component : m_Components)
+    {
+        if (component->IsEnabled())
+        {
+            component->PhysicsUpdate(deltaTime);
+        }
+    }
+
+    for (GameObject* child : m_Children)
+    {
+        if (child && child->IsActive())
+        {
+            child->PhysicsUpdate(deltaTime);
+        }
+    }
+}
+
+void GameObject::LateUpdate(float deltaTime)
+{
+    for (auto& component : m_Components)
+    {
+        if (component->IsEnabled())
+        {
+            component->LateUpdate(deltaTime);
+        }
+    }
+
+    for (GameObject* child : m_Children)
+    {
+        if (child && child->IsActive())
+        {
+            child->LateUpdate(deltaTime);
+        }
+    }
+}
+
 void GameObject::Render(
     Renderer& renderer,
     const Camera& camera)

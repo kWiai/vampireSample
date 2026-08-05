@@ -2,6 +2,8 @@
 
 #include "Component.h"
 
+class RigidbodyComponent;
+
 class PlayerControllerComponent : public Component
 {
 public:
@@ -16,4 +18,5 @@ public:
 private:
 
     float m_MoveSpeed;
+    RigidbodyComponent* m_Rigidbody;
 };

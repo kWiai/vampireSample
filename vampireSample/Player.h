@@ -5,6 +5,7 @@
 
 class SpriteComponent;
 class PlayerControllerComponent;
+class RigidbodyComponent;
 
 class Player : public GameObject
 {
@@ -20,4 +21,6 @@ private:
     PlayerControllerComponent* m_PlayerController;
 
     AnimationComponent* m_Animation;
+
+    RigidbodyComponent* m_Rigidbody;
 };

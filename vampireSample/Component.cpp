@@ -75,3 +75,12 @@ void Component::OnCollisionExit(GameObject* other)
 {
 
 }
+void Component::PhysicsUpdate(float)
+{
+
+}
+
+void Component::LateUpdate(float)
+{
+
+}

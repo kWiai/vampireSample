@@ -20,7 +20,9 @@ public:
     void Render(
         Renderer& renderer,
         const Camera& camera);
+    void PhysicsUpdate(float deltaTime);
 
+    void LateUpdate(float deltaTime);
     void SetName(const std::string& name);
     const std::string& GetName() const;
 

@@ -21,6 +21,9 @@ public:
         const Collision& collision);
 
 private:
+    void ResolveCollision(
+        BoxColliderComponent* a,
+        BoxColliderComponent* b);
 
     void CollectColliders(
         GameObject* object,

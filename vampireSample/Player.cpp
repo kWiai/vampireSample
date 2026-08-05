@@ -8,6 +8,7 @@
 #include "AnimationComponent.h"
 #include "PlayerAnimations.h"
 #include "BoxColliderComponent.h"
+#include "RigidbodyComponent.h"
 
 Player::Player()
 {
@@ -17,6 +18,7 @@ Player::Player()
     m_SpriteComponent = nullptr;
     m_PlayerController = nullptr;
     m_Animation = nullptr;
+    m_Rigidbody = nullptr;
 }
 
 Player::~Player()
@@ -67,6 +69,12 @@ void Player::Initialize()
 
     m_Animation->Play("Idle");
 
+    m_Rigidbody =
+        AddComponent<RigidbodyComponent>();
+
+    m_Rigidbody->SetUseGravity(false);
+
+    m_Rigidbody->SetKinematic(false);
 
     m_PlayerController =
         AddComponent<PlayerControllerComponent>();

@@ -20,7 +20,7 @@ RigidbodyComponent::~RigidbodyComponent()
 
 }
 
-void RigidbodyComponent::Update(float deltaTime)
+void RigidbodyComponent::PhysicsUpdate(float deltaTime)
 {
     if (m_IsKinematic)
         return;
