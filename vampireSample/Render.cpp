@@ -22,6 +22,8 @@ Renderer::Renderer()
 
     m_Width = 0;
     m_Height = 0;
+
+    m_ShowColliders = true;
 }
 
 Renderer::~Renderer()
@@ -211,6 +213,39 @@ void Renderer::DrawTile(
 Graphics* Renderer::GetGraphics()
 {
     return m_Graphics;
+}
+
+void Renderer::SetShowColliders(bool value)
+{
+    m_ShowColliders = value;
+}
+
+bool Renderer::IsShowingColliders() const
+{
+    return m_ShowColliders;
+}
+
+void Renderer::DrawRectangle(
+    float x,
+    float y,
+    float width,
+    float height,
+    const Camera& camera)
+{
+    Math::Vector2 screen =
+        camera.WorldToScreen(
+            Math::Vector2(x, y));
+
+    Pen pen(
+        Color(255, 0, 255, 0), // зеленый
+        2.0f);
+
+    m_Graphics->DrawRectangle(
+        &pen,
+        screen.X,
+        screen.Y,
+        width,
+        height);
 }
 
 void Renderer::DrawGrid(const Camera& camera, int cellSize)

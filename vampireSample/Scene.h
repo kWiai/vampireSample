@@ -4,6 +4,7 @@
 #include <vector>
 #include <string> 
 #include "CameraComponent.h"
+#include "PhysicsWorld.h"
 
 class GameObject;
 class Renderer;
@@ -37,7 +38,11 @@ public:
 
     void AddGameObject(std::unique_ptr<GameObject> object);
 
+    const std::vector<std::unique_ptr<GameObject>>&
+        GetGameObjects() const;
+
 private:
     GameObject* m_MainCamera;
     std::vector<std::unique_ptr<GameObject>> m_GameObjects;
+    PhysicsWorld m_Physics;
 };

@@ -125,6 +125,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AABB.h" />
     <ClInclude Include="AnimationClip.h" />
     <ClInclude Include="AnimationComponent.h" />
     <ClInclude Include="AnimationFrame.h" />
@@ -134,18 +135,21 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraComponent.h" />
     <ClInclude Include="CameraFollowComponent.h" />
+    <ClInclude Include="Collision.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Globals.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="MapLoader.h" />
+    <ClInclude Include="PhysicsWorld.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerAnimations.h" />
     <ClInclude Include="PlayerControllerComponent.h" />
     <ClInclude Include="Rectangle.h" />
     <ClInclude Include="Render.h" />
     <ClInclude Include="ResourceManager.h" />
+    <ClInclude Include="RigidbodyComponent.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="SpriteComponent.h" />
@@ -160,6 +164,7 @@
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AABB.cpp" />
     <ClCompile Include="AnimationClip.cpp" />
     <ClCompile Include="AnimationComponent.cpp" />
     <ClCompile Include="Application.cpp" />
@@ -173,12 +178,14 @@
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MapLoader.cpp" />
+    <ClCompile Include="PhysicsWorld.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerAnimations.cpp" />
     <ClCompile Include="PlayerControllerComponent.cpp" />
     <ClCompile Include="Rectangle.cpp" />
     <ClCompile Include="Render.cpp" />
     <ClCompile Include="ResorceManager.cpp" />
+    <ClCompile Include="RigidbodyComponent.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="SpriteComponent.cpp" />

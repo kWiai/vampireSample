@@ -17,7 +17,9 @@ public:
     virtual void Render(
         Renderer& renderer,
         const Camera& camera);
-
+    virtual void OnCollisionEnter(GameObject* other);
+    virtual void OnCollisionStay(GameObject* other);
+    virtual void OnCollisionExit(GameObject* other);
     void SetOwner(GameObject* owner);
 
     GameObject* GetOwner() const;

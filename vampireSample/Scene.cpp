@@ -35,6 +35,12 @@ void Scene::AddGameObject(std::unique_ptr<GameObject> object)
     m_GameObjects.push_back(std::move(object));
 }
 
+const std::vector<std::unique_ptr<GameObject>>&
+Scene::GetGameObjects() const
+{
+    return m_GameObjects;
+}
+
 void Scene::Update(float deltaTime)
 {
     // 1. Обновляем все объекты, кроме камеры
@@ -43,12 +49,13 @@ void Scene::Update(float deltaTime)
         if (!object->IsActive())
             continue;
 
-        // Обновляем только корневые объекты
         if (object->GetParent() != nullptr)
             continue;
 
         object->Update(deltaTime);
     }
+
+    m_Physics.Update(*this);
 
     // 2. Обновляем камеру последней
     if (m_MainCamera && m_MainCamera->IsActive())

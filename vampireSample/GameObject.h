@@ -45,6 +45,9 @@ public:
     const std::vector<GameObject*>&
         GetChildren() const;
 
+    const std::vector<std::unique_ptr<Component>>&
+        GetComponents() const;
+
     template<typename T, typename... Args>
     T* AddComponent(Args&&... args);
 

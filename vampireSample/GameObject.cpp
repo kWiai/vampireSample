@@ -147,6 +147,11 @@ void GameObject::RemoveChild(GameObject* child)
         m_Children.erase(it);
     }
 }
+const std::vector<std::unique_ptr<Component>>&
+GameObject::GetComponents() const
+{
+    return m_Components;
+}
 
 const std::vector<GameObject*>&
 GameObject::GetChildren() const

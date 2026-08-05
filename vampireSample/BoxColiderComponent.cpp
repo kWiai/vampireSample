@@ -2,6 +2,8 @@
 
 #include "GameObject.h"
 
+#include "Render.h"
+
 BoxColliderComponent::BoxColliderComponent()
 {
     m_Size = Math::Vector2(32.0f, 32.0f);
@@ -61,4 +63,29 @@ Math::Vector2 BoxColliderComponent::GetMax() const
         GetTransform().Position +
         m_Offset +
         m_Size;
+}
+
+void BoxColliderComponent::Render(
+    Renderer& renderer,
+    const Camera& camera)
+{
+    if (!renderer.IsShowingColliders())
+        return;
+
+    Math::Vector2 min =
+        GetMin();
+
+    renderer.DrawRectangle(
+        min.X,
+        min.Y,
+        m_Size.X,
+        m_Size.Y,
+        camera);
+}
+Physics::AABB
+BoxColliderComponent::GetBounds() const
+{
+    return Physics::AABB(
+        GetMin(),
+        GetMax());
 }

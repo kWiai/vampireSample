@@ -7,6 +7,7 @@
 #include "PlayerControllerComponent.h"
 #include "AnimationComponent.h"
 #include "PlayerAnimations.h"
+#include "BoxColliderComponent.h"
 
 Player::Player()
 {
@@ -35,6 +36,12 @@ void Player::Initialize()
     //-----------------------------------
     // Sprite
     //-----------------------------------
+    auto collider =
+        AddComponent<BoxColliderComponent>();
+
+    collider->SetSize(
+        160,
+        160);
 
     m_SpriteComponent =
         AddComponent<SpriteComponent>();

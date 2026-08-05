@@ -40,6 +40,7 @@ GameObject* Component::GetOwner() const
 {
     return m_Owner;
 }
+ 
 
 Transform& Component::GetTransform()
 {
@@ -59,4 +60,18 @@ void Component::SetEnabled(bool enabled)
 bool Component::IsEnabled() const
 {
     return m_Enabled;
+}
+void Component::OnCollisionEnter(GameObject* other)
+{
+
+}
+
+void Component::OnCollisionStay(GameObject* other)
+{
+
+}
+
+void Component::OnCollisionExit(GameObject* other)
+{
+
 }

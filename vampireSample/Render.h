@@ -41,7 +41,18 @@ public:
         const Camera& camera,
         int cellSize = 64);
 
+    void DrawRectangle(
+        float x,
+        float y,
+        float width,
+        float height,
+        const Camera& camera);
+
     Graphics* GetGraphics();
+
+    void SetShowColliders(bool value);
+
+    bool IsShowingColliders() const;
 
 private:
 
@@ -66,4 +77,5 @@ private:
 
     int m_Width;
     int m_Height;
+    bool m_ShowColliders;
 };
