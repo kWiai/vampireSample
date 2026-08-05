@@ -5,8 +5,8 @@
 
 #include "SpriteComponent.h"
 #include "PlayerControllerComponent.h"
-#include "Animation.h"
 #include "AnimationComponent.h"
+#include "PlayerAnimations.h"
 
 Player::Player()
 {
@@ -26,10 +26,10 @@ Player::~Player()
 void Player::Initialize()
 {
     GetTransform().Position =
-        Math::Vector2(300.0f, 200.0f);
+        Math::Vector2(0.0f, 0.0f);
 
     GetTransform().Size =
-        Math::Vector2(128.0f, 128.0f);
+        Math::Vector2(160.0f, 160.0f);
 
 
     //-----------------------------------
@@ -42,7 +42,7 @@ void Player::Initialize()
     m_SpriteComponent->LoadTexture(
         Assets::Textures::PLAYER);
 
-    m_SpriteComponent->SetSize(128, 128);
+    m_SpriteComponent->SetSize(160, 160);
 
 
     //-----------------------------------
@@ -52,88 +52,14 @@ void Player::Initialize()
     m_Animation =
         AddComponent<AnimationComponent>();
 
+    m_Animation->AddAnimation(
+        PlayerAnimations::CreateIdle());
 
-    Animation walk;
+    m_Animation->AddAnimation(
+        PlayerAnimations::CreateWalk());
 
-    walk.SetName("Walk");
+    m_Animation->Play("Idle");
 
-
-    walk.AddFrame(
-        Math::Rectangle(
-            0,
-            0,
-            256,
-            256),
-        0.08f);
-
-    walk.AddFrame(
-        Math::Rectangle(
-            256,
-            0,
-            256,
-            256),
-        0.08f);
-
-    walk.AddFrame(
-        Math::Rectangle(
-            512,
-            0,
-            256,
-            256),
-        0.08f);
-
-    walk.AddFrame(
-        Math::Rectangle(
-            768,
-            0,
-            256,
-            256),
-        0.08f);
-
-    walk.AddFrame(
-        Math::Rectangle(
-            1024,
-            0,
-            256,
-            256),
-        0.08f);
-
-    walk.AddFrame(
-        Math::Rectangle(
-            1280,
-            0,
-            256,
-            256),
-        0.08f);
-
-    walk.AddFrame(
-        Math::Rectangle(
-            1536,
-            0,
-            256,
-            256),
-        0.08f);
-
-    walk.AddFrame(
-        Math::Rectangle(
-            1792,
-            0,
-            256,
-            256),
-        0.08f);
-
-
-    walk.SetLoop(true);
-
-
-    m_Animation->AddAnimation(walk);
-
-    m_Animation->Play("Walk");
-
-
-    //-----------------------------------
-    // Controller
-    //-----------------------------------
 
     m_PlayerController =
         AddComponent<PlayerControllerComponent>();

@@ -4,7 +4,7 @@
 #include <string>
 
 #include "Component.h"
-#include "Animation.h"
+#include "AnimationClip.h"
 
 class SpriteComponent;
 
@@ -17,7 +17,8 @@ public:
 
     void Update(float deltaTime) override;
 
-    void AddAnimation(const Animation& animation);
+    void AddAnimation(
+        const AnimationClip& animation);
 
     bool Play(const std::string& name);
 
@@ -31,9 +32,9 @@ private:
 
 private:
 
-    std::vector<Animation> m_Animations;
+    std::vector<AnimationClip> m_Animations;
 
-    Animation* m_CurrentAnimation;
+    AnimationClip* m_CurrentAnimation;
 
     SpriteComponent* m_Sprite;
 

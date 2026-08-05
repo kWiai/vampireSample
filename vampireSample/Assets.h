@@ -4,6 +4,10 @@ namespace Assets
 {
     namespace Textures
     {
+        constexpr wchar_t PLAYER_WALK[] = L"Walk-Sheet.png";
+
+        constexpr wchar_t PLAYER_IDLE[] = L"Idle-Sheet.png";
+
         constexpr wchar_t PLAYER[] = L"Walk-Sheet.png";
 
         constexpr wchar_t TILES[] = L"tilemap.png";

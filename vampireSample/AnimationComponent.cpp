@@ -84,7 +84,7 @@ void AnimationComponent::ApplyFrame()
 }
 
 void AnimationComponent::AddAnimation(
-    const Animation& animation)
+    const AnimationClip& animation)
 {
     m_Animations.push_back(animation);
 }
@@ -106,6 +106,8 @@ bool AnimationComponent::Play(
         if (animation.GetName() == name)
         {
             m_CurrentAnimation = &animation;
+            m_Sprite->SetTexture(
+                animation.GetTexture());
             m_CurrentFrame = 0;
             m_Timer = 0.0f;
             m_Playing = true;
