@@ -111,6 +111,9 @@
     <ClInclude Include="PlayerAnimations.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="BoxColliderComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp">
@@ -198,6 +201,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PlayerAnimations.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BoxColiderComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

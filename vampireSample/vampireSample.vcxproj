@@ -130,6 +130,7 @@
     <ClInclude Include="AnimationFrame.h" />
     <ClInclude Include="Application.h" />
     <ClInclude Include="Assets.h" />
+    <ClInclude Include="BoxColliderComponent.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraComponent.h" />
     <ClInclude Include="CameraFollowComponent.h" />
@@ -162,6 +163,7 @@
     <ClCompile Include="AnimationClip.cpp" />
     <ClCompile Include="AnimationComponent.cpp" />
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="BoxColiderComponent.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraComponent.cpp" />
     <ClCompile Include="CameraFollowComponent.cpp" />

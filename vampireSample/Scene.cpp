@@ -43,7 +43,8 @@ void Scene::Update(float deltaTime)
         if (!object->IsActive())
             continue;
 
-        if (object.get() == m_MainCamera)
+        // Обновляем только корневые объекты
+        if (object->GetParent() != nullptr)
             continue;
 
         object->Update(deltaTime);
@@ -61,12 +62,16 @@ void Scene::Render(Renderer& renderer)
     renderer.DrawGrid(GetCamera());
     for (auto& object : m_GameObjects)
     {
-        if (object->IsActive())
-        {
-            object->Render(
-                renderer,
-                GetCamera());
-        }
+        if (!object->IsActive())
+            continue;
+
+        // Рисуем только корневые объекты
+        if (object->GetParent() != nullptr)
+            continue;
+
+        object->Render(
+            renderer,
+            GetCamera());
     }
 }
 GameObject* Scene::FindByName(const std::string& name)

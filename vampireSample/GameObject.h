@@ -34,6 +34,17 @@ public:
     Transform& GetTransform();
     const Transform& GetTransform() const;
 
+    void SetParent(GameObject* parent);
+
+    GameObject* GetParent() const;
+
+    void AddChild(GameObject* child);
+
+    void RemoveChild(GameObject* child);
+
+    const std::vector<GameObject*>&
+        GetChildren() const;
+
     template<typename T, typename... Args>
     T* AddComponent(Args&&... args);
 
@@ -59,6 +70,12 @@ protected:
 private:
 
     std::vector<std::unique_ptr<Component>> m_Components;
+
+    GameObject* m_Parent;
+
+    std::vector<GameObject*> m_Children;
+
+
 };
 
 template<typename T, typename... Args>
