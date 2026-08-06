@@ -25,19 +25,10 @@ public:
         int x,
         int y) const;
 
-    bool IsSolid(
-        int x,
-        int y) const;
-
     void SetTile(
         int x,
         int y,
         int tileId);
-
-    void SetSolid(
-        int x,
-        int y,
-        bool solid);
 
 private:
 

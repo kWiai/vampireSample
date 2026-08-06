@@ -3,6 +3,8 @@
 #include "Component.h"
 #include "Vector2.h"
 #include "AABB.h"
+#include "CollisionLayer.h"
+#include "PhysicsMaterial.h"
 
 class BoxColliderComponent : public Component
 {
@@ -24,6 +26,11 @@ public:
     Physics::AABB GetBounds() const;
     Math::Vector2 GetMin() const;
     Math::Vector2 GetMax() const;
+    void SetLayer(CollisionLayer layer);
+    CollisionLayer GetLayer() const;
+    PhysicsMaterial& GetMaterial();
+
+    const PhysicsMaterial& GetMaterial() const;
 
 private:
 
@@ -31,4 +38,6 @@ private:
     Math::Vector2 m_Offset;
 
     bool m_IsTrigger;
+    CollisionLayer m_Layer;
+    PhysicsMaterial m_Material;
 };

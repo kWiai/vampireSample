@@ -8,6 +8,7 @@
 #include "CameraFollowComponent.h"
 #include "TileMapComponent.h"
 #include "MapLoader.h"
+#include "CollisionMatrix.h"
 
 using namespace Gdiplus;
 
@@ -23,6 +24,8 @@ Game::~Game()
 
 void Game::Init()
 {
+    CollisionMatrix::Initialize();
+
     m_Scene = std::make_unique<Scene>();
 
     auto mapObject =
@@ -40,13 +43,15 @@ void Game::Init()
 
     tileMap->SetTileSet(&tileSet);
 
+    tileSet.GetTile(1).Solid = true;
+
     MapLoader::Load(
         "test.map",
         tileMap->GetTileMap());
     auto& map =
         tileMap->GetTileMap();
 
-    map.SetSolid(2, 6, true);
+    
 
     m_Scene->AddGameObject(
         std::move(mapObject));

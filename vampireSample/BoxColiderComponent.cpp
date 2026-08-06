@@ -1,7 +1,7 @@
 #include "BoxColliderComponent.h"
 
 #include "GameObject.h"
-
+#include "CollisionLayer.h"
 #include "Render.h"
 
 BoxColliderComponent::BoxColliderComponent()
@@ -10,6 +10,7 @@ BoxColliderComponent::BoxColliderComponent()
     m_Offset = Math::Vector2(0.0f, 0.0f);
 
     m_IsTrigger = false;
+    m_Layer = CollisionLayer::Default;
 }
 
 BoxColliderComponent::~BoxColliderComponent()
@@ -27,6 +28,18 @@ void BoxColliderComponent::SetSize(
 Math::Vector2 BoxColliderComponent::GetSize() const
 {
     return m_Size;
+}
+
+PhysicsMaterial&
+BoxColliderComponent::GetMaterial()
+{
+    return m_Material;
+}
+
+const PhysicsMaterial&
+BoxColliderComponent::GetMaterial() const
+{
+    return m_Material;
 }
 
 void BoxColliderComponent::SetOffset(
@@ -63,6 +76,17 @@ Math::Vector2 BoxColliderComponent::GetMax() const
         GetTransform().Position +
         m_Offset +
         m_Size;
+}
+
+void BoxColliderComponent::SetLayer(
+    CollisionLayer layer)
+{
+    m_Layer = layer;
+}
+
+CollisionLayer BoxColliderComponent::GetLayer() const
+{
+    return m_Layer;
 }
 
 void BoxColliderComponent::Render(

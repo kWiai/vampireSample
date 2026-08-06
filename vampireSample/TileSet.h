@@ -28,6 +28,7 @@ public:
 
     std::shared_ptr<Texture2D> GetTexture() const;
 
+    TileInfo& GetTile(int id);
     const TileInfo& GetTile(int id) const;
 
     int GetTileWidth() const;

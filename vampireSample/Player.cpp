@@ -40,6 +40,8 @@ void Player::Initialize()
     //-----------------------------------
     auto collider =
         AddComponent<BoxColliderComponent>();
+    collider->SetLayer(
+        CollisionLayer::Player);
 
     collider->SetSize(
         160,

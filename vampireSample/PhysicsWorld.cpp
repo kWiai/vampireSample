@@ -8,6 +8,7 @@
 #include "Collision.h"
 #include "RigidbodyComponent.h"
 #include "TileMapComponent.h"
+#include "CollisionMatrix.h"
 
 PhysicsWorld::PhysicsWorld()
 {
@@ -145,22 +146,34 @@ void PhysicsWorld::ResolveTileCollision(
     TileMap& map =
         tileMapComponent->GetTileMap();
 
+    TileSet* tileSet =
+        tileMapComponent->GetTileSet();
+
+    if (tileSet == nullptr)
+        return;
+
+    const int tileWidth =
+        tileSet->GetTileWidth();
+
+    const int tileHeight =
+        tileSet->GetTileHeight();
+
     Physics::AABB bounds =
         collider->GetBounds();
 
-    const int tileSize = 32;
+    
 
     int left =
-        static_cast<int>(bounds.Min.X) / tileSize;
+        static_cast<int>(bounds.Min.X) / tileWidth;
 
     int right =
-        static_cast<int>(bounds.Max.X - 1) / tileSize;
+        static_cast<int>(bounds.Max.X - 1) / tileWidth;
 
     int top =
-        static_cast<int>(bounds.Min.Y) / tileSize;
+        static_cast<int>(bounds.Min.Y) / tileHeight;
 
     int bottom =
-        static_cast<int>(bounds.Max.Y - 1) / tileSize;
+        static_cast<int>(bounds.Max.Y - 1) / tileHeight;
 
     for (int y = top; y <= bottom; y++)
     {
@@ -172,24 +185,93 @@ void PhysicsWorld::ResolveTileCollision(
             const Tile& tile =
                 map.GetTile(x, y);
 
-            char buffer[128];
+            const TileInfo& info =
+                tileSet->GetTile(tile.GetId());
 
-            sprintf_s(
-                buffer,
-                "Tile (%d,%d) id=%d solid=%d\n",
-                x,
-                y,
-                tile.GetId(),
-                tile.IsSolid());
-
-            OutputDebugStringA(buffer);
-
-            if (!tile.IsSolid())
+            if (!info.Solid)
                 continue;
 
-            OutputDebugStringA("SOLID TILE\n");
+            Physics::AABB tileBounds(
+                Math::Vector2(
+                    x * tileWidth,
+                    y * tileHeight),
+
+                Math::Vector2(
+                    (x + 1) * tileWidth,
+                    (y + 1) * tileHeight));
+
+            ResolveStaticCollision(
+                body,
+                collider,
+                tileBounds);
+
         }
     }
+}
+
+void PhysicsWorld::ResolveStaticCollision(
+    RigidbodyComponent* body,
+    BoxColliderComponent* collider,
+    const Physics::AABB& staticBounds)
+{
+    // Границы динамического объекта
+    Physics::AABB bodyBounds =
+        collider->GetBounds();
+
+    // Нет пересечения
+    if (!bodyBounds.Intersects(staticBounds))
+        return;
+
+    // Глубина пересечения
+    Math::Vector2 overlap =
+        bodyBounds.GetOverlap(staticBounds);
+
+    // Центры объектов
+    Math::Vector2 bodyCenter(
+        (bodyBounds.Min.X + bodyBounds.Max.X) * 0.5f,
+        (bodyBounds.Min.Y + bodyBounds.Max.Y) * 0.5f);
+
+    Math::Vector2 staticCenter(
+        (staticBounds.Min.X + staticBounds.Max.X) * 0.5f,
+        (staticBounds.Min.Y + staticBounds.Max.Y) * 0.5f);
+
+    Math::Vector2& position =
+        body->GetTransform().Position;
+
+    Math::Vector2 velocity =
+        body->GetVelocity();
+
+    // Выбираем ось с минимальным проникновением
+    if (overlap.X < overlap.Y)
+    {
+        // Столкновение по X
+        if (bodyCenter.X < staticCenter.X)
+        {
+            position.X -= overlap.X;
+        }
+        else
+        {
+            position.X += overlap.X;
+        }
+
+        velocity.X = 0.0f;
+    }
+    else
+    {
+        // Столкновение по Y
+        if (bodyCenter.Y < staticCenter.Y)
+        {
+            position.Y -= overlap.Y;
+        }
+        else
+        {
+            position.Y += overlap.Y;
+        }
+
+        velocity.Y = 0.0f;
+    }
+
+    body->SetVelocity(velocity);
 }
 
 
@@ -243,6 +325,13 @@ void PhysicsWorld::Update(Scene& scene)
     {
         for (size_t j = i + 1; j < colliders.size(); j++)
         {
+            if (!CollisionMatrix::CanCollide(
+                colliders[i]->GetLayer(),
+                colliders[j]->GetLayer()))
+            {
+                continue;
+            }
+
             if (!colliders[i]->GetBounds().Intersects(
                 colliders[j]->GetBounds()))
             {

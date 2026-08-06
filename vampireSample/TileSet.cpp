@@ -73,6 +73,11 @@ std::shared_ptr<Texture2D> TileSet::GetTexture() const
     return m_Texture;
 }
 
+TileInfo& TileSet::GetTile(int id)
+{
+    return m_Tiles.at(id);
+}
+
 const TileInfo& TileSet::GetTile(int id) const
 {
     return m_Tiles.at(id);

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include "AABB.h"
 
 class Scene;
 class GameObject;
@@ -8,6 +9,7 @@ class BoxColliderComponent;
 class RigidbodyComponent;
 struct Collision;
 class TileMapComponent;
+
 
 class PhysicsWorld
 {
@@ -33,6 +35,18 @@ private:
         TileMapComponent* tileMap,
         RigidbodyComponent* body,
         BoxColliderComponent* collider);
+
+    void ResolveTileOverlap(
+        TileMapComponent* tileMap,
+        RigidbodyComponent* body,
+        BoxColliderComponent* collider,
+        int tileX,
+        int tileY);
+
+    void ResolveStaticCollision(
+        RigidbodyComponent* body,
+        BoxColliderComponent* collider,
+        const Physics::AABB& staticBounds);
 
     void CollectColliders(
         GameObject* object,
