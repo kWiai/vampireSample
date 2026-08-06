@@ -5,7 +5,9 @@
 class Scene;
 class GameObject;
 class BoxColliderComponent;
+class RigidbodyComponent;
 struct Collision;
+class TileMapComponent;
 
 class PhysicsWorld
 {
@@ -24,6 +26,13 @@ private:
     void ResolveCollision(
         BoxColliderComponent* a,
         BoxColliderComponent* b);
+
+    TileMapComponent* FindTileMap(Scene& scene);
+
+    void ResolveTileCollision(
+        TileMapComponent* tileMap,
+        RigidbodyComponent* body,
+        BoxColliderComponent* collider);
 
     void CollectColliders(
         GameObject* object,

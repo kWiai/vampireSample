@@ -56,6 +56,17 @@ bool TileMap::IsValidPosition(
         y >= 0 &&
         y < m_Height;
 }
+
+bool TileMap::IsSolid(
+    int x,
+    int y) const
+{
+    if (!IsValidPosition(x, y))
+        return false;
+
+    return GetTile(x, y).IsSolid();
+}
+
 void TileMap::SetTile(
     int x,
     int y,
@@ -65,6 +76,17 @@ void TileMap::SetTile(
         return;
 
     GetTile(x, y).SetId(tileId);
+}
+
+void TileMap::SetSolid(
+    int x,
+    int y,
+    bool solid)
+{
+    if (!IsValidPosition(x, y))
+        return;
+
+    GetTile(x, y).SetSolid(solid);
 }
 
 int TileMap::GetIndex(

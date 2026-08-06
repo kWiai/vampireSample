@@ -7,6 +7,7 @@
 #include "BoxColliderComponent.h"
 #include "Collision.h"
 #include "RigidbodyComponent.h"
+#include "TileMapComponent.h"
 
 PhysicsWorld::PhysicsWorld()
 {
@@ -117,10 +118,89 @@ void PhysicsWorld::ResolveCollision(
     rbA->SetVelocity(velocity);
 }
 
+TileMapComponent* PhysicsWorld::FindTileMap(Scene& scene)
+{
+    const auto& objects =
+        scene.GetGameObjects();
+
+    for (const auto& object : objects)
+    {
+        auto tileMap =
+            object->GetComponent<TileMapComponent>();
+
+        if (tileMap != nullptr)
+        {
+            return tileMap;
+        }
+    }
+
+    return nullptr;
+}
+
+void PhysicsWorld::ResolveTileCollision(
+    TileMapComponent* tileMapComponent,
+    RigidbodyComponent* body,
+    BoxColliderComponent* collider)
+{
+    TileMap& map =
+        tileMapComponent->GetTileMap();
+
+    Physics::AABB bounds =
+        collider->GetBounds();
+
+    const int tileSize = 32;
+
+    int left =
+        static_cast<int>(bounds.Min.X) / tileSize;
+
+    int right =
+        static_cast<int>(bounds.Max.X - 1) / tileSize;
+
+    int top =
+        static_cast<int>(bounds.Min.Y) / tileSize;
+
+    int bottom =
+        static_cast<int>(bounds.Max.Y - 1) / tileSize;
+
+    for (int y = top; y <= bottom; y++)
+    {
+        for (int x = left; x <= right; x++)
+        {
+            if (!map.IsValidPosition(x, y))
+                continue;
+
+            const Tile& tile =
+                map.GetTile(x, y);
+
+            char buffer[128];
+
+            sprintf_s(
+                buffer,
+                "Tile (%d,%d) id=%d solid=%d\n",
+                x,
+                y,
+                tile.GetId(),
+                tile.IsSolid());
+
+            OutputDebugStringA(buffer);
+
+            if (!tile.IsSolid())
+                continue;
+
+            OutputDebugStringA("SOLID TILE\n");
+        }
+    }
+}
+
+
 void PhysicsWorld::Update(Scene& scene)
 {
     m_LastCollisions = m_Collisions;
     m_Collisions.clear();
+
+    TileMapComponent* tileMapComponent =
+        FindTileMap(scene);
+
 
     std::vector<BoxColliderComponent*> colliders;
 
@@ -139,6 +219,23 @@ void PhysicsWorld::Update(Scene& scene)
         CollectColliders(
             object.get(),
             colliders);
+    }
+
+
+    if (tileMapComponent != nullptr)
+    {
+        for (auto* collider : colliders)
+        {
+            auto body =
+                collider->GetOwner()->GetComponent<RigidbodyComponent>();
+
+            if (body == nullptr)
+                continue;
+            ResolveTileCollision(
+                tileMapComponent,
+                body,
+                collider);
+        }
     }
 
     // Проверяем все пары

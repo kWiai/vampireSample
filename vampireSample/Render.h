@@ -39,7 +39,7 @@ public:
 
     void DrawGrid(
         const Camera& camera,
-        int cellSize = 64);
+        int cellSize = 32);
 
     void DrawRectangle(
         float x,

@@ -43,6 +43,10 @@ void Game::Init()
     MapLoader::Load(
         "test.map",
         tileMap->GetTileMap());
+    auto& map =
+        tileMap->GetTileMap();
+
+    map.SetSolid(2, 6, true);
 
     m_Scene->AddGameObject(
         std::move(mapObject));
