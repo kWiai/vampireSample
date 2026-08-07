@@ -669,7 +669,7 @@ void PhysicsWorld::BeginFrame()
         std::move(m_Triggers);
 
     m_Triggers.clear();
-    m_DebugRays.clear();
+   // m_DebugRays.clear();
 }
 void PhysicsWorld::IntegrateBodies(
     const std::vector<BoxColliderComponent*>& colliders,
@@ -739,6 +739,7 @@ bool PhysicsWorld::Raycast(
             continue;
         }
 
+        distance = 100;
         if (distance >= closestDistance)
             continue;
 
@@ -799,6 +800,7 @@ void PhysicsWorld::RenderDebug(
             }
         }
     }
+    m_DebugRays.clear();
 }
 
 void PhysicsWorld::Update(

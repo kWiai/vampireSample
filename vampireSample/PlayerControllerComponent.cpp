@@ -91,10 +91,10 @@ void PlayerControllerComponent::Update(float deltaTime)
     if (scene != nullptr)
     {
         RaycastHit hit;
-
+        //if(moving)
         scene->GetPhysics().Raycast(
             GetTransform().Position,
-            Math::Vector2(1.0f, 0.0f),
+            direction,
             300.0f,
             hit,
             *scene);
