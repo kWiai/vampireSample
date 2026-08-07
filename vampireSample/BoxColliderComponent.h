@@ -26,6 +26,7 @@ public:
     Physics::AABB GetBounds() const;
     Math::Vector2 GetMin() const;
     Math::Vector2 GetMax() const;
+    Math::Vector2 GetCenter() const;
     void SetLayer(CollisionLayer layer);
     CollisionLayer GetLayer() const;
     PhysicsMaterial& GetMaterial();

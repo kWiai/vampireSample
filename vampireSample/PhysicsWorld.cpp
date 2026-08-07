@@ -706,12 +706,16 @@ bool PhysicsWorld::Raycast(
     const Math::Vector2& direction,
     float maxDistance,
     RaycastHit& hit,
-    Scene& scene)
+    Scene& scene,
+    GameObject* ignoreObject)
 {
     DebugRay ray;
 
     ray.Origin = origin;
-    ray.End = origin + direction * maxDistance;
+    ray.End =
+        origin +
+        direction * maxDistance;
+
     ray.Hit = false;
 
     hit = RaycastHit();
@@ -726,6 +730,9 @@ bool PhysicsWorld::Raycast(
 
     for (auto* collider : colliders)
     {
+        if (collider->GetOwner() == ignoreObject)
+            continue;
+
         float distance;
         Math::Vector2 normal;
 
@@ -739,7 +746,9 @@ bool PhysicsWorld::Raycast(
             continue;
         }
 
-        distance = 100;
+        if (distance < 0.0f)
+            continue;
+
         if (distance >= closestDistance)
             continue;
 
@@ -750,13 +759,16 @@ bool PhysicsWorld::Raycast(
         hit.Normal = normal;
         hit.Collider = collider;
         hit.Object = collider->GetOwner();
+
         hit.Point =
             origin +
             direction * distance;
+
         ray.End = hit.Point;
         ray.Hit = true;
     }
     m_DebugRays.push_back(ray);
+
     return hit.Hit;
 }
 

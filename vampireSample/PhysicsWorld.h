@@ -44,7 +44,8 @@ public:
         const Math::Vector2& direction,
         float maxDistance,
         RaycastHit& hit,
-        Scene& scene);
+        Scene& scene,
+        GameObject* ignoreObject);
 
 private:
 

@@ -8,6 +8,7 @@
 #include "RaycastHit.h"
 #include "Scene.h"
 #include "PhysicsWorld.h"
+#include "BoxColliderComponent.h"
 
 PlayerControllerComponent::PlayerControllerComponent()
 {
@@ -90,13 +91,26 @@ void PlayerControllerComponent::Update(float deltaTime)
 
     if (scene != nullptr)
     {
+        auto collider =
+            GetOwner()->GetComponent<BoxColliderComponent>();
+
+        if (collider == nullptr)
+            return;
+
+        Physics::AABB bounds =
+            collider->GetBounds();
+
+        Math::Vector2 origin =
+            (bounds.Min + bounds.Max) * 0.5f;
+
         RaycastHit hit;
         //if(moving)
         scene->GetPhysics().Raycast(
-            GetTransform().Position,
+            origin,
             direction,
             300.0f,
             hit,
-            *scene);
+            *scene,
+            GetOwner());
     }
 }

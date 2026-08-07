@@ -113,3 +113,13 @@ BoxColliderComponent::GetBounds() const
         GetMin(),
         GetMax());
 }
+Math::Vector2
+BoxColliderComponent::GetCenter() const
+{
+    Physics::AABB bounds =
+        GetBounds();
+
+    return Math::Vector2(
+        (bounds.Min.X + bounds.Max.X) * 0.5f,
+        (bounds.Min.Y + bounds.Max.Y) * 0.5f);
+}

@@ -19,13 +19,13 @@ void SpatialHash::Insert(
         static_cast<int>(bounds.Min.X) / CellSize;
 
     int right =
-        static_cast<int>(bounds.Max.X) / CellSize;
+        static_cast<int>(bounds.Max.X - 1) / CellSize;
 
     int top =
         static_cast<int>(bounds.Min.Y) / CellSize;
 
     int bottom =
-        static_cast<int>(bounds.Max.Y) / CellSize;
+        static_cast<int>(bounds.Max.Y - 1) / CellSize;
 
     for (int y = top; y <= bottom; y++)
     {
@@ -53,13 +53,13 @@ void SpatialHash::Query(
         static_cast<int>(bounds.Min.X) / CellSize;
 
     int right =
-        static_cast<int>(bounds.Max.X) / CellSize;
+        static_cast<int>(bounds.Max.X - 1) / CellSize;
 
     int top =
         static_cast<int>(bounds.Min.Y) / CellSize;
 
     int bottom =
-        static_cast<int>(bounds.Max.Y) / CellSize;
+        static_cast<int>(bounds.Max.Y - 1) / CellSize;
 
     for (int y = top; y <= bottom; y++)
     {
@@ -81,7 +81,13 @@ void SpatialHash::Query(
                 if (other == collider)
                     continue;
 
-                result.push_back(other);
+                if (std::find(
+                    result.begin(),
+                    result.end(),
+                    other) == result.end())
+                {
+                    result.push_back(other);
+                }
             }
         }
     }
