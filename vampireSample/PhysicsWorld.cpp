@@ -20,6 +20,46 @@ PhysicsWorld::~PhysicsWorld()
 
 }
 
+void PhysicsWorld::MoveBodiesX(
+    const std::vector<BoxColliderComponent*>& colliders,
+    float deltaTime)
+{
+    for (auto* collider : colliders)
+    {
+        auto body =
+            collider->GetOwner()->GetComponent<RigidbodyComponent>();
+
+        if (body == nullptr)
+            continue;
+
+        if (body->IsKinematic())
+            continue;
+
+        body->GetTransform().Position.X +=
+            body->GetVelocity().X * deltaTime;
+    }
+}
+
+void PhysicsWorld::MoveBodiesY(
+    const std::vector<BoxColliderComponent*>& colliders,
+    float deltaTime)
+{
+    for (auto* collider : colliders)
+    {
+        auto body =
+            collider->GetOwner()->GetComponent<RigidbodyComponent>();
+
+        if (body == nullptr)
+            continue;
+
+        if (body->IsKinematic())
+            continue;
+
+        body->GetTransform().Position.Y +=
+            body->GetVelocity().Y * deltaTime;
+    }
+}
+
 void PhysicsWorld::CollectColliders(
     GameObject* object,
     std::vector<BoxColliderComponent*>& colliders)
@@ -56,67 +96,104 @@ bool PhysicsWorld::ContainsCollision(
     return false;
 }
 
-void PhysicsWorld::ResolveCollision(
-    BoxColliderComponent* a,
-    BoxColliderComponent* b)
+
+
+void PhysicsWorld::ResolveCollisionX(
+    BoxColliderComponent* first,
+    BoxColliderComponent* second)
 {
-    auto rbA =
-        a->GetOwner()->GetComponent<RigidbodyComponent>();
+    auto body =
+        first->GetOwner()->GetComponent<RigidbodyComponent>();
 
-    auto rbB =
-        b->GetOwner()->GetComponent<RigidbodyComponent>();
-
-    // Пока двигаем только объект с Rigidbody
-    if (rbA == nullptr || rbB != nullptr)
+    if (body == nullptr)
         return;
 
-    Physics::AABB boundsA =
-        a->GetBounds();
+    if (second->GetOwner()->GetComponent<RigidbodyComponent>() != nullptr)
+        return;
 
-    Physics::AABB boundsB =
-        b->GetBounds();
+    Physics::AABB firstBounds =
+        first->GetBounds();
 
-    Math::Vector2 overlap =
-        boundsA.GetOverlap(boundsB);
+    Physics::AABB secondBounds =
+        second->GetBounds();
 
-    float centerAX =
-        (boundsA.Min.X + boundsA.Max.X) * 0.5f;
+    if (!firstBounds.Intersects(secondBounds))
+        return;
 
-    float centerAY =
-        (boundsA.Min.Y + boundsA.Max.Y) * 0.5f;
+    float firstCenter =
+        (firstBounds.Min.X + firstBounds.Max.X) * 0.5f;
 
-    float centerBX =
-        (boundsB.Min.X + boundsB.Max.X) * 0.5f;
+    float secondCenter =
+        (secondBounds.Min.X + secondBounds.Max.X) * 0.5f;
 
-    float centerBY =
-        (boundsB.Min.Y + boundsB.Max.Y) * 0.5f;
-
-    auto& position =
-        rbA->GetTransform().Position;
-
-    Math::Vector2 velocity =
-        rbA->GetVelocity();
-
-    if (overlap.X < overlap.Y)
+    if (firstCenter < secondCenter)
     {
-        if (centerAX < centerBX)
-            position.X -= overlap.X;
-        else
-            position.X += overlap.X;
-
-        velocity.X = 0.0f;
+        body->GetTransform().Position.X -=
+            firstBounds.Max.X -
+            secondBounds.Min.X;
     }
     else
     {
-        if (centerAY < centerBY)
-            position.Y -= overlap.Y;
-        else
-            position.Y += overlap.Y;
-
-        velocity.Y = 0.0f;
+        body->GetTransform().Position.X +=
+            secondBounds.Max.X -
+            firstBounds.Min.X;
     }
 
-    rbA->SetVelocity(velocity);
+    auto velocity =
+        body->GetVelocity();
+
+    velocity.X = 0.0f;
+
+    body->SetVelocity(velocity);
+}
+
+void PhysicsWorld::ResolveCollisionY(
+    BoxColliderComponent* first,
+    BoxColliderComponent* second)
+{
+    auto body =
+        first->GetOwner()->GetComponent<RigidbodyComponent>();
+
+    if (body == nullptr)
+        return;
+
+    if (second->GetOwner()->GetComponent<RigidbodyComponent>() != nullptr)
+        return;
+
+    Physics::AABB firstBounds =
+        first->GetBounds();
+
+    Physics::AABB secondBounds =
+        second->GetBounds();
+
+    if (!firstBounds.Intersects(secondBounds))
+        return;
+
+    float firstCenter =
+        (firstBounds.Min.Y + firstBounds.Max.Y) * 0.5f;
+
+    float secondCenter =
+        (secondBounds.Min.Y + secondBounds.Max.Y) * 0.5f;
+
+    if (firstCenter < secondCenter)
+    {
+        body->GetTransform().Position.Y -=
+            firstBounds.Max.Y -
+            secondBounds.Min.Y;
+    }
+    else
+    {
+        body->GetTransform().Position.Y +=
+            secondBounds.Max.Y -
+            firstBounds.Min.Y;
+    }
+
+    auto velocity =
+        body->GetVelocity();
+
+    velocity.Y = 0.0f;
+
+    body->SetVelocity(velocity);
 }
 
 TileMapComponent* PhysicsWorld::FindTileMap(Scene& scene)
@@ -141,7 +218,8 @@ TileMapComponent* PhysicsWorld::FindTileMap(Scene& scene)
 void PhysicsWorld::ResolveTileCollision(
     TileMapComponent* tileMapComponent,
     RigidbodyComponent* body,
-    BoxColliderComponent* collider)
+    BoxColliderComponent* collider,
+    bool horizontal)
 {
     TileMap& map =
         tileMapComponent->GetTileMap();
@@ -200,167 +278,158 @@ void PhysicsWorld::ResolveTileCollision(
                     (x + 1) * tileWidth,
                     (y + 1) * tileHeight));
 
-            ResolveStaticCollision(
-                body,
-                collider,
-                tileBounds);
+            if (horizontal)
+            {
+                ResolveStaticCollisionX(
+                    body,
+                    collider,
+                    tileBounds);
+            }
+            else
+            {
+                ResolveStaticCollisionY(
+                    body,
+                    collider,
+                    tileBounds);
+            }
 
         }
     }
 }
 
-void PhysicsWorld::ResolveStaticCollision(
-    RigidbodyComponent* body,
-    BoxColliderComponent* collider,
-    const Physics::AABB& staticBounds)
+void PhysicsWorld::ResolveTileCollisions(
+    Scene& scene,
+    const std::vector<BoxColliderComponent*>& colliders,
+    bool horizontal)
 {
-    // Границы динамического объекта
-    Physics::AABB bodyBounds =
-        collider->GetBounds();
-
-    // Нет пересечения
-    if (!bodyBounds.Intersects(staticBounds))
-        return;
-
-    // Глубина пересечения
-    Math::Vector2 overlap =
-        bodyBounds.GetOverlap(staticBounds);
-
-    // Центры объектов
-    Math::Vector2 bodyCenter(
-        (bodyBounds.Min.X + bodyBounds.Max.X) * 0.5f,
-        (bodyBounds.Min.Y + bodyBounds.Max.Y) * 0.5f);
-
-    Math::Vector2 staticCenter(
-        (staticBounds.Min.X + staticBounds.Max.X) * 0.5f,
-        (staticBounds.Min.Y + staticBounds.Max.Y) * 0.5f);
-
-    Math::Vector2& position =
-        body->GetTransform().Position;
-
-    Math::Vector2 velocity =
-        body->GetVelocity();
-
-    // Выбираем ось с минимальным проникновением
-    if (overlap.X < overlap.Y)
-    {
-        // Столкновение по X
-        if (bodyCenter.X < staticCenter.X)
-        {
-            position.X -= overlap.X;
-        }
-        else
-        {
-            position.X += overlap.X;
-        }
-
-        velocity.X = 0.0f;
-    }
-    else
-    {
-        // Столкновение по Y
-        if (bodyCenter.Y < staticCenter.Y)
-        {
-            position.Y -= overlap.Y;
-        }
-        else
-        {
-            position.Y += overlap.Y;
-        }
-
-        velocity.Y = 0.0f;
-    }
-
-    body->SetVelocity(velocity);
-}
-
-
-void PhysicsWorld::Update(Scene& scene)
-{
-    m_LastCollisions = m_Collisions;
-    m_Collisions.clear();
-
-    TileMapComponent* tileMapComponent =
+    TileMapComponent* tileMap =
         FindTileMap(scene);
 
+    if (tileMap == nullptr)
+        return;
 
-    std::vector<BoxColliderComponent*> colliders;
-
-    const auto& objects =
-        scene.GetGameObjects();
-
-    // Собираем все коллайдеры
-    for (const auto& object : objects)
+    for (auto* collider : colliders)
     {
-        if (!object->IsActive())
+        auto body =
+            collider->GetOwner()->GetComponent<RigidbodyComponent>();
+
+        if (body == nullptr)
             continue;
 
-        if (object->GetParent() != nullptr)
-            continue;
-
-        CollectColliders(
-            object.get(),
-            colliders);
+        ResolveTileCollision(
+            tileMap,
+            body,
+            collider,
+            horizontal);
     }
+}
 
+void PhysicsWorld::ResolveDynamicCollisions(
+    const std::vector<BoxColliderComponent*>& colliders,
+    bool horizontal)
+{
+    std::vector<BoxColliderComponent*> nearby;
 
-    if (tileMapComponent != nullptr)
+    for (auto* collider : colliders)
     {
-        for (auto* collider : colliders)
-        {
-            auto body =
-                collider->GetOwner()->GetComponent<RigidbodyComponent>();
+        nearby.clear();
 
-            if (body == nullptr)
+        m_SpatialHash.Query(
+            collider,
+            nearby);
+
+        for (auto* other : nearby)
+        {
+            if (collider == other)
                 continue;
-            ResolveTileCollision(
-                tileMapComponent,
-                body,
-                collider);
-        }
-    }
 
-    // Проверяем все пары
-    for (size_t i = 0; i < colliders.size(); i++)
-    {
-        for (size_t j = i + 1; j < colliders.size(); j++)
-        {
+            if (collider > other)
+                continue;
+
             if (!CollisionMatrix::CanCollide(
-                colliders[i]->GetLayer(),
-                colliders[j]->GetLayer()))
+                collider->GetLayer(),
+                other->GetLayer()))
             {
                 continue;
             }
 
-            if (!colliders[i]->GetBounds().Intersects(
-                colliders[j]->GetBounds()))
+            if (!collider->GetBounds().Intersects(
+                other->GetBounds()))
             {
                 continue;
             }
 
-            ResolveCollision(
-                colliders[i],
-                colliders[j]);
+            if (collider->IsTrigger() ||
+                other->IsTrigger())
+            {
+                AddTrigger(
+                    collider->GetOwner(),
+                    other->GetOwner());
 
-            Collision collisionA;
-            collisionA.Self = colliders[i]->GetOwner();
-            collisionA.Other = colliders[j]->GetOwner();
-            collisionA.Normal = Math::Vector2(0.0f, 0.0f);
-            collisionA.Depth = 0.0f;
+                AddTrigger(
+                    other->GetOwner(),
+                    collider->GetOwner());
 
-            m_Collisions.push_back(collisionA);
+                continue;
+            }
 
-            Collision collisionB;
-            collisionB.Self = colliders[j]->GetOwner();
-            collisionB.Other = colliders[i]->GetOwner();
-            collisionB.Normal = Math::Vector2(0.0f, 0.0f);
-            collisionB.Depth = 0.0f;
+            if (horizontal)
+            {
+                ResolveCollisionX(
+                    collider,
+                    other);
+            }
+            else
+            {
+                ResolveCollisionY(
+                    collider,
+                    other);
+            }
 
-            m_Collisions.push_back(collisionB);
+            AddCollision(
+                collider->GetOwner(),
+                other->GetOwner());
+
+            AddCollision(
+                other->GetOwner(),
+                collider->GetOwner());
         }
     }
+}
 
+void PhysicsWorld::AddCollision(
+    GameObject* self,
+    GameObject* other)
+{
+    Collision collision;
+
+    collision.Self = self;
+    collision.Other = other;
+    collision.Normal = Math::Vector2(0.0f, 0.0f);
+    collision.Depth = 0.0f;
+
+    m_Collisions.push_back(
+        collision);
+}
+
+void PhysicsWorld::AddTrigger(
+    GameObject* self,
+    GameObject* other)
+{
+    Collision trigger;
+
+    trigger.Self = self;
+    trigger.Other = other;
+    trigger.Normal = Math::Vector2(0, 0);
+    trigger.Depth = 0;
+
+    m_Triggers.push_back(trigger);
+}
+
+void PhysicsWorld::DispatchCollisionEvents()
+{
     // ENTER
+
     for (const auto& collision : m_Collisions)
     {
         if (ContainsCollision(
@@ -379,6 +448,7 @@ void PhysicsWorld::Update(Scene& scene)
     }
 
     // STAY
+
     for (const auto& collision : m_Collisions)
     {
         if (!ContainsCollision(
@@ -397,6 +467,7 @@ void PhysicsWorld::Update(Scene& scene)
     }
 
     // EXIT
+
     for (const auto& collision : m_LastCollisions)
     {
         if (ContainsCollision(
@@ -413,4 +484,269 @@ void PhysicsWorld::Update(Scene& scene)
                 collision.Other);
         }
     }
+}
+
+void PhysicsWorld::DispatchTriggerEvents()
+{
+    // ENTER
+
+    for (const auto& collision : m_Triggers)
+    {
+        if (ContainsCollision(
+            m_LastTriggers,
+            collision))
+        {
+            continue;
+        }
+
+        for (const auto& component :
+            collision.Self->GetComponents())
+        {
+            component->OnTriggerEnter(
+                collision.Other);
+        }
+    }
+
+    // STAY
+
+    for (const auto& collision : m_Triggers)
+    {
+        if (!ContainsCollision(
+            m_LastTriggers,
+            collision))
+        {
+            continue;
+        }
+
+        for (const auto& component :
+            collision.Self->GetComponents())
+        {
+            component->OnTriggerStay(
+                collision.Other);
+        }
+    }
+
+    // EXIT
+
+    for (const auto& collision : m_LastTriggers)
+    {
+        if (ContainsCollision(
+            m_Triggers,
+            collision))
+        {
+            continue;
+        }
+
+        for (const auto& component :
+            collision.Self->GetComponents())
+        {
+            component->OnTriggerExit(
+                collision.Other);
+        }
+    }
+}
+
+void PhysicsWorld::ResolveStaticCollisionX(
+    RigidbodyComponent* body,
+    BoxColliderComponent* collider,
+    const Physics::AABB& staticBounds)
+{
+    Physics::AABB bodyBounds =
+        collider->GetBounds();
+
+    if (!bodyBounds.Intersects(staticBounds))
+        return;
+
+    float overlap;
+
+    if ((bodyBounds.Min.X + bodyBounds.Max.X) * 0.5f <
+        (staticBounds.Min.X + staticBounds.Max.X) * 0.5f)
+    {
+        overlap =
+            bodyBounds.Max.X -
+            staticBounds.Min.X;
+
+        body->GetTransform().Position.X -= overlap;
+    }
+    else
+    {
+        overlap =
+            staticBounds.Max.X -
+            bodyBounds.Min.X;
+
+        body->GetTransform().Position.X += overlap;
+    }
+
+    Math::Vector2 velocity =
+        body->GetVelocity();
+
+    velocity.X = 0.0f;
+
+    body->SetVelocity(velocity);
+}
+void PhysicsWorld::ResolveStaticCollisionY(
+    RigidbodyComponent* body,
+    BoxColliderComponent* collider,
+    const Physics::AABB& staticBounds)
+{
+    Physics::AABB bodyBounds =
+        collider->GetBounds();
+
+    if (!bodyBounds.Intersects(staticBounds))
+        return;
+
+    float overlap;
+
+    if ((bodyBounds.Min.Y + bodyBounds.Max.Y) * 0.5f <
+        (staticBounds.Min.Y + staticBounds.Max.Y) * 0.5f)
+    {
+        overlap =
+            bodyBounds.Max.Y -
+            staticBounds.Min.Y;
+
+        body->GetTransform().Position.Y -= overlap;
+    }
+    else
+    {
+        overlap =
+            staticBounds.Max.Y -
+            bodyBounds.Min.Y;
+
+        body->GetTransform().Position.Y += overlap;
+    }
+
+    Math::Vector2 velocity =
+        body->GetVelocity();
+
+    velocity.Y = 0.0f;
+
+    body->SetVelocity(velocity);
+}
+void PhysicsWorld::CollectSceneColliders(
+    Scene& scene,
+    std::vector<BoxColliderComponent*>& colliders)
+{
+    const auto& objects =
+        scene.GetGameObjects();
+
+    for (const auto& object : objects)
+    {
+        if (!object->IsActive())
+            continue;
+
+        if (object->GetParent())
+            continue;
+
+        CollectColliders(
+            object.get(),
+            colliders);
+    }
+}
+
+void PhysicsWorld::BuildSpatialHash(
+    const std::vector<BoxColliderComponent*>& colliders)
+{
+    m_SpatialHash.Clear();
+
+    for (auto* collider : colliders)
+    {
+        m_SpatialHash.Insert(
+            collider);
+    }
+}
+
+
+
+void PhysicsWorld::BeginFrame()
+{
+    m_LastCollisions =
+        std::move(m_Collisions);
+
+    m_Collisions.clear();
+
+    m_LastTriggers =
+        std::move(m_Triggers);
+
+    m_Triggers.clear();
+}
+void PhysicsWorld::IntegrateBodies(
+    const std::vector<BoxColliderComponent*>& colliders,
+    float deltaTime)
+{
+    for (auto* collider : colliders)
+    {
+        auto body =
+            collider->GetOwner()->GetComponent<RigidbodyComponent>();
+
+        if (body == nullptr)
+            continue;
+
+        if (body->IsKinematic())
+            continue;
+
+        Math::Vector2 velocity =
+            body->GetVelocity();
+
+        if (body->GetUseGravity())
+        {
+            velocity.Y +=
+                980.0f *
+                body->GetGravityScale() *
+                deltaTime;
+        }
+
+        body->SetVelocity(velocity);
+    }
+}
+
+void PhysicsWorld::Update(
+    Scene& scene,
+    float deltaTime)
+{
+    BeginFrame();
+
+    std::vector<BoxColliderComponent*> colliders;
+
+    CollectSceneColliders(
+        scene,
+        colliders);
+
+    BuildSpatialHash(
+        colliders);
+
+    IntegrateBodies(colliders, deltaTime);
+
+    // 1. движение по X
+    MoveBodiesX(
+        colliders,
+        deltaTime);
+
+    ResolveTileCollisions(
+        scene,
+        colliders,
+        true);
+
+    ResolveDynamicCollisions(
+        colliders,
+        true);
+
+    // 2. движение по Y
+    MoveBodiesY(
+        colliders,
+        deltaTime);
+
+    ResolveTileCollisions(
+        scene,
+        colliders,
+        false);
+
+    ResolveDynamicCollisions(
+        colliders,
+        false);
+
+    DispatchCollisionEvents();
+
+    DispatchTriggerEvents();
+
+
 }

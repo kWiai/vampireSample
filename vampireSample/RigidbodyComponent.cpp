@@ -32,9 +32,6 @@ void RigidbodyComponent::PhysicsUpdate(float deltaTime)
             m_GravityScale *
             deltaTime;
     }
-
-    GetTransform().Position +=
-        m_Velocity * deltaTime;
 }
 
 void RigidbodyComponent::SetVelocity(

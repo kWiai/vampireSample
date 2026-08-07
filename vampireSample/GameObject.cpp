@@ -4,6 +4,8 @@
 
 #include <algorithm>
 
+#include "BoxColliderComponent.h"
+
 GameObject::GameObject()
 {
     m_Name = "GameObject";
@@ -76,6 +78,48 @@ void GameObject::LateUpdate(float deltaTime)
         {
             child->LateUpdate(deltaTime);
         }
+    }
+}
+
+void GameObject::RenderDebug(
+    Renderer& renderer,
+    const Camera& camera)
+{
+    auto collider =
+        GetComponent<BoxColliderComponent>();
+
+    if (collider != nullptr)
+    {
+        Physics::AABB bounds =
+            collider->GetBounds();
+
+        if (collider->IsTrigger())
+        {
+            renderer.DrawRectangle(
+                bounds.Min.X,
+                bounds.Min.Y,
+                bounds.Max.X - bounds.Min.X,
+                bounds.Max.Y - bounds.Min.Y,
+                camera,
+                255, 0, 0);   // красный
+        }
+        else
+        {
+            renderer.DrawRectangle(
+                bounds.Min.X,
+                bounds.Min.Y,
+                bounds.Max.X - bounds.Min.X,
+                bounds.Max.Y - bounds.Min.Y,
+                camera,
+                0, 255, 0);   // зеленый
+        }
+    }
+
+    for (GameObject* child : m_Children)
+    {
+        child->RenderDebug(
+            renderer,
+            camera);
     }
 }
 

@@ -230,15 +230,19 @@ void Renderer::DrawRectangle(
     float y,
     float width,
     float height,
-    const Camera& camera)
+    const Camera& camera,
+    BYTE r,
+    BYTE g,
+    BYTE b,
+    float thickness)
 {
     Math::Vector2 screen =
         camera.WorldToScreen(
             Math::Vector2(x, y));
 
     Pen pen(
-        Color(255, 0, 255, 0), // зеленый
-        2.0f);
+        Color(255, r, g, b),
+        thickness);
 
     m_Graphics->DrawRectangle(
         &pen,

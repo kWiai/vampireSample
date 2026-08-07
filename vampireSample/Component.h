@@ -20,6 +20,11 @@ public:
     virtual void OnCollisionEnter(GameObject* other);
     virtual void OnCollisionStay(GameObject* other);
     virtual void OnCollisionExit(GameObject* other);
+    virtual void OnTriggerEnter(GameObject* other);
+
+    virtual void OnTriggerStay(GameObject* other);
+
+    virtual void OnTriggerExit(GameObject* other);
     virtual void PhysicsUpdate(float deltaTime);
     virtual void LateUpdate(float deltaTime);
     void SetOwner(GameObject* owner);

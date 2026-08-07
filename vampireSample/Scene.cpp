@@ -68,7 +68,7 @@ void Scene::Update(float deltaTime)
     }
 
     // 3. ѕроверка и разрешение столкновений
-    m_Physics.Update(*this);
+    m_Physics.Update(*this, deltaTime);
 
     // 4. ѕозднее обновление (камера, след€щие системы)
     for (auto& object : m_GameObjects)
@@ -98,6 +98,13 @@ void Scene::Render(Renderer& renderer)
         object->Render(
             renderer,
             GetCamera());
+
+        if (renderer.IsShowingColliders())
+        {
+            object->RenderDebug(
+                renderer,
+                GetCamera());
+        }
     }
 }
 GameObject* Scene::FindByName(const std::string& name)

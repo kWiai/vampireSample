@@ -75,6 +75,17 @@ void Component::OnCollisionExit(GameObject* other)
 {
 
 }
+void Component::OnTriggerEnter(GameObject*)
+{
+}
+
+void Component::OnTriggerStay(GameObject*)
+{
+}
+
+void Component::OnTriggerExit(GameObject*)
+{
+}
 void Component::PhysicsUpdate(float)
 {
 

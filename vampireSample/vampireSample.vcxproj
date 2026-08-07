@@ -139,6 +139,7 @@
     <ClInclude Include="CollisionLayer.h" />
     <ClInclude Include="CollisionMatrix.h" />
     <ClInclude Include="Component.h" />
+    <ClInclude Include="DebugSettings.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Globals.h" />
@@ -154,6 +155,7 @@
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="RigidbodyComponent.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="SpatialHash.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="SpriteComponent.h" />
     <ClInclude Include="StaticCollider.h" />
@@ -178,6 +180,7 @@
     <ClCompile Include="CameraFollowComponent.cpp" />
     <ClCompile Include="CollisionMatrix.cpp" />
     <ClCompile Include="Component.cpp" />
+    <ClCompile Include="DebugSettings.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="InputManager.cpp" />
@@ -193,6 +196,7 @@
     <ClCompile Include="ResorceManager.cpp" />
     <ClCompile Include="RigidbodyComponent.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="SpatialHash.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="SpriteComponent.cpp" />
     <ClCompile Include="Texture2D.cpp" />

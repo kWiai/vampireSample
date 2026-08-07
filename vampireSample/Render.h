@@ -46,7 +46,11 @@ public:
         float y,
         float width,
         float height,
-        const Camera& camera);
+        const Camera& camera,
+        BYTE r = 0,
+        BYTE g = 255,
+        BYTE b = 0,
+        float thickness = 2.0f);
 
     Graphics* GetGraphics();
 

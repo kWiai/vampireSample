@@ -44,6 +44,10 @@ public:
 
     void RemoveChild(GameObject* child);
 
+    void RenderDebug(
+        Renderer& renderer,
+        const Camera& camera);
+
     const std::vector<GameObject*>&
         GetChildren() const;
 
