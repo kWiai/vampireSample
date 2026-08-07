@@ -2,8 +2,10 @@
 
 #include <unordered_map>
 #include <vector>
+#include "Render.h"
 
 class BoxColliderComponent;
+
 
 struct Cell
 {
@@ -39,6 +41,10 @@ public:
     void Query(
         BoxColliderComponent* collider,
         std::vector<BoxColliderComponent*>& result);
+
+    void DebugDraw(
+        Renderer& renderer,
+        const Camera& camera) const;
 
 private:
 

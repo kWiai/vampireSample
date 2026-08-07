@@ -7,6 +7,8 @@
 #include "Transform.h"
 #include "Component.h"
 
+class Scene;
+
 class Renderer;
 
 class GameObject
@@ -48,6 +50,10 @@ public:
         Renderer& renderer,
         const Camera& camera);
 
+    void SetScene(Scene* scene);
+
+    Scene* GetScene() const;
+
     const std::vector<GameObject*>&
         GetChildren() const;
 
@@ -83,6 +89,8 @@ private:
     GameObject* m_Parent;
 
     std::vector<GameObject*> m_Children;
+
+    Scene* m_Scene;
 
 
 };

@@ -4,6 +4,7 @@
 
 #include "Collision.h"
 #include "SpatialHash.h"
+#include "RaycastHit.h"
 
 class Scene;
 class GameObject;
@@ -24,9 +25,26 @@ public:
     PhysicsWorld();
     ~PhysicsWorld();
 
+    struct DebugRay
+    {
+        Math::Vector2 Origin;
+        Math::Vector2 End;
+
+        bool Hit;
+    };
+
     void Update(
         Scene& scene,
         float deltaTime);
+    void RenderDebug(
+        Renderer& renderer,
+        const Camera& camera);
+    bool Raycast(
+        const Math::Vector2& origin,
+        const Math::Vector2& direction,
+        float maxDistance,
+        RaycastHit& hit,
+        Scene& scene);
 
 private:
 
@@ -118,8 +136,6 @@ private:
         const std::vector<Collision>& list,
         const Collision& collision);
 
-    void DrawDebug(
-        Scene& scene);
 
 private:
 
@@ -129,4 +145,5 @@ private:
     std::vector<Collision> m_LastCollisions;
     std::vector<Collision> m_Triggers;
     std::vector<Collision> m_LastTriggers;
+    std::vector<DebugRay> m_DebugRays;
 };

@@ -150,6 +150,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerAnimations.h" />
     <ClInclude Include="PlayerControllerComponent.h" />
+    <ClInclude Include="RaycastHit.h" />
     <ClInclude Include="Rectangle.h" />
     <ClInclude Include="Render.h" />
     <ClInclude Include="ResourceManager.h" />

@@ -9,6 +9,7 @@
 #include "RigidbodyComponent.h"
 #include "TileMapComponent.h"
 #include "CollisionMatrix.h"
+#include "DebugSettings.h"
 
 PhysicsWorld::PhysicsWorld()
 {
@@ -668,6 +669,7 @@ void PhysicsWorld::BeginFrame()
         std::move(m_Triggers);
 
     m_Triggers.clear();
+    m_DebugRays.clear();
 }
 void PhysicsWorld::IntegrateBodies(
     const std::vector<BoxColliderComponent*>& colliders,
@@ -696,6 +698,106 @@ void PhysicsWorld::IntegrateBodies(
         }
 
         body->SetVelocity(velocity);
+    }
+}
+
+bool PhysicsWorld::Raycast(
+    const Math::Vector2& origin,
+    const Math::Vector2& direction,
+    float maxDistance,
+    RaycastHit& hit,
+    Scene& scene)
+{
+    DebugRay ray;
+
+    ray.Origin = origin;
+    ray.End = origin + direction * maxDistance;
+    ray.Hit = false;
+
+    hit = RaycastHit();
+
+    std::vector<BoxColliderComponent*> colliders;
+
+    CollectSceneColliders(
+        scene,
+        colliders);
+
+    float closestDistance = maxDistance;
+
+    for (auto* collider : colliders)
+    {
+        float distance;
+        Math::Vector2 normal;
+
+        if (!collider->GetBounds().Raycast(
+            origin,
+            direction,
+            maxDistance,
+            distance,
+            normal))
+        {
+            continue;
+        }
+
+        if (distance >= closestDistance)
+            continue;
+
+        closestDistance = distance;
+
+        hit.Hit = true;
+        hit.Distance = distance;
+        hit.Normal = normal;
+        hit.Collider = collider;
+        hit.Object = collider->GetOwner();
+        hit.Point =
+            origin +
+            direction * distance;
+        ray.End = hit.Point;
+        ray.Hit = true;
+    }
+    m_DebugRays.push_back(ray);
+    return hit.Hit;
+}
+
+void PhysicsWorld::RenderDebug(
+    Renderer& renderer,
+    const Camera& camera)
+{
+    if (DebugSettings::DrawSpatialHash)
+    {
+        m_SpatialHash.DebugDraw(
+            renderer,
+            camera);
+    }
+    if (DebugSettings::DrawRaycasts)
+    {
+        for (const auto& ray : m_DebugRays)
+        {
+            if (ray.Hit)
+            {
+                renderer.DrawLine(
+                    ray.Origin.X,
+                    ray.Origin.Y,
+                    ray.End.X,
+                    ray.End.Y,
+                    camera,
+                    255,
+                    255,
+                    0);   // желтый
+            }
+            else
+            {
+                renderer.DrawLine(
+                    ray.Origin.X,
+                    ray.Origin.Y,
+                    ray.End.X,
+                    ray.End.Y,
+                    camera,
+                    150,
+                    150,
+                    150); // серый
+            }
+        }
     }
 }
 

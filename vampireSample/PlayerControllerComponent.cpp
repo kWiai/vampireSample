@@ -5,6 +5,9 @@
 #include "AnimationComponent.h"
 #include "RigidbodyComponent.h"
 #include "Vector2.h"
+#include "RaycastHit.h"
+#include "Scene.h"
+#include "PhysicsWorld.h"
 
 PlayerControllerComponent::PlayerControllerComponent()
 {
@@ -67,6 +70,7 @@ void PlayerControllerComponent::Update(float deltaTime)
     m_Rigidbody->SetVelocity(
         direction * m_MoveSpeed);
 
+
     auto animation =
         GetOwner()->GetComponent<AnimationComponent>();
 
@@ -80,5 +84,19 @@ void PlayerControllerComponent::Update(float deltaTime)
     else
     {
         animation->Play("Idle");
+    }
+    auto scene =
+        GetOwner()->GetScene();
+
+    if (scene != nullptr)
+    {
+        RaycastHit hit;
+
+        scene->GetPhysics().Raycast(
+            GetTransform().Position,
+            Math::Vector2(1.0f, 0.0f),
+            300.0f,
+            hit,
+            *scene);
     }
 }

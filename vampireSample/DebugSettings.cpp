@@ -1,7 +1,9 @@
 #include "DebugSettings.h"
 
-bool DebugSettings::DrawPhysics = false;
+bool DebugSettings::DrawPhysics = true;
 
-bool DebugSettings::DrawSpatialHash = false;
+bool DebugSettings::DrawSpatialHash = true;
 
-bool DebugSettings::DrawTriggers = false;
+bool DebugSettings::DrawTriggers = true;
+
+bool DebugSettings::DrawRaycasts = true;

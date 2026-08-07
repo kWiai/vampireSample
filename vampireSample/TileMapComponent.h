@@ -23,6 +23,10 @@ public:
         Renderer& renderer,
         const Camera& camera) override;
 
+    void RenderDebug(
+        Renderer& renderer,
+        const Camera& camera);
+
 private:
 
     TileMap m_TileMap;

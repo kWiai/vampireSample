@@ -34,6 +34,10 @@ public:
 
     CameraComponent* GetMainCamera();
 
+    PhysicsWorld& GetPhysics();
+
+    const PhysicsWorld& GetPhysics() const;
+
     std::vector<GameObject*> FindAllByTag(const std::string& tag);
 
     void AddGameObject(std::unique_ptr<GameObject> object);

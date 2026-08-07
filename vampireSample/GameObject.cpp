@@ -6,17 +6,42 @@
 
 #include "BoxColliderComponent.h"
 
+#include "RigidbodyComponent.h"
+#include "TileMapComponent.h"
+#include "DebugSettings.h"
+#include "Scene.h"
+
 GameObject::GameObject()
 {
     m_Name = "GameObject";
     m_Tag = "Default";
     m_IsActive = true;
     m_Parent = nullptr;
+    m_Scene = nullptr;
 }
 
 GameObject::~GameObject()
 {
 
+}
+
+void GameObject::SetScene(Scene* scene)
+{
+    m_Scene = scene;
+
+    // Передаем сцену детям
+    for (GameObject* child : m_Children)
+    {
+        if (child)
+        {
+            child->SetScene(scene);
+        }
+    }
+}
+
+Scene* GameObject::GetScene() const
+{
+    return m_Scene;
 }
 
 void GameObject::Update(float deltaTime)
@@ -85,33 +110,96 @@ void GameObject::RenderDebug(
     Renderer& renderer,
     const Camera& camera)
 {
-    auto collider =
-        GetComponent<BoxColliderComponent>();
-
-    if (collider != nullptr)
+    if (DebugSettings::DrawPhysics)
     {
-        Physics::AABB bounds =
-            collider->GetBounds();
+        auto tileMap =
+            GetComponent<TileMapComponent>();
 
-        if (collider->IsTrigger())
+        if (tileMap != nullptr)
         {
-            renderer.DrawRectangle(
-                bounds.Min.X,
-                bounds.Min.Y,
-                bounds.Max.X - bounds.Min.X,
-                bounds.Max.Y - bounds.Min.Y,
-                camera,
-                255, 0, 0);   // красный
+            tileMap->RenderDebug(
+                renderer,
+                camera);
         }
-        else
+    }
+    if (DebugSettings::DrawPhysics)
+    {
+        auto collider =
+            GetComponent<BoxColliderComponent>();
+
+        if (collider != nullptr)
         {
-            renderer.DrawRectangle(
-                bounds.Min.X,
-                bounds.Min.Y,
-                bounds.Max.X - bounds.Min.X,
-                bounds.Max.Y - bounds.Min.Y,
+            Physics::AABB bounds =
+                collider->GetBounds();
+
+            if (collider->IsTrigger())
+            {
+                renderer.DrawRectangle(
+                    bounds.Min.X,
+                    bounds.Min.Y,
+                    bounds.Max.X - bounds.Min.X,
+                    bounds.Max.Y - bounds.Min.Y,
+                    camera,
+                    255, 0, 0);   // красный
+            }
+            else
+            {
+                renderer.DrawRectangle(
+                    bounds.Min.X,
+                    bounds.Min.Y,
+                    bounds.Max.X - bounds.Min.X,
+                    bounds.Max.Y - bounds.Min.Y,
+                    camera,
+                    0, 255, 0);   // зеленый
+            }
+        }
+    }
+
+    const auto& pos =
+        GetTransform().Position;
+
+    renderer.DrawLine(
+        pos.X - 4.0f,
+        pos.Y,
+        pos.X + 4.0f,
+        pos.Y,
+        camera,
+        255,
+        255,
+        0);
+
+    renderer.DrawLine(
+        pos.X,
+        pos.Y - 4.0f,
+        pos.X,
+        pos.Y + 4.0f,
+        camera,
+        255,
+        255,
+        0);
+
+    if (DebugSettings::DrawPhysics)
+    {
+        auto body =
+            GetComponent<RigidbodyComponent>();
+
+        if (body != nullptr)
+        {
+            auto pos =
+                GetTransform().Position;
+
+            auto velocity =
+                body->GetVelocity();
+
+            renderer.DrawLine(
+                pos.X,
+                pos.Y,
+                pos.X + velocity.X * 0.15f,
+                pos.Y + velocity.Y * 0.15f,
                 camera,
-                0, 255, 0);   // зеленый
+                0,
+                255,
+                255);
         }
     }
 
@@ -212,6 +300,10 @@ void GameObject::AddChild(GameObject* child)
     m_Children.push_back(child);
 
     child->SetParent(this);
+    if (m_Scene)
+    {
+        child->SetScene(m_Scene);
+    }
 }
 
 void GameObject::RemoveChild(GameObject* child)

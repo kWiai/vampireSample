@@ -17,6 +17,12 @@ namespace Physics
         bool Intersects(
             const AABB& other) const;
         Math::Vector2 GetOverlap(const AABB& other) const;
+        bool Raycast(
+            const Math::Vector2& origin,
+            const Math::Vector2& direction,
+            float maxDistance,
+            float& distance,
+            Math::Vector2& normal) const;
 
     public:
 

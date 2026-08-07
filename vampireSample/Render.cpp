@@ -225,6 +225,63 @@ bool Renderer::IsShowingColliders() const
     return m_ShowColliders;
 }
 
+void Renderer::DrawLine(
+    float x1,
+    float y1,
+    float x2,
+    float y2,
+    const Camera& camera,
+    BYTE r,
+    BYTE g,
+    BYTE b,
+    float thickness)
+{
+    Math::Vector2 start =
+        camera.WorldToScreen(
+            Math::Vector2(x1, y1));
+
+    Math::Vector2 finish =
+        camera.WorldToScreen(
+            Math::Vector2(x2, y2));
+
+    Pen pen(
+        Color(255, r, g, b),
+        thickness);
+
+    m_Graphics->DrawLine(
+        &pen,
+        start.X,
+        start.Y,
+        finish.X,
+        finish.Y);
+}
+
+void Renderer::DrawFilledRectangle(
+    float x,
+    float y,
+    float width,
+    float height,
+    const Camera& camera,
+    BYTE r,
+    BYTE g,
+    BYTE b,
+    BYTE alpha)
+{
+    Math::Vector2 screen =
+        camera.WorldToScreen(
+            Math::Vector2(x, y));
+
+    SolidBrush brush(
+        Color(alpha, r, g, b));
+
+    m_Graphics->FillRectangle(
+        &brush,
+        screen.X,
+        screen.Y,
+        width,
+        height);
+}
+
 void Renderer::DrawRectangle(
     float x,
     float y,

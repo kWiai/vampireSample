@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "Render.h"
 
+
 Scene::Scene()
 {
     m_MainCamera = nullptr;
@@ -25,6 +26,8 @@ void Scene::Init()
     auto cameraComponent =
         cameraObject->AddComponent<CameraComponent>();
 
+    cameraObject->SetScene(this);
+
     m_MainCamera = cameraObject.get();
 
     m_GameObjects.push_back(std::move(cameraObject));
@@ -32,6 +35,8 @@ void Scene::Init()
 
 void Scene::AddGameObject(std::unique_ptr<GameObject> object)
 {
+    object->SetScene(this);
+
     m_GameObjects.push_back(std::move(object));
 }
 
@@ -70,6 +75,8 @@ void Scene::Update(float deltaTime)
     // 3. ѕроверка и разрешение столкновений
     m_Physics.Update(*this, deltaTime);
 
+    RaycastHit hit;
+
     // 4. ѕозднее обновление (камера, след€щие системы)
     for (auto& object : m_GameObjects)
     {
@@ -99,13 +106,14 @@ void Scene::Render(Renderer& renderer)
             renderer,
             GetCamera());
 
-        if (renderer.IsShowingColliders())
-        {
-            object->RenderDebug(
-                renderer,
-                GetCamera());
-        }
+        object->RenderDebug(
+            renderer,
+            GetCamera());
+
     }
+    m_Physics.RenderDebug(
+        renderer,
+        GetCamera());
 }
 GameObject* Scene::FindByName(const std::string& name)
 {
@@ -158,6 +166,16 @@ const Camera& Scene::GetCamera() const
     return m_MainCamera
         ->GetComponent<CameraComponent>()
         ->GetCamera();
+}
+
+PhysicsWorld& Scene::GetPhysics()
+{
+    return m_Physics;
+}
+
+const PhysicsWorld& Scene::GetPhysics() const
+{
+    return m_Physics;
 }
 
 GameObject* Scene::GetMainCameraObject()

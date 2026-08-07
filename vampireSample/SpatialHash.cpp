@@ -2,6 +2,8 @@
 
 #include "BoxColliderComponent.h"
 #include "AABB.h"
+#include "Render.h"
+#include "Camera.h"
 
 void SpatialHash::Clear()
 {
@@ -82,5 +84,26 @@ void SpatialHash::Query(
                 result.push_back(other);
             }
         }
+    }
+}
+void SpatialHash::DebugDraw(
+    Renderer& renderer,
+    const Camera& camera) const
+{
+    for (const auto& pair : m_Cells)
+    {
+        const Cell& cell =
+            pair.first;
+
+        renderer.DrawRectangle(
+            cell.X * CellSize,
+            cell.Y * CellSize,
+            CellSize,
+            CellSize,
+            camera,
+            0,
+            120,
+            255,
+            1.0f);
     }
 }

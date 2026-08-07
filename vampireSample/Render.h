@@ -52,6 +52,28 @@ public:
         BYTE b = 0,
         float thickness = 2.0f);
 
+    void DrawLine(
+        float x1,
+        float y1,
+        float x2,
+        float y2,
+        const Camera& camera,
+        BYTE r = 255,
+        BYTE g = 255,
+        BYTE b = 255,
+        float thickness = 2.0f);
+
+    void DrawFilledRectangle(
+        float x,
+        float y,
+        float width,
+        float height,
+        const Camera& camera,
+        BYTE r,
+        BYTE g,
+        BYTE b,
+        BYTE alpha = 80);
+
     Graphics* GetGraphics();
 
     void SetShowColliders(bool value);

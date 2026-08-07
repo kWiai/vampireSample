@@ -59,3 +59,49 @@ void TileMapComponent::Render(
         }
     }
 }
+void TileMapComponent::RenderDebug(
+    Renderer& renderer,
+    const Camera& camera)
+{
+    if (m_TileSet == nullptr)
+        return;
+
+    const int w = m_TileSet->GetTileWidth();
+    const int h = m_TileSet->GetTileHeight();
+
+    for (int y = 0; y < m_TileMap.GetHeight(); y++)
+    {
+        for (int x = 0; x < m_TileMap.GetWidth(); x++)
+        {
+            const Tile& tile =
+                m_TileMap.GetTile(x, y);
+
+            const TileInfo& info =
+                m_TileSet->GetTile(tile.GetId());
+
+            if (!info.Solid)
+                continue;
+
+            renderer.DrawFilledRectangle(
+                x * w,
+                y * h,
+                w,
+                h,
+                camera,
+                255,
+                0,
+                0,
+                70);
+
+            renderer.DrawRectangle(
+                x * w,
+                y * h,
+                w,
+                h,
+                camera,
+                255,
+                0,
+                0);
+        }
+    }
+}
