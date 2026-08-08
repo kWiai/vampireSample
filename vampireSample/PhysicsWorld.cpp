@@ -131,12 +131,14 @@ void PhysicsWorld::ResolveCollisionX(
 
     if (firstCenter < secondCenter)
     {
+        OutputDebugString(L"COLLIDE");
         body->GetTransform().Position.X -=
             firstBounds.Max.X -
             secondBounds.Min.X;
     }
     else
     {
+        OutputDebugString(L"COLLIDE");
         body->GetTransform().Position.X +=
             secondBounds.Max.X -
             firstBounds.Min.X;
@@ -324,6 +326,7 @@ void PhysicsWorld::ResolveTileCollisions(
             body,
             collider,
             horizontal);
+        
     }
 }
 
@@ -362,6 +365,10 @@ void PhysicsWorld::ResolveDynamicCollisions(
                 continue;
             }
 
+            // ---------------------------------
+            // Trigger
+            // ---------------------------------
+
             if (collider->IsTrigger() ||
                 other->IsTrigger())
             {
@@ -376,18 +383,58 @@ void PhysicsWorld::ResolveDynamicCollisions(
                 continue;
             }
 
-            if (horizontal)
+            // ---------------------------------
+            // Rigidbody
+            // ---------------------------------
+
+            auto firstBody =
+                collider->GetOwner()
+                ->GetComponent<RigidbodyComponent>();
+
+            auto secondBody =
+                other->GetOwner()
+                ->GetComponent<RigidbodyComponent>();
+
+            // ---------------------------------
+            // Dynamic -> Static
+            // ---------------------------------
+
+            if (firstBody != nullptr &&
+                secondBody == nullptr)
             {
-                ResolveCollisionX(
-                    collider,
-                    other);
+                if (horizontal)
+                {
+                    ResolveCollisionX(
+                        collider,
+                        other);
+                }
+                else
+                {
+                    ResolveCollisionY(
+                        collider,
+                        other);
+                }
             }
-            else
+            else if (firstBody == nullptr &&
+                secondBody != nullptr)
             {
-                ResolveCollisionY(
-                    collider,
-                    other);
+                if (horizontal)
+                {
+                    ResolveCollisionX(
+                        other,
+                        collider);
+                }
+                else
+                {
+                    ResolveCollisionY(
+                        other,
+                        collider);
+                }
             }
+
+            // ---------------------------------
+            // Events
+            // ---------------------------------
 
             AddCollision(
                 collider->GetOwner(),
@@ -968,13 +1015,10 @@ void PhysicsWorld::Update(
         scene,
         colliders);
 
-    // -----------------------------------------
-    // Integration
-    // -----------------------------------------
-
     IntegrateBodies(
         colliders,
         deltaTime);
+
 
     // =========================
     // X
@@ -984,18 +1028,21 @@ void PhysicsWorld::Update(
         colliders,
         deltaTime);
 
+    // ВАЖНО:
+    // объекты уже переместились,
+    // старый SpatialHash больше не актуален
+    BuildSpatialHash(
+        colliders);
+
     ResolveTileCollisions(
         scene,
         colliders,
         true);
 
-    // Теперь коллайдеры находятся в актуальных позициях
-    BuildSpatialHash(
-        colliders);
-
     ResolveDynamicCollisions(
         colliders,
         true);
+
 
     // =========================
     // Y
@@ -1005,31 +1052,20 @@ void PhysicsWorld::Update(
         colliders,
         deltaTime);
 
+    // Снова обновляем hash после движения
+    BuildSpatialHash(
+        colliders);
+
     ResolveTileCollisions(
         scene,
         colliders,
         false);
 
-    // После движения по Y снова строим Hash
-    BuildSpatialHash(
-        colliders);
-
     ResolveDynamicCollisions(
         colliders,
         false);
 
-    // =========================
-    // Финальное состояние
-    // =========================
-
-    // Чтобы DebugDraw показывал актуальную
-    // позицию объектов
-    BuildSpatialHash(
-        colliders);
 
     DispatchCollisionEvents();
-
     DispatchTriggerEvents();
-
-
 }

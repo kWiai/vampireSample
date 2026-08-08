@@ -140,9 +140,13 @@
     <ClInclude Include="CollisionMatrix.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="DebugSettings.h" />
+    <ClInclude Include="EntityDefinition.h" />
+    <ClInclude Include="EntityFactory.h" />
+    <ClInclude Include="EntityLoader.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Globals.h" />
+    <ClInclude Include="EntityManager.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="MapLoader.h" />
     <ClInclude Include="PhysicsMaterial.h" />
@@ -150,6 +154,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerAnimations.h" />
     <ClInclude Include="PlayerControllerComponent.h" />
+    <ClInclude Include="Prefab.h" />
     <ClInclude Include="RaycastHit.h" />
     <ClInclude Include="Rectangle.h" />
     <ClInclude Include="Render.h" />
@@ -182,6 +187,9 @@
     <ClCompile Include="CollisionMatrix.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="DebugSettings.cpp" />
+    <ClCompile Include="EntityFactory.cpp" />
+    <ClCompile Include="EntityLoader.cpp" />
+    <ClCompile Include="EntityManager.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="InputManager.cpp" />
@@ -192,6 +200,7 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerAnimations.cpp" />
     <ClCompile Include="PlayerControllerComponent.cpp" />
+    <ClCompile Include="Prefab.cpp" />
     <ClCompile Include="Rectangle.cpp" />
     <ClCompile Include="Render.cpp" />
     <ClCompile Include="ResorceManager.cpp" />
@@ -219,9 +228,19 @@
     <Image Include="Walk-Sheet.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Enemy.json" />
+    <None Include="packages.config" />
+    <None Include="Player.json" />
     <None Include="test.map" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="..\packages\nlohmann.json.3.12.0\build\native\nlohmann.json.targets" Condition="Exists('..\packages\nlohmann.json.3.12.0\build\native\nlohmann.json.targets')" />
   </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\nlohmann.json.3.12.0\build\native\nlohmann.json.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\nlohmann.json.3.12.0\build\native\nlohmann.json.targets'))" />
+  </Target>
 </Project>

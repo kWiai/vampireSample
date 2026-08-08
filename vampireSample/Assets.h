@@ -12,6 +12,8 @@ namespace Assets
 
         constexpr wchar_t TILES[] = L"tilemap.png";
 
+        constexpr wchar_t STONE[] = L"stone.png";
+
         constexpr wchar_t HERO[] = L"Resources/Textures/hero.png";
 
         constexpr wchar_t ENEMY[] = L"Resources/Textures/enemy.png";

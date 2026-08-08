@@ -147,6 +147,21 @@
     <ClInclude Include="RaycastHit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="EntityDefinition.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Prefab.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp">
@@ -260,6 +275,18 @@
     <ClCompile Include="DebugSettings.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="EntityFactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Prefab.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EntityLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EntityManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="player.png">
@@ -286,6 +313,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="test.map">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="packages.config" />
+    <None Include="Player.json">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Enemy.json">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

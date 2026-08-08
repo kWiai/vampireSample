@@ -1,0 +1,45 @@
+{
+  "Name": "Enemy",
+
+  "Transform": {
+    "Position": [ 400, 200 ],
+    "Size": [ 160, 160 ]
+  },
+
+  "Sprite": {
+    "Enabled": true,
+    "Texture": "Idle-Sheet.png"
+  },
+
+  "Animation": {
+    "Enabled": true,
+
+    "Idle": {
+      "Enabled": true,
+      "Texture": "Idle-Sheet.png",
+      "FrameCount": 8,
+      "FrameWidth": 640,
+      "FrameHeight": 640,
+      "FrameDuration": 0.12,
+      "Loop": true
+    }
+  },
+
+  "Rigidbody": {
+    "Enabled": true,
+    "Gravity": false,
+    "Kinematic": false
+  },
+
+  "Collider": {
+    "Enabled": true,
+    "Size": [ 140, 140 ],
+    "Offset": [ 10, 10 ],
+    "Trigger": false,
+    "Layer": "Enemy"
+  },
+
+  "PlayerController": {
+    "Enabled": false
+  }
+}
