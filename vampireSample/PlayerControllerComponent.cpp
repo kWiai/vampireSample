@@ -97,20 +97,23 @@ void PlayerControllerComponent::Update(float deltaTime)
         if (collider == nullptr)
             return;
 
-        Physics::AABB bounds =
-            collider->GetBounds();
+        if (moving)
+        {
+            Physics::AABB bounds =
+                collider->GetBounds();
 
-        Math::Vector2 origin =
-            (bounds.Min + bounds.Max) * 0.5f;
+            Math::Vector2 origin =
+                (bounds.Min + bounds.Max) * 0.5f;
 
-        RaycastHit hit;
-        //if(moving)
-        scene->GetPhysics().Raycast(
-            origin,
-            direction,
-            300.0f,
-            hit,
-            *scene,
-            GetOwner());
+            RaycastHit hit;
+
+            scene->GetPhysics().Raycast(
+                origin,
+                direction,
+                300.0f,
+                hit,
+                *scene,
+                GetOwner());
+        }
     }
 }

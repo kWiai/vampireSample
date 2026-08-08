@@ -1,6 +1,8 @@
 #include "PhysicsWorld.h"
 
+#include <cmath>
 #include <algorithm>
+#include <iostream>
 
 #include "Scene.h"
 #include "GameObject.h"
@@ -712,13 +714,16 @@ bool PhysicsWorld::Raycast(
     DebugRay ray;
 
     ray.Origin = origin;
-    ray.End =
-        origin +
-        direction * maxDistance;
-
+    ray.End = origin + direction * maxDistance;
     ray.Hit = false;
 
     hit = RaycastHit();
+
+    float closestDistance = maxDistance;
+
+    // =========================================================
+    // 1. Raycast по BoxColliderComponent
+    // =========================================================
 
     std::vector<BoxColliderComponent*> colliders;
 
@@ -726,12 +731,17 @@ bool PhysicsWorld::Raycast(
         scene,
         colliders);
 
-    float closestDistance = maxDistance;
-
     for (auto* collider : colliders)
     {
-        if (collider->GetOwner() == ignoreObject)
+        if (collider == nullptr)
             continue;
+
+        // Игнорируем объект, от которого был запущен raycast
+        if (ignoreObject != nullptr &&
+            collider->GetOwner() == ignoreObject)
+        {
+            continue;
+        }
 
         float distance;
         Math::Vector2 normal;
@@ -763,10 +773,141 @@ bool PhysicsWorld::Raycast(
         hit.Point =
             origin +
             direction * distance;
+    }
 
+    // =========================================================
+    // 2. Raycast по TileMap
+    // =========================================================
+
+    TileMapComponent* tileMapComponent =
+        FindTileMap(scene);
+
+    if (tileMapComponent != nullptr)
+    {
+        TileMap& map =
+            tileMapComponent->GetTileMap();
+
+        TileSet* tileSet =
+            tileMapComponent->GetTileSet();
+
+        if (tileSet != nullptr)
+        {
+            const int tileWidth =
+                tileSet->GetTileWidth();
+
+            const int tileHeight =
+                tileSet->GetTileHeight();
+
+            Math::Vector2 rayEnd =
+                origin +
+                direction * maxDistance;
+
+            float minX =
+                min(origin.X, rayEnd.X);
+
+            float maxX =
+                max(origin.X, rayEnd.X);
+
+            float minY =
+                min(origin.Y, rayEnd.Y);
+
+            float maxY =
+                max(origin.Y, rayEnd.Y);
+
+            int left =
+                static_cast<int>(
+                    std::floor(minX / tileWidth));
+
+            int right =
+                static_cast<int>(
+                    std::floor(maxX / tileWidth));
+
+            int top =
+                static_cast<int>(
+                    std::floor(minY / tileHeight));
+
+            int bottom =
+                static_cast<int>(
+                    std::floor(maxY / tileHeight));
+
+            for (int y = top; y <= bottom; y++)
+            {
+                for (int x = left; x <= right; x++)
+                {
+                    if (!map.IsValidPosition(x, y))
+                        continue;
+
+                    const Tile& tile =
+                        map.GetTile(x, y);
+
+                    if (tile.GetId() < 0)
+                        continue;
+
+                    const TileInfo& info =
+                        tileSet->GetTile(tile.GetId());
+
+                    if (!info.Solid)
+                        continue;
+
+                    Physics::AABB tileBounds(
+                        Math::Vector2(
+                            x * tileWidth,
+                            y * tileHeight),
+
+                        Math::Vector2(
+                            (x + 1) * tileWidth,
+                            (y + 1) * tileHeight));
+
+                    float distance;
+                    Math::Vector2 normal;
+
+                    if (!tileBounds.Raycast(
+                        origin,
+                        direction,
+                        maxDistance,
+                        distance,
+                        normal))
+                    {
+                        continue;
+                    }
+
+                    if (distance < 0.0f)
+                        continue;
+
+                    if (distance >= closestDistance)
+                        continue;
+
+                    closestDistance = distance;
+
+                    hit.Hit = true;
+                    hit.Distance = distance;
+                    hit.Normal = normal;
+
+                    // У TileMap нет BoxColliderComponent
+                    hit.Collider = nullptr;
+
+                    // Сам TileMapComponent принадлежит GameObject
+                    hit.Object =
+                        tileMapComponent->GetOwner();
+
+                    hit.Point =
+                        origin +
+                        direction * distance;
+                }
+            }
+        }
+    }
+
+    // =========================================================
+    // Debug ray
+    // =========================================================
+
+    if (hit.Hit)
+    {
         ray.End = hit.Point;
         ray.Hit = true;
     }
+
     m_DebugRays.push_back(ray);
 
     return hit.Hit;
@@ -827,12 +968,18 @@ void PhysicsWorld::Update(
         scene,
         colliders);
 
-    BuildSpatialHash(
-        colliders);
+    // -----------------------------------------
+    // Integration
+    // -----------------------------------------
 
-    IntegrateBodies(colliders, deltaTime);
+    IntegrateBodies(
+        colliders,
+        deltaTime);
 
-    // 1. движение по X
+    // =========================
+    // X
+    // =========================
+
     MoveBodiesX(
         colliders,
         deltaTime);
@@ -842,11 +989,18 @@ void PhysicsWorld::Update(
         colliders,
         true);
 
+    // Теперь коллайдеры находятся в актуальных позициях
+    BuildSpatialHash(
+        colliders);
+
     ResolveDynamicCollisions(
         colliders,
         true);
 
-    // 2. движение по Y
+    // =========================
+    // Y
+    // =========================
+
     MoveBodiesY(
         colliders,
         deltaTime);
@@ -856,9 +1010,22 @@ void PhysicsWorld::Update(
         colliders,
         false);
 
+    // После движения по Y снова строим Hash
+    BuildSpatialHash(
+        colliders);
+
     ResolveDynamicCollisions(
         colliders,
         false);
+
+    // =========================
+    // Финальное состояние
+    // =========================
+
+    // Чтобы DebugDraw показывал актуальную
+    // позицию объектов
+    BuildSpatialHash(
+        colliders);
 
     DispatchCollisionEvents();
 
