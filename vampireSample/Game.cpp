@@ -93,66 +93,18 @@ void Game::Init()
         m_Scene->AddGameObject(std::move(enemy));
     }
 
-    EntityDefinition wallDefinition;
-
-    wallDefinition.Name = "Wall";
-
-    wallDefinition.Position =
-        Math::Vector2(400.0f, 400.0f);
-
-    wallDefinition.Size =
-        Math::Vector2(160.0f, 160.0f);
-
-
-    // Sprite
-    wallDefinition.HasSprite = true;
-
-    wallDefinition.Texture =
-        Assets::Textures::STONE;
-
-
-    // Animation
-    wallDefinition.HasAnimation = false;
-
-    wallDefinition.Idle.HasAnimation = false;
-   
-
-    wallDefinition.Walk.HasAnimation = false;
-    
-
-
-    // Rigidbody
-    wallDefinition.HasRigidbody = false;
-    wallDefinition.UseGravity = false;
-    wallDefinition.Kinematic = false;
-
-
-    // Collider
-    wallDefinition.HasCollider = true;
-    wallDefinition.ColliderSize =
-        Math::Vector2(160.0f, 160.0f);
-
-    wallDefinition.Layer =
-        CollisionLayer::Wall;
-
-
-    // Controller
-    wallDefinition.HasPlayerController = false;
-    
-
-
-    Prefab wallPrefab;
-
-    wallPrefab.SetDefinition(
-        wallDefinition);
-
     auto wall =
-        wallPrefab.Instantiate();
+        entityManager.Create("Wall");
 
-    wall->SetName("Wall");
-    wall->SetTag("Wall");
+    if (wall)
+    {
+        wall->SetName("Wall");
+        wall->SetTag("Wall");
 
-    m_Scene->AddGameObject(std::move(wall));
+        m_Scene->AddGameObject(std::move(wall));
+    }
+
+   
 
     // Теперь создаем камеру
     m_Scene->Init();

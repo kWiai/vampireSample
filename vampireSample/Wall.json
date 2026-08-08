@@ -1,0 +1,35 @@
+{
+  "Name": "Wall",
+
+  "Transform": {
+    "Position": [ 400, 500 ],
+    "Size": [ 100, 100 ]
+  },
+
+  "Sprite": {
+    "Enabled": true,
+    "Texture": "stone.png"
+  },
+
+  "Animation": {
+    "Enabled": false
+  },
+
+  "Rigidbody": {
+    "Enabled": false,
+    "Gravity": false,
+    "Kinematic": false
+  },
+
+  "Collider": {
+    "Enabled": true,
+    "Size": [ 100, 100 ],
+    "Offset": [ 0, 0 ],
+    "Trigger": false,
+    "Layer": "Wall"
+  },
+
+  "PlayerController": {
+    "Enabled": false
+  }
+}

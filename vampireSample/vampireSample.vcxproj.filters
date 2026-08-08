@@ -322,5 +322,8 @@
     <None Include="Enemy.json">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="Wall.json">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

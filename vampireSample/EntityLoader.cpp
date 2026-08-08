@@ -285,6 +285,18 @@ bool EntityLoader::Load(
                 definition.Layer =
                     CollisionLayer::Player;
             }
+            else if(layer == "Wall") {
+                
+                definition.Layer =
+                    CollisionLayer::Wall;
+                
+            }
+            else if (layer == "Enemy") {
+
+                definition.Layer =
+                    CollisionLayer::Enemy;
+
+            }
             else
             {
                 definition.Layer =

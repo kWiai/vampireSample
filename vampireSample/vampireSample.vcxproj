@@ -232,6 +232,7 @@
     <None Include="packages.config" />
     <None Include="Player.json" />
     <None Include="test.map" />
+    <None Include="Wall.json" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
