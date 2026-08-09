@@ -5,6 +5,7 @@
 #include <string> 
 #include "CameraComponent.h"
 #include "PhysicsWorld.h"
+#include "EventManager.h"
 
 class GameObject;
 class Renderer;
@@ -30,6 +31,9 @@ public:
 
     const Camera& GetCamera() const;
 
+    EventManager& GetEvents();
+    const EventManager& GetEvents() const;
+
     GameObject* GetMainCameraObject();
 
     CameraComponent* GetMainCamera();
@@ -49,4 +53,6 @@ private:
     GameObject* m_MainCamera;
     std::vector<std::unique_ptr<GameObject>> m_GameObjects;
     PhysicsWorld m_Physics;
+    EventManager m_Events;
+    
 };

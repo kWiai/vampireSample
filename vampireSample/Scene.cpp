@@ -75,7 +75,7 @@ void Scene::Update(float deltaTime)
     // 3. ѕроверка и разрешение столкновений
     m_Physics.Update(*this, deltaTime);
 
-    RaycastHit hit;
+    m_Events.Update();
 
     // 4. ѕозднее обновление (камера, след€щие системы)
     for (auto& object : m_GameObjects)
@@ -190,4 +190,13 @@ CameraComponent* Scene::GetMainCamera()
     }
 
     return m_MainCamera->GetComponent<CameraComponent>();
+}
+EventManager& Scene::GetEvents()
+{
+    return m_Events;
+}
+
+const EventManager& Scene::GetEvents() const
+{
+    return m_Events;
 }

@@ -14,6 +14,9 @@
 #include "Prefab.h"
 #include "EntityLoader.h"
 #include "EntityManager.h"
+#include "TestDamageComponent.h"
+#include "Damage.h"
+#include "HealthComponent.h"
 
 using namespace Gdiplus;
 
@@ -73,15 +76,15 @@ void Game::Init()
     auto player =
         entityManager.Create("Player");
 
-    
     if (player)
     {
         player->SetName("Player");
         player->SetTag("Player");
-
-        m_Scene->AddGameObject(std::move(player));
+        player->AddComponent<HealthComponent>();
+        m_Scene->AddGameObject(
+            std::move(player));
     }
-    
+
     auto enemy =
         entityManager.Create("Enemy");
 
@@ -90,7 +93,11 @@ void Game::Init()
         enemy->SetName("Enemy");
         enemy->SetTag("Enemy");
 
-        m_Scene->AddGameObject(std::move(enemy));
+        enemy->AddComponent<TestDamageComponent>();
+        enemy->AddComponent<HealthComponent>();
+
+        m_Scene->AddGameObject(
+            std::move(enemy));
     }
 
     auto wall =
@@ -103,6 +110,17 @@ void Game::Init()
 
         m_Scene->AddGameObject(std::move(wall));
     }
+
+    GameObject* playerObject =
+        m_Scene->FindByName("Player");
+
+    GameObject* enemyObject =
+        m_Scene->FindByName("Enemy");
+
+    Damage::Apply(
+        playerObject,
+        enemyObject,
+        25.0f);
 
    
 
