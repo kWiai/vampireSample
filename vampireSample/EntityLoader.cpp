@@ -351,6 +351,52 @@ bool EntityLoader::Load(
     }
 
     // -------------------------
+// Moving Platform
+// -------------------------
+
+    if (data.contains("MovingPlatform"))
+    {
+        const auto& platform =
+            data["MovingPlatform"];
+
+        definition.HasMovingPlatform =
+            platform.value(
+                "Enabled",
+                false);
+
+        definition.MovementSpeed =
+            platform.value(
+                "Speed",
+                100.0f);
+
+        definition.MovementLoop =
+            platform.value(
+                "Loop",
+                true);
+
+        definition.MovementPoints.clear();
+
+        if (platform.contains("Points"))
+        {
+            const auto& points =
+                platform["Points"];
+
+            for (const auto& point : points)
+            {
+                if (!point.is_array())
+                    continue;
+
+                if (point.size() < 2)
+                    continue;
+
+                definition.MovementPoints.push_back(
+                    Math::Vector2(
+                        point[0].get<float>(),
+                        point[1].get<float>()));
+            }
+        }
+    }
+    // -------------------------
     // Player Controller
     // -------------------------
 

@@ -1,0 +1,45 @@
+{
+  "Name": "MovingPlatform",
+
+  "Transform": {
+    "Position": [ 300.0, 300.0 ],
+    "Size": [ 160.0, 32.0 ]
+  },
+
+  "Sprite": {
+    "Enabled": true,
+    "Texture": "stone.png"
+  },
+
+  "MovingPlatform": {
+    "Enabled": true,
+    "Speed": 100.0,
+    "Loop": true,
+
+    "Points": [
+      [ 300.0, 300.0 ],
+      [ 600.0, 300.0 ],
+      [ 600.0, 500.0 ],
+      [ 300.0, 500.0 ]
+    ]
+  },
+
+  "Collider": {
+    "Enabled": true,
+    "Size": [ 160.0, 32.0 ],
+    "Offset": [ 0.0, 0.0 ],
+    "Trigger": false,
+    "Layer": "Wall"
+  },
+
+  "Health": {
+    "Enabled": true,
+    "MaxHealth": 100.0,
+    "Health": 100.0
+  },
+
+  "Damage": {
+    "Enabled": true,
+    "Amount": 25.0
+  }
+}

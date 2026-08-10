@@ -13,6 +13,7 @@
 #include "ResourceManager.h"
 #include "DamageOnCollisionComponent.h"
 #include "HealthComponent.h"
+#include "MovingPlatformComponent.h"
 
 std::unique_ptr<GameObject>
 EntityFactory::Create(
@@ -183,6 +184,29 @@ EntityFactory::Create(
 
         health->SetHealth(
             definition.Health);
+    }
+
+    // -------------------------
+// Moving Platform
+// -------------------------
+
+    if (definition.HasMovingPlatform)
+    {
+        auto platform =
+            object->AddComponent<
+            MovingPlatformComponent>();
+
+        platform->SetSpeed(
+            definition.MovementSpeed);
+
+        platform->SetLoop(
+            definition.MovementLoop);
+
+        for (const auto& point :
+            definition.MovementPoints)
+        {
+            platform->AddPoint(point);
+        }
     }
     // -------------------------
     // Player Controller

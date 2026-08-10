@@ -183,6 +183,9 @@
     <ClInclude Include="DamageOnCollisionComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MovingPlatformComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp">
@@ -326,6 +329,9 @@
     <ClCompile Include="DamageOnCollisionComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MovingPlatformComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="player.png">
@@ -362,6 +368,9 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="Wall.json">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Moving_platform.json">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

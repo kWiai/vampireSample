@@ -108,6 +108,17 @@ void Game::Init()
         m_Scene->AddGameObject(std::move(wall));
     }
 
+    auto moving_platform =
+        entityManager.Create("Moving_platform");
+
+    if (moving_platform)
+    {
+        moving_platform->SetName("Moving_platform");
+        moving_platform->SetTag("Moving_platform");
+
+        m_Scene->AddGameObject(std::move(moving_platform));
+    }
+
     
     // Теперь создаем камеру
     m_Scene->Init();

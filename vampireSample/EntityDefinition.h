@@ -1,7 +1,8 @@
 #pragma once
 
 #include <string>
-
+#include <vector>
+#include <iostream>
 #include "Vector2.h"
 #include "CollisionLayer.h"
 
@@ -113,4 +114,24 @@ struct EntityDefinition
     float MaxHealth = 100.0f;
 
     float Health = 100.0f;
+
+    // -------------------------
+// Moving Platform
+// -------------------------
+
+    bool HasMovingPlatform = false;
+
+    float MovementSpeed = 100.0f;
+
+    bool MovementLoop = true;
+
+    std::vector<Math::Vector2> MovementPoints;
+
+
+};
+
+struct EntityMovementPoint
+{
+    Math::Vector2 Position =
+        Math::Vector2(0.0f, 0.0f);
 };

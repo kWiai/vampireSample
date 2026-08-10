@@ -155,6 +155,7 @@
     <ClInclude Include="HealthComponent.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="MapLoader.h" />
+    <ClInclude Include="MovingPlatformComponent.h" />
     <ClInclude Include="PhysicsMaterial.h" />
     <ClInclude Include="PhysicsWorld.h" />
     <ClInclude Include="Player.h" />
@@ -207,6 +208,7 @@
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MapLoader.cpp" />
+    <ClCompile Include="MovingPlatformComponent.cpp" />
     <ClCompile Include="PhysicsMaterial.cpp" />
     <ClCompile Include="PhysicsWorld.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -242,6 +244,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Enemy.json" />
+    <None Include="Moving_platform.json" />
     <None Include="packages.config" />
     <None Include="Player.json" />
     <None Include="test.map" />
