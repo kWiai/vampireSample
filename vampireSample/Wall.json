@@ -1,35 +1,33 @@
 {
-  "Name": "Wall",
+    "Name": "Wall",
 
-  "Transform": {
-    "Position": [ 400, 500 ],
-    "Size": [ 100, 100 ]
-  },
+    "Transform": {
+        "Position": [400.0, 200.0],
+        "Size": [128.0, 128.0]
+    },
 
-  "Sprite": {
-    "Enabled": true,
-    "Texture": "stone.png"
-  },
+    "Sprite": {
+        "Enabled": true,
+        "Texture": "dirt.png"
+    },
 
-  "Animation": {
-    "Enabled": false
-  },
+    "Rigidbody": {
+        "Enabled": false,
+        "Gravity": false,
+        "GravityScale": 1.0,
+        "Kinematic": false
+    },
 
-  "Rigidbody": {
-    "Enabled": false,
-    "Gravity": false,
-    "Kinematic": false
-  },
+    "Collider": {
+        "Enabled": true,
+        "Size": [128.0, 128.0],
+        "Offset": [0.0, 0.0],
+        "Trigger": true,
+        "Layer": "Wall"
+    },
 
-  "Collider": {
-    "Enabled": true,
-    "Size": [ 100, 100 ],
-    "Offset": [ 0, 0 ],
-    "Trigger": false,
-    "Layer": "Wall"
-  },
-
-  "PlayerController": {
-    "Enabled": false
-  }
+    "Damage": {
+        "Enabled": true,
+        "Amount": 25.0
+    }
 }

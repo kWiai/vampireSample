@@ -2,6 +2,8 @@
 
 #include "GameObject.h"
 #include "Component.h"
+#include <string>
+#include "Window.h"
 
 EventManager::EventManager()
 {
@@ -49,14 +51,14 @@ void EventManager::Dispatch(
             component->OnDamage(
                 event.Sender,
                 event.Value);
-
+            OutputDebugString(L"DAMAGE");
             break;
 
 
         case EventType::Death:
 
             component->OnDeath();
-
+            OutputDebugString(L"DEATH");
             break;
 
 

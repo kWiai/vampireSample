@@ -76,6 +76,8 @@ void Scene::Update(float deltaTime)
     m_Physics.Update(*this, deltaTime);
 
     m_Events.Update();
+    m_Events.Clear();
+
 
     // 4. ѕозднее обновление (камера, след€щие системы)
     for (auto& object : m_GameObjects)

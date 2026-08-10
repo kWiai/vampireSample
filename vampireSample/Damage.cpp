@@ -24,6 +24,9 @@ namespace Damage
         if (health == nullptr)
             return;
 
+        if (health->IsDead())
+            return;
+
         health->TakeDamage(amount);
 
         Scene* scene =
@@ -34,33 +37,20 @@ namespace Damage
 
         Event event;
 
-        event.Type =
-            EventType::Damage;
-
-        event.Sender =
-            attacker;
-
-        event.Target =
-            target;
-
-        event.Value =
-            amount;
+        event.Type = EventType::Damage;
+        event.Sender = attacker;
+        event.Target = target;
+        event.Value = amount;
 
         scene->GetEvents().Send(event);
-
 
         if (health->IsDead())
         {
             Event deathEvent;
 
-            deathEvent.Type =
-                EventType::Death;
-
-            deathEvent.Sender =
-                attacker;
-
-            deathEvent.Target =
-                target;
+            deathEvent.Type = EventType::Death;
+            deathEvent.Sender = attacker;
+            deathEvent.Target = target;
 
             scene->GetEvents().Send(
                 deathEvent);

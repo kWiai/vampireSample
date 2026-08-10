@@ -11,6 +11,8 @@
 #include "AnimationComponent.h"
 #include "AnimationClip.h"
 #include "ResourceManager.h"
+#include "DamageOnCollisionComponent.h"
+#include "HealthComponent.h"
 
 std::unique_ptr<GameObject>
 EntityFactory::Create(
@@ -153,7 +155,35 @@ EntityFactory::Create(
             definition.Layer);
     }
 
+    // -------------------------
+// Damage
+// -------------------------
 
+    if (definition.HasDamage)
+    {
+        auto damage =
+            object->AddComponent<
+            DamageOnCollisionComponent>();
+
+        damage->SetDamage(
+            definition.Damage);
+    }
+
+    // -------------------------
+// Health
+// -------------------------
+
+    if (definition.HasHealth)
+    {
+        auto health =
+            object->AddComponent<HealthComponent>();
+
+        health->SetMaxHealth(
+            definition.MaxHealth);
+
+        health->SetHealth(
+            definition.Health);
+    }
     // -------------------------
     // Player Controller
     // -------------------------

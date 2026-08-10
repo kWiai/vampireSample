@@ -49,7 +49,11 @@
     "Trigger": false,
     "Layer": "Player"
   },
-
+  "Health": {
+    "Enabled": true,
+    "MaxHealth": 100.0,
+    "Health": 100.0
+  },
   "PlayerController": {
     "Enabled": true,
     "MoveSpeed": 300.0

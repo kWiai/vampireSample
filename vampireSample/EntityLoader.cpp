@@ -305,6 +305,50 @@ bool EntityLoader::Load(
         }
     }
 
+    // -------------------------
+// Damage
+// -------------------------
+
+    if (data.contains("Damage"))
+    {
+        const auto& damage =
+            data["Damage"];
+
+        definition.HasDamage =
+            damage.value(
+                "Enabled",
+                false);
+
+        definition.Damage =
+            damage.value(
+                "Amount",
+                0.0f);
+    }
+
+    // -------------------------
+// Health
+// -------------------------
+
+    if (data.contains("Health"))
+    {
+        const auto& health =
+            data["Health"];
+
+        definition.HasHealth =
+            health.value(
+                "Enabled",
+                false);
+
+        definition.MaxHealth =
+            health.value(
+                "MaxHealth",
+                100.0f);
+
+        definition.Health =
+            health.value(
+                "Health",
+                definition.MaxHealth);
+    }
 
     // -------------------------
     // Player Controller

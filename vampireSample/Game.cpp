@@ -18,6 +18,7 @@
 #include "Damage.h"
 #include "HealthComponent.h"
 
+
 using namespace Gdiplus;
 
 Game::Game()
@@ -80,7 +81,6 @@ void Game::Init()
     {
         player->SetName("Player");
         player->SetTag("Player");
-        player->AddComponent<HealthComponent>();
         m_Scene->AddGameObject(
             std::move(player));
     }
@@ -92,9 +92,6 @@ void Game::Init()
     {
         enemy->SetName("Enemy");
         enemy->SetTag("Enemy");
-
-        enemy->AddComponent<TestDamageComponent>();
-        enemy->AddComponent<HealthComponent>();
 
         m_Scene->AddGameObject(
             std::move(enemy));
@@ -111,19 +108,7 @@ void Game::Init()
         m_Scene->AddGameObject(std::move(wall));
     }
 
-    GameObject* playerObject =
-        m_Scene->FindByName("Player");
-
-    GameObject* enemyObject =
-        m_Scene->FindByName("Enemy");
-
-    Damage::Apply(
-        playerObject,
-        enemyObject,
-        25.0f);
-
-   
-
+    
     // Теперь создаем камеру
     m_Scene->Init();
 

@@ -82,6 +82,8 @@ struct EntityDefinition
 
     bool Trigger = false;
 
+    bool IsPassable = false;
+
     CollisionLayer Layer =
         CollisionLayer::Default;
 
@@ -93,4 +95,22 @@ struct EntityDefinition
     bool HasPlayerController = false;
 
     float MoveSpeed = 300.0f;
+
+    // -------------------------
+    // Damage
+    // -------------------------
+
+    bool HasDamage = false;
+
+    float Damage = 0.0f;
+
+    // -------------------------
+// Health
+// -------------------------
+
+    bool HasHealth = false;
+
+    float MaxHealth = 100.0f;
+
+    float Health = 100.0f;
 };

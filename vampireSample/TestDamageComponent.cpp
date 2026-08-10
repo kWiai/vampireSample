@@ -1,20 +1,24 @@
 #include "TestDamageComponent.h"
+#include <Windows.h>
+#include <string>
 
-#include <iostream>
 
 void TestDamageComponent::OnDamage(
     GameObject* attacker,
     float damage)
 {
-    std::cout
-        << "Object received damage: "
-        << damage
-        << std::endl;
+    std::string message =
+        "TestDamageComponent::OnDamage() damage = "
+        + std::to_string(damage)
+        + "\n";
+
+    OutputDebugStringA(
+        message.c_str());
+
 }
 
 void TestDamageComponent::OnDeath()
 {
-    std::cout
-        << "Object died!"
-        << std::endl;
+    OutputDebugStringA(
+        "TestDamageComponent::OnDeath()\n");
 }

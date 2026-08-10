@@ -142,6 +142,7 @@
     <ClInclude Include="Damage.h" />
     <ClInclude Include="DamageComponent.h" />
     <ClInclude Include="DebugSettings.h" />
+    <ClInclude Include="DamageOnCollisionComponent.h" />
     <ClInclude Include="EntityDefinition.h" />
     <ClInclude Include="EntityFactory.h" />
     <ClInclude Include="EntityLoader.h" />
@@ -195,6 +196,7 @@
     <ClCompile Include="Damage.cpp" />
     <ClCompile Include="DamageComponent.cpp" />
     <ClCompile Include="DebugSettings.cpp" />
+    <ClCompile Include="DamageOnCollisionComponent.cpp" />
     <ClCompile Include="EntityFactory.cpp" />
     <ClCompile Include="EntityLoader.cpp" />
     <ClCompile Include="EntityManager.cpp" />
