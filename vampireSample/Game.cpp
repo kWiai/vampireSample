@@ -17,6 +17,7 @@
 #include "TestDamageComponent.h"
 #include "Damage.h"
 #include "HealthComponent.h"
+#include "EnemyControllerComponent.h"
 
 
 using namespace Gdiplus;
@@ -92,6 +93,19 @@ void Game::Init()
     {
         enemy->SetName("Enemy");
         enemy->SetTag("Enemy");
+
+        auto playerObject =
+            m_Scene->FindByName("Player");
+
+        auto controller =
+            enemy->GetComponent<
+            EnemyControllerComponent>();
+
+        if (controller != nullptr)
+        {
+            controller->SetTarget(
+                playerObject);
+        }
 
         m_Scene->AddGameObject(
             std::move(enemy));

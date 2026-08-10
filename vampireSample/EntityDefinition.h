@@ -127,7 +127,17 @@ struct EntityDefinition
 
     std::vector<Math::Vector2> MovementPoints;
 
+    // -------------------------
+// Enemy
+// -------------------------
 
+    bool HasEnemyController = false;
+
+    float EnemySpeed = 100.0f;
+
+    float EnemyViewRadius = 300.0f;
+
+    std::vector<Math::Vector2> EnemyPoints;
 };
 
 struct EntityMovementPoint

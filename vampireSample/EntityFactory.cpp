@@ -14,6 +14,7 @@
 #include "DamageOnCollisionComponent.h"
 #include "HealthComponent.h"
 #include "MovingPlatformComponent.h"
+#include "EnemyControllerComponent.h"
 
 std::unique_ptr<GameObject>
 EntityFactory::Create(
@@ -221,7 +222,28 @@ EntityFactory::Create(
         controller->SetMoveSpeed(
             definition.MoveSpeed);
     }
+    // -------------------------
+// Enemy
+// -------------------------
 
+    if (definition.HasEnemyController)
+    {
+        auto enemy =
+            object->AddComponent<
+            EnemyControllerComponent>();
+
+        enemy->SetSpeed(
+            definition.EnemySpeed);
+
+        enemy->SetViewRadius(
+            definition.EnemyViewRadius);
+
+        for (const auto& point :
+            definition.EnemyPoints)
+        {
+            enemy->AddPoint(point);
+        }
+    }
 
     return object;
 }

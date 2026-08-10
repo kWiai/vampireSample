@@ -416,6 +416,53 @@ bool EntityLoader::Load(
                 300.0f);
     }
 
+    // -------------------------
+// Enemy
+// -------------------------
+
+    if (data.contains("Enemy"))
+    {
+        const auto& enemy =
+            data["Enemy"];
+
+        definition.HasEnemyController =
+            enemy.value(
+                "Enabled",
+                false);
+
+        definition.EnemySpeed =
+            enemy.value(
+                "Speed",
+                100.0f);
+
+        definition.EnemyViewRadius =
+            enemy.value(
+                "ViewRadius",
+                300.0f);
+
+        definition.EnemyPoints.clear();
+
+        if (enemy.contains("Points"))
+        {
+            const auto& points =
+                enemy["Points"];
+
+            for (const auto& point : points)
+            {
+                if (!point.is_array())
+                    continue;
+
+                if (point.size() < 2)
+                    continue;
+
+                definition.EnemyPoints.push_back(
+                    Math::Vector2(
+                        point[0].get<float>(),
+                        point[1].get<float>()));
+            }
+        }
+    }
+
 
     return true;
 }

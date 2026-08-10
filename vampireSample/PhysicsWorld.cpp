@@ -131,14 +131,12 @@ void PhysicsWorld::ResolveCollisionX(
 
     if (firstCenter < secondCenter)
     {
-        OutputDebugString(L"COLLIDE");
         body->GetTransform().Position.X -=
             firstBounds.Max.X -
             secondBounds.Min.X;
     }
     else
     {
-        OutputDebugString(L"COLLIDE");
         body->GetTransform().Position.X +=
             secondBounds.Max.X -
             firstBounds.Min.X;

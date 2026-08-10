@@ -43,7 +43,20 @@
     "MaxHealth": 100.0,
     "Health": 100.0
   },
-  "PlayerController": {
-    "Enabled": false
+  "Damage": {
+    "Enabled": true,
+    "Amount": 25.0
+  },
+  "Enemy": {
+    "Enabled": true,
+    "Speed": 120.0,
+    "ViewRadius": 300.0,
+
+    "Points": [
+      [ 800.0, 300.0 ],
+      [ 1000.0, 300.0 ],
+      [ 1000.0, 500.0 ],
+      [ 800.0, 500.0 ]
+    ]
   }
 }
