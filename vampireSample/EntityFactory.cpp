@@ -123,6 +123,9 @@ EntityFactory::Create(
         auto rigidbody =
             object->AddComponent<RigidbodyComponent>();
 
+        rigidbody->SetMass(
+            definition.Mass);
+
         rigidbody->SetUseGravity(
             definition.UseGravity);
 
@@ -131,6 +134,9 @@ EntityFactory::Create(
 
         rigidbody->SetKinematic(
             definition.Kinematic);
+
+        rigidbody->SetVelocity(
+            definition.InitialVelocity);
     }
 
 

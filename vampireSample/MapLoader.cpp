@@ -10,7 +10,7 @@ bool MapLoader::Load(
 {
     std::ifstream file(filename);
 
-    if (!file.is_open())
+    if (!file.is_open()) 
     {
         return false;
     }

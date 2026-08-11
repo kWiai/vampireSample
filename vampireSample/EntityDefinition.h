@@ -66,7 +66,12 @@ struct EntityDefinition
 
     float GravityScale = 1.0f;
 
+    float Mass = 1.0f;
+
     bool Kinematic = false;
+
+    Math::Vector2 InitialVelocity =
+        Math::Vector2(0.0f, 0.0f);
 
 
     // -------------------------

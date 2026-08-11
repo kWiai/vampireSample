@@ -232,10 +232,23 @@ bool EntityLoader::Load(
                 "GravityScale",
                 1.0f);
 
+        definition.Mass =
+            rigidbody.value(
+                "Mass",
+                1.0f);
+
         definition.Kinematic =
             rigidbody.value(
                 "Kinematic",
                 false);
+
+        if (rigidbody.contains("Velocity"))
+        {
+            definition.InitialVelocity =
+                Math::Vector2(
+                    rigidbody["Velocity"][0].get<float>(),
+                    rigidbody["Velocity"][1].get<float>());
+        }
     }
 
 

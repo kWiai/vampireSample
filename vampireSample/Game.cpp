@@ -66,11 +66,7 @@ void Game::Init()
     m_Scene->AddGameObject(
         std::move(mapObject));
 
-    // Сначала создаем игрока
-    //auto player = std::make_unique<Player>();
-    //player->Initialize();
-
-    // Добавляем его в сцену
+  
     EntityDefinition definition;
 
     EntityManager entityManager;
@@ -131,6 +127,18 @@ void Game::Init()
         moving_platform->SetTag("Moving_platform");
 
         m_Scene->AddGameObject(std::move(moving_platform));
+    }
+
+
+    auto dynamic_box =
+        entityManager.Create("DynamicBox");
+
+    if (dynamic_box)
+    {
+        dynamic_box->SetName("DynamicBox");
+        dynamic_box->SetTag("DynamicBox");
+
+        m_Scene->AddGameObject(std::move(dynamic_box));
     }
 
     

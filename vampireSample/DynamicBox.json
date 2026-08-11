@@ -1,0 +1,29 @@
+{
+  "Name": "DynamicBox",
+
+  "Transform": {
+    "Position": [ 500, 100 ],
+    "Size": [ 64, 64 ]
+  },
+
+  "Sprite": {
+    "Enabled": true,
+    "Texture": "grass.png"
+  },
+
+  "Rigidbody": {
+    "Enabled": true,
+    "Gravity": true,
+    "GravityScale": 1.0,
+    "Mass": 5.0,
+    "Velocity": [ 100, 0 ],
+    "Kinematic": false
+  },
+
+  "Collider": {
+    "Enabled": true,
+    "Size": [ 64, 64 ],
+    "Trigger": false,
+    "Layer": "Default"
+  }
+}

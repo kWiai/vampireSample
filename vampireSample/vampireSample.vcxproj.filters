@@ -379,5 +379,8 @@
     <None Include="Moving_platform.json">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="DynamicBox.json">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

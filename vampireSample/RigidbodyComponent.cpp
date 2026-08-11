@@ -13,6 +13,8 @@ RigidbodyComponent::RigidbodyComponent()
     m_GravityScale = 1.0f;
 
     m_IsKinematic = false;
+
+    m_Force = Math::Vector2(0, 0);
 }
 
 RigidbodyComponent::~RigidbodyComponent()
@@ -25,6 +27,15 @@ void RigidbodyComponent::PhysicsUpdate(float deltaTime)
     if (m_IsKinematic)
         return;
 
+    if (m_Mass <= 0.0f)
+        return;
+
+    // Сила
+    m_Velocity +=
+        (m_Force / m_Mass) *
+        deltaTime;
+
+    // Гравитация
     if (m_UseGravity)
     {
         m_Velocity.Y +=
@@ -32,6 +43,11 @@ void RigidbodyComponent::PhysicsUpdate(float deltaTime)
             m_GravityScale *
             deltaTime;
     }
+
+    // Силы действуют только один кадр,
+    // если их снова не добавить.
+    m_Force =
+        Math::Vector2(0, 0);
 }
 
 void RigidbodyComponent::SetVelocity(
@@ -49,7 +65,24 @@ RigidbodyComponent::GetVelocity() const
 void RigidbodyComponent::AddForce(
     const Math::Vector2& force)
 {
-    m_Velocity += force / m_Mass;
+    if (m_IsKinematic)
+        return;
+
+    m_Force += force;
+}
+
+
+void RigidbodyComponent::AddImpulse(
+    const Math::Vector2& impulse)
+{
+    if (m_IsKinematic)
+        return;
+
+    if (m_Mass <= 0.0f)
+        return;
+
+    m_Velocity +=
+        impulse / m_Mass;
 }
 
 void RigidbodyComponent::SetMass(float mass)

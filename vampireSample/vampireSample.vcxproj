@@ -245,6 +245,7 @@
     <Image Include="Walk-Sheet.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="DynamicBox.json" />
     <None Include="Enemy.json" />
     <None Include="Moving_platform.json" />
     <None Include="packages.config" />

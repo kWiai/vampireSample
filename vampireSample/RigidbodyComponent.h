@@ -16,6 +16,7 @@ public:
     const Math::Vector2& GetVelocity() const;
 
     void AddForce(const Math::Vector2& force);
+    void AddImpulse(const Math::Vector2& impulse);
 
     void SetMass(float mass);
     float GetMass() const;
@@ -32,6 +33,8 @@ public:
 private:
 
     Math::Vector2 m_Velocity;
+
+    Math::Vector2 m_Force;
 
     float m_Mass;
 
