@@ -15,14 +15,10 @@
 
 PhysicsWorld::PhysicsWorld()
 {
-
 }
-
 PhysicsWorld::~PhysicsWorld()
 {
-
 }
-
 void PhysicsWorld::MoveBodiesX(
     const std::vector<BoxColliderComponent*>& colliders,
     float deltaTime)
@@ -42,7 +38,6 @@ void PhysicsWorld::MoveBodiesX(
             body->GetVelocity().X * deltaTime;
     }
 }
-
 void PhysicsWorld::MoveBodiesY(
     const std::vector<BoxColliderComponent*>& colliders,
     float deltaTime)
@@ -61,6 +56,57 @@ void PhysicsWorld::MoveBodiesY(
         body->GetTransform().Position.Y +=
             body->GetVelocity().Y * deltaTime;
     }
+}
+
+void PhysicsWorld::SimulateStep(
+    Scene& scene,
+    const std::vector<BoxColliderComponent*>& colliders,
+    float deltaTime)
+{
+    IntegrateBodies(
+        colliders,
+        deltaTime);
+
+    // -------------------------
+    // X
+    // -------------------------
+
+    MoveBodiesX(
+        colliders,
+        deltaTime);
+
+    BuildSpatialHash(
+        colliders);
+
+    ResolveTileCollisions(
+        scene,
+        colliders,
+        true);
+
+    ResolveDynamicCollisions(
+        colliders,
+        true);
+
+
+    // -------------------------
+    // Y
+    // -------------------------
+
+    MoveBodiesY(
+        colliders,
+        deltaTime);
+
+    BuildSpatialHash(
+        colliders);
+
+    ResolveTileCollisions(
+        scene,
+        colliders,
+        false);
+
+    ResolveDynamicCollisions(
+        colliders,
+        false);
 }
 
 void PhysicsWorld::CollectColliders(
@@ -85,7 +131,6 @@ void PhysicsWorld::CollectColliders(
             colliders);
     }
 }
-
 bool PhysicsWorld::ContainsCollision(
     const std::vector<Collision>& list,
     const Collision& collision)
@@ -98,9 +143,6 @@ bool PhysicsWorld::ContainsCollision(
 
     return false;
 }
-
-
-
 void PhysicsWorld::ResolveCollisionX(
     BoxColliderComponent* first,
     BoxColliderComponent* second)
@@ -198,7 +240,6 @@ void PhysicsWorld::ResolveCollisionY(
 
     body->SetVelocity(velocity);
 }
-
 TileMapComponent* PhysicsWorld::FindTileMap(Scene& scene)
 {
     const auto& objects =
@@ -217,7 +258,6 @@ TileMapComponent* PhysicsWorld::FindTileMap(Scene& scene)
 
     return nullptr;
 }
-
 void PhysicsWorld::ResolveTileCollision(
     TileMapComponent* tileMapComponent,
     RigidbodyComponent* body,
@@ -241,8 +281,6 @@ void PhysicsWorld::ResolveTileCollision(
 
     Physics::AABB bounds =
         collider->GetBounds();
-
-    
 
     int left =
         static_cast<int>(bounds.Min.X) / tileWidth;
@@ -299,7 +337,6 @@ void PhysicsWorld::ResolveTileCollision(
         }
     }
 }
-
 void PhysicsWorld::ResolveTileCollisions(
     Scene& scene,
     const std::vector<BoxColliderComponent*>& colliders,
@@ -327,7 +364,6 @@ void PhysicsWorld::ResolveTileCollisions(
         
     }
 }
-
 void PhysicsWorld::ResolveDynamicCollisions(
     const std::vector<BoxColliderComponent*>& colliders,
     bool horizontal)
@@ -363,10 +399,6 @@ void PhysicsWorld::ResolveDynamicCollisions(
                 continue;
             }
 
-            // ---------------------------------
-            // Trigger
-            // ---------------------------------
-
             if (collider->IsTrigger() ||
                 other->IsTrigger())
             {
@@ -381,10 +413,6 @@ void PhysicsWorld::ResolveDynamicCollisions(
                 continue;
             }
 
-            // ---------------------------------
-            // Rigidbody
-            // ---------------------------------
-
             auto firstBody =
                 collider->GetOwner()
                 ->GetComponent<RigidbodyComponent>();
@@ -392,10 +420,6 @@ void PhysicsWorld::ResolveDynamicCollisions(
             auto secondBody =
                 other->GetOwner()
                 ->GetComponent<RigidbodyComponent>();
-
-            // ---------------------------------
-            // Dynamic -> Static
-            // ---------------------------------
 
             if (firstBody != nullptr &&
                 secondBody == nullptr)
@@ -429,10 +453,22 @@ void PhysicsWorld::ResolveDynamicCollisions(
                         collider);
                 }
             }
-
-            // ---------------------------------
-            // Events
-            // ---------------------------------
+            else if (firstBody != nullptr &&
+                secondBody != nullptr)
+            {
+                if (horizontal)
+                {
+                    ResolveDynamicCollisionX(
+                        collider,
+                        other);
+                }
+                else
+                {
+                    ResolveDynamicCollisionY(
+                        collider,
+                        other);
+                }
+            }
 
             AddCollision(
                 collider->GetOwner(),
@@ -476,8 +512,6 @@ void PhysicsWorld::AddTrigger(
 
 void PhysicsWorld::DispatchCollisionEvents()
 {
-    // ENTER
-
     for (const auto& collision : m_Collisions)
     {
         if (ContainsCollision(
@@ -494,9 +528,6 @@ void PhysicsWorld::DispatchCollisionEvents()
                 collision.Other);
         }
     }
-
-    // STAY
-
     for (const auto& collision : m_Collisions)
     {
         if (!ContainsCollision(
@@ -513,9 +544,6 @@ void PhysicsWorld::DispatchCollisionEvents()
                 collision.Other);
         }
     }
-
-    // EXIT
-
     for (const auto& collision : m_LastCollisions)
     {
         if (ContainsCollision(
@@ -536,8 +564,6 @@ void PhysicsWorld::DispatchCollisionEvents()
 
 void PhysicsWorld::DispatchTriggerEvents()
 {
-    // ENTER
-
     for (const auto& collision : m_Triggers)
     {
         if (ContainsCollision(
@@ -554,9 +580,6 @@ void PhysicsWorld::DispatchTriggerEvents()
                 collision.Other);
         }
     }
-
-    // STAY
-
     for (const auto& collision : m_Triggers)
     {
         if (!ContainsCollision(
@@ -573,9 +596,6 @@ void PhysicsWorld::DispatchTriggerEvents()
                 collision.Other);
         }
     }
-
-    // EXIT
-
     for (const auto& collision : m_LastTriggers)
     {
         if (ContainsCollision(
@@ -593,7 +613,6 @@ void PhysicsWorld::DispatchTriggerEvents()
         }
     }
 }
-
 void PhysicsWorld::ResolveStaticCollisionX(
     RigidbodyComponent* body,
     BoxColliderComponent* collider,
@@ -670,6 +689,260 @@ void PhysicsWorld::ResolveStaticCollisionY(
 
     body->SetVelocity(velocity);
 }
+void PhysicsWorld::ResolveDynamicCollisionX(
+    BoxColliderComponent* first,
+    BoxColliderComponent* second)
+{
+    auto firstBody =
+        first->GetOwner()->GetComponent<RigidbodyComponent>();
+
+    auto secondBody =
+        second->GetOwner()->GetComponent<RigidbodyComponent>();
+
+    if (firstBody == nullptr ||
+        secondBody == nullptr)
+    {
+        return;
+    }
+
+    if (firstBody->IsKinematic() &&
+        secondBody->IsKinematic())
+    {
+        return;
+    }
+
+    Physics::AABB firstBounds =
+        first->GetBounds();
+
+    Physics::AABB secondBounds =
+        second->GetBounds();
+
+    if (!firstBounds.Intersects(secondBounds))
+        return;
+
+    float firstCenter =
+        (firstBounds.Min.X + firstBounds.Max.X) * 0.5f;
+
+    float secondCenter =
+        (secondBounds.Min.X + secondBounds.Max.X) * 0.5f;
+
+    float overlap = 0.0f;
+
+    if (firstCenter < secondCenter)
+    {
+        overlap =
+            firstBounds.Max.X -
+            secondBounds.Min.X;
+    }
+    else
+    {
+        overlap =
+            secondBounds.Max.X -
+            firstBounds.Min.X;
+    }
+
+    if (overlap <= 0.0f)
+        return;
+
+    bool firstKinematic =
+        firstBody->IsKinematic();
+
+    bool secondKinematic =
+        secondBody->IsKinematic();
+
+    if (firstKinematic)
+    {
+        if (firstCenter < secondCenter)
+        {
+            secondBody->GetTransform().Position.X += overlap;
+        }
+        else
+        {
+            secondBody->GetTransform().Position.X -= overlap;
+        }
+    }
+    else if (secondKinematic)
+    {
+        if (firstCenter < secondCenter)
+        {
+            firstBody->GetTransform().Position.X -= overlap;
+        }
+        else
+        {
+            firstBody->GetTransform().Position.X += overlap;
+        }
+    }
+    else
+    {
+        float totalMass =
+            firstBody->GetMass() +
+            secondBody->GetMass();
+
+        if (totalMass <= 0.0f)
+            return;
+
+        float firstMove =
+            overlap *
+            (secondBody->GetMass() / totalMass);
+
+        float secondMove =
+            overlap *
+            (firstBody->GetMass() / totalMass);
+
+        if (firstCenter < secondCenter)
+        {
+            firstBody->GetTransform().Position.X -= firstMove;
+            secondBody->GetTransform().Position.X += secondMove;
+        }
+        else
+        {
+            firstBody->GetTransform().Position.X += firstMove;
+            secondBody->GetTransform().Position.X -= secondMove;
+        }
+    }
+
+    Math::Vector2 firstVelocity =
+        firstBody->GetVelocity();
+
+    Math::Vector2 secondVelocity =
+        secondBody->GetVelocity();
+
+    if (!firstKinematic)
+        firstVelocity.X = 0.0f;
+
+    if (!secondKinematic)
+        secondVelocity.X = 0.0f;
+
+    firstBody->SetVelocity(firstVelocity);
+    secondBody->SetVelocity(secondVelocity);
+}
+void PhysicsWorld::ResolveDynamicCollisionY(
+    BoxColliderComponent* first,
+    BoxColliderComponent* second)
+{
+    auto firstBody =
+        first->GetOwner()->GetComponent<RigidbodyComponent>();
+
+    auto secondBody =
+        second->GetOwner()->GetComponent<RigidbodyComponent>();
+
+    if (firstBody == nullptr ||
+        secondBody == nullptr)
+    {
+        return;
+    }
+
+    if (firstBody->IsKinematic() &&
+        secondBody->IsKinematic())
+    {
+        return;
+    }
+
+    Physics::AABB firstBounds =
+        first->GetBounds();
+
+    Physics::AABB secondBounds =
+        second->GetBounds();
+
+    if (!firstBounds.Intersects(secondBounds))
+        return;
+
+    float firstCenter =
+        (firstBounds.Min.Y + firstBounds.Max.Y) * 0.5f;
+
+    float secondCenter =
+        (secondBounds.Min.Y + secondBounds.Max.Y) * 0.5f;
+
+    float overlap = 0.0f;
+
+    if (firstCenter < secondCenter)
+    {
+        overlap =
+            firstBounds.Max.Y -
+            secondBounds.Min.Y;
+    }
+    else
+    {
+        overlap =
+            secondBounds.Max.Y -
+            firstBounds.Min.Y;
+    }
+
+    if (overlap <= 0.0f)
+        return;
+
+    bool firstKinematic =
+        firstBody->IsKinematic();
+
+    bool secondKinematic =
+        secondBody->IsKinematic();
+
+    if (firstKinematic)
+    {
+        if (firstCenter < secondCenter)
+        {
+            secondBody->GetTransform().Position.Y += overlap;
+        }
+        else
+        {
+            secondBody->GetTransform().Position.Y -= overlap;
+        }
+    }
+    else if (secondKinematic)
+    {
+        if (firstCenter < secondCenter)
+        {
+            firstBody->GetTransform().Position.Y -= overlap;
+        }
+        else
+        {
+            firstBody->GetTransform().Position.Y += overlap;
+        }
+    }
+    else
+    {
+        float totalMass =
+            firstBody->GetMass() +
+            secondBody->GetMass();
+
+        if (totalMass <= 0.0f)
+            return;
+
+        float firstMove =
+            overlap *
+            (secondBody->GetMass() / totalMass);
+
+        float secondMove =
+            overlap *
+            (firstBody->GetMass() / totalMass);
+
+        if (firstCenter < secondCenter)
+        {
+            firstBody->GetTransform().Position.Y -= firstMove;
+            secondBody->GetTransform().Position.Y += secondMove;
+        }
+        else
+        {
+            firstBody->GetTransform().Position.Y += firstMove;
+            secondBody->GetTransform().Position.Y -= secondMove;
+        }
+    }
+
+    Math::Vector2 firstVelocity =
+        firstBody->GetVelocity();
+
+    Math::Vector2 secondVelocity =
+        secondBody->GetVelocity();
+
+    if (!firstKinematic)
+        firstVelocity.Y = 0.0f;
+
+    if (!secondKinematic)
+        secondVelocity.Y = 0.0f;
+
+    firstBody->SetVelocity(firstVelocity);
+    secondBody->SetVelocity(secondVelocity);
+}
 void PhysicsWorld::CollectSceneColliders(
     Scene& scene,
     std::vector<BoxColliderComponent*>& colliders)
@@ -690,7 +963,6 @@ void PhysicsWorld::CollectSceneColliders(
             colliders);
     }
 }
-
 void PhysicsWorld::BuildSpatialHash(
     const std::vector<BoxColliderComponent*>& colliders)
 {
@@ -702,9 +974,6 @@ void PhysicsWorld::BuildSpatialHash(
             collider);
     }
 }
-
-
-
 void PhysicsWorld::BeginFrame()
 {
     m_LastCollisions =
@@ -766,10 +1035,6 @@ bool PhysicsWorld::Raycast(
 
     float closestDistance = maxDistance;
 
-    // =========================================================
-    // 1. Raycast по BoxColliderComponent
-    // =========================================================
-
     std::vector<BoxColliderComponent*> colliders;
 
     CollectSceneColliders(
@@ -781,7 +1046,6 @@ bool PhysicsWorld::Raycast(
         if (collider == nullptr)
             continue;
 
-        // Игнорируем объект, от которого был запущен raycast
         if (ignoreObject != nullptr &&
             collider->GetOwner() == ignoreObject)
         {
@@ -819,10 +1083,6 @@ bool PhysicsWorld::Raycast(
             origin +
             direction * distance;
     }
-
-    // =========================================================
-    // 2. Raycast по TileMap
-    // =========================================================
 
     TileMapComponent* tileMapComponent =
         FindTileMap(scene);
@@ -943,10 +1203,6 @@ bool PhysicsWorld::Raycast(
         }
     }
 
-    // =========================================================
-    // Debug ray
-    // =========================================================
-
     if (hit.Hit)
     {
         ray.End = hit.Point;
@@ -1013,56 +1269,34 @@ void PhysicsWorld::Update(
         scene,
         colliders);
 
-    IntegrateBodies(
-        colliders,
-        deltaTime);
+
+    // -------------------------
+    // Sub-stepping
+    // -------------------------
+
+    const float fixedStep = 1.0f / 120.0f;
+
+    float remainingTime = deltaTime;
+
+    while (remainingTime > 0.0f)
+    {
+        float step =
+            min(
+                remainingTime,
+                fixedStep);
+
+        SimulateStep(
+            scene,
+            colliders,
+            step);
+
+        remainingTime -= step;
+    }
 
 
-    // =========================
-    // X
-    // =========================
-
-    MoveBodiesX(
-        colliders,
-        deltaTime);
-
-    // ВАЖНО:
-    // объекты уже переместились,
-    // старый SpatialHash больше не актуален
-    BuildSpatialHash(
-        colliders);
-
-    ResolveTileCollisions(
-        scene,
-        colliders,
-        true);
-
-    ResolveDynamicCollisions(
-        colliders,
-        true);
-
-
-    // =========================
-    // Y
-    // =========================
-
-    MoveBodiesY(
-        colliders,
-        deltaTime);
-
-    // Снова обновляем hash после движения
-    BuildSpatialHash(
-        colliders);
-
-    ResolveTileCollisions(
-        scene,
-        colliders,
-        false);
-
-    ResolveDynamicCollisions(
-        colliders,
-        false);
-
+    // -------------------------
+    // Events
+    // -------------------------
 
     DispatchCollisionEvents();
     DispatchTriggerEvents();

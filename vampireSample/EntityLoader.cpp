@@ -318,6 +318,32 @@ bool EntityLoader::Load(
         }
     }
 
+
+    // -------------------------
+// Destroy On Collision
+// -------------------------
+
+    if (data.contains("DestroyOnCollision"))
+    {
+        const auto& destroy =
+            data["DestroyOnCollision"];
+
+        definition.HasDestroyOnCollision =
+            destroy.value(
+                "Enabled",
+                false);
+
+        definition.DestroyDelay =
+            destroy.value(
+                "Delay",
+                0.0f);
+
+        definition.DestroyOnlyPlayer =
+            destroy.value(
+                "OnlyPlayer",
+                true);
+    }
+
     // -------------------------
 // Damage
 // -------------------------

@@ -2,7 +2,7 @@
     "Name": "Wall",
 
     "Transform": {
-        "Position": [400.0, 200.0],
+        "Position": [200.0, 500.0],
         "Size": [128.0, 128.0]
     },
 

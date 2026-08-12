@@ -189,6 +189,12 @@
     <ClInclude Include="EnemyControllerComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DestroyOnCollisionComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ButtonComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp">
@@ -338,6 +344,12 @@
     <ClCompile Include="EnemyControllerComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DestroyOnCollisionComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ButtonComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="player.png">
@@ -380,6 +392,9 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="DynamicBox.json">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="FallingPlatform.json">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

@@ -16,7 +16,7 @@
     "Gravity": true,
     "GravityScale": 1.0,
     "Mass": 5.0,
-    "Velocity": [ 100, 0 ],
+    "Velocity": [ 0, 0 ],
     "Kinematic": false
   },
 
@@ -24,6 +24,6 @@
     "Enabled": true,
     "Size": [ 64, 64 ],
     "Trigger": false,
-    "Layer": "Default"
+    "Layer": "Wall"
   }
 }

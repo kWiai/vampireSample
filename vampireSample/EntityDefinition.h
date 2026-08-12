@@ -110,6 +110,13 @@ struct EntityDefinition
 
     float Damage = 0.0f;
 
+
+    bool HasDestroyOnCollision = false;
+
+    float DestroyDelay = 0.0f;
+
+    bool DestroyOnlyPlayer = true;
+
     // -------------------------
 // Health
 // -------------------------

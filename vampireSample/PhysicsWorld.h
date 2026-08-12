@@ -98,6 +98,11 @@ private:
 
     // ---------- Dynamic\static Collision ----------
 
+    void SimulateStep(
+        Scene& scene,
+        const std::vector<BoxColliderComponent*>& colliders,
+        float deltaTime);
+
     void ResolveDynamicCollisions(
         const std::vector<BoxColliderComponent*>& colliders,
         bool horizontal);
@@ -115,6 +120,14 @@ private:
         BoxColliderComponent* second);
 
     void ResolveCollisionY(
+        BoxColliderComponent* first,
+        BoxColliderComponent* second);
+
+    void ResolveDynamicCollisionX(
+        BoxColliderComponent* first,
+        BoxColliderComponent* second);
+
+    void ResolveDynamicCollisionY(
         BoxColliderComponent* first,
         BoxColliderComponent* second);
 

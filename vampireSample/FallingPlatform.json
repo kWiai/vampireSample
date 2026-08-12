@@ -1,0 +1,28 @@
+{
+  "Name": "FallingPlatform",
+  "Tag": "Platform",
+
+  "Transform": {
+    "Position": [ 300, 400 ],
+    "Size": [ 128, 32 ]
+  },
+
+  "Sprite": {
+    "Enabled": true,
+    "Texture": "player.png"
+  },
+
+  "Collider": {
+    "Enabled": true,
+    "Size": [ 128, 32 ],
+    "Offset": [ 0, 0 ],
+    "Trigger": false,
+    "Layer": "Wall"
+  },
+
+  "DestroyOnCollision": {
+    "Enabled": true,
+    "Delay": 2.0,
+    "OnlyPlayer": true
+  }
+}

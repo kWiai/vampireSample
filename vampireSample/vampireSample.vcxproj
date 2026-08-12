@@ -132,6 +132,7 @@
     <ClInclude Include="Application.h" />
     <ClInclude Include="Assets.h" />
     <ClInclude Include="BoxColliderComponent.h" />
+    <ClInclude Include="ButtonComponent.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraComponent.h" />
     <ClInclude Include="CameraFollowComponent.h" />
@@ -143,6 +144,7 @@
     <ClInclude Include="DamageComponent.h" />
     <ClInclude Include="DebugSettings.h" />
     <ClInclude Include="DamageOnCollisionComponent.h" />
+    <ClInclude Include="DestroyOnCollisionComponent.h" />
     <ClInclude Include="EnemyControllerComponent.h" />
     <ClInclude Include="EntityDefinition.h" />
     <ClInclude Include="EntityFactory.h" />
@@ -190,6 +192,7 @@
     <ClCompile Include="AnimationComponent.cpp" />
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="BoxColiderComponent.cpp" />
+    <ClCompile Include="ButtonComponent.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraComponent.cpp" />
     <ClCompile Include="CameraFollowComponent.cpp" />
@@ -199,6 +202,7 @@
     <ClCompile Include="DamageComponent.cpp" />
     <ClCompile Include="DebugSettings.cpp" />
     <ClCompile Include="DamageOnCollisionComponent.cpp" />
+    <ClCompile Include="DestroyOnCollisionComponent.cpp" />
     <ClCompile Include="EnemyControllerComponent.cpp" />
     <ClCompile Include="EntityFactory.cpp" />
     <ClCompile Include="EntityLoader.cpp" />
@@ -247,6 +251,7 @@
   <ItemGroup>
     <None Include="DynamicBox.json" />
     <None Include="Enemy.json" />
+    <None Include="FallingPlatform.json" />
     <None Include="Moving_platform.json" />
     <None Include="packages.config" />
     <None Include="Player.json" />

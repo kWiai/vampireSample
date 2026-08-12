@@ -15,6 +15,7 @@
 #include "HealthComponent.h"
 #include "MovingPlatformComponent.h"
 #include "EnemyControllerComponent.h"
+#include "DestroyOnCollisionComponent.h"
 
 std::unique_ptr<GameObject>
 EntityFactory::Create(
@@ -161,6 +162,19 @@ EntityFactory::Create(
 
         collider->SetLayer(
             definition.Layer);
+    }
+
+    if (definition.HasDestroyOnCollision)
+    {
+        auto component =
+            object->AddComponent<
+            DestroyOnCollisionComponent>();
+
+        component->SetDelay(
+            definition.DestroyDelay);
+
+        component->SetOnlyPlayer(
+            definition.DestroyOnlyPlayer);
     }
 
     // -------------------------

@@ -141,6 +141,18 @@ void Game::Init()
         m_Scene->AddGameObject(std::move(dynamic_box));
     }
 
+
+    auto falling_platform  =
+        entityManager.Create("FallingPlatform");
+
+    if (falling_platform)
+    {
+        falling_platform->SetName("FallingPlatform");
+        falling_platform->SetTag("FallingPlatform");
+
+        m_Scene->AddGameObject(std::move(falling_platform));
+    }
+
     
     // Теперь создаем камеру
     m_Scene->Init();
