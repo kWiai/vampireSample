@@ -6,10 +6,10 @@
 
 #include "BoxColliderComponent.h"
 
-#include "RigidbodyComponent.h"
-#include "TileMapComponent.h"
 #include "DebugSettings.h"
+#include "RigidbodyComponent.h"
 #include "Scene.h"
+#include "TileMapComponent.h"
 
 GameObject::GameObject()
 {

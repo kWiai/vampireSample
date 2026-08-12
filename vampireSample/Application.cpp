@@ -30,7 +30,8 @@ int Application::Run(HINSTANCE hInstance, int nCmdShow)
     while (m_IsRunning && m_Window.ProcessMessages())
     {
         Time::Update();
-
+        std::wstring title = L"FPS: " + std::to_wstring(Time::FPS());
+        SetWindowText(m_Window.GetHWND(), title.c_str());
         InputManager::Update();
 
         m_Game.Update(Time::DeltaTime());
