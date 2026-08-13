@@ -29,7 +29,7 @@ void CollisionMatrix::Initialize()
         [(int)CollisionLayer::Player] = true;
 
     m_Matrix[(int)CollisionLayer::Player]
-        [(int)CollisionLayer::Enemy] = true;
+        [(int)CollisionLayer::Enemy] = false;
 
     m_Matrix[(int)CollisionLayer::Enemy]
         [(int)CollisionLayer::Player] = true;

@@ -17,66 +17,88 @@
 #include "BoxColliderComponent.h"
 #include "MovingPlatformComponent.h"
 #include "PlayerControllerComponent.h"
-#include "DamageComponent.h"
-#include "DestroyOnCollisionComponent.h"
-#include "DamageOnCollisionComponent.h" 
+#include "DamageOnCollisionComponent.h"   // компонент урона при столкновении/триггере
+#include "DestroyOnCollisionComponent.h" // компонент самоуничтожения при касании
 
 using namespace Gdiplus;
 
+// =================== ГЛОБАЛЬНЫЙ РЕЖИМ ИГРЫ ===================
+// true  = боковой вид (платформер) – гравитация работает, W – прыжок
+// false = вид сверху (top?down) – гравитация отключена, WASD – свободное перемещение
+bool g_IsSideView;
+
+// Вспомогательная функция для создания вектора (x, y) одной строкой
 static Math::Vector2 V2(float x, float y) { return Math::Vector2(x, y); }
 
-// Вспомогательная функция для создания AnimationClip
+// Вспомогательная функция для создания анимационного клипа
+// Параметры:
+//   name          - имя анимации (например, "Idle", "Walk")
+//   texturePath   - путь к файлу со спрайт-листом
+//   frameCount    - количество кадров
+//   frameWidth    - ширина одного кадра в пикселях
+//   frameHeight   - высота одного кадра
+//   frameDuration - длительность одного кадра в секундах
+//   loop          - зациклена ли анимация
 static AnimationClip MakeClip(const std::string& name,
     const std::wstring& texturePath,
     int frameCount, int frameWidth, int frameHeight,
     float frameDuration, bool loop)
 {
     AnimationClip clip;
-    clip.SetName(name);
-    clip.SetTexture(ResourceManager::LoadTexture(texturePath));
-    clip.GenerateHorizontal(frameCount, frameWidth, frameHeight, frameDuration);
-    clip.SetLoop(loop);
+    clip.SetName(name);                                                    // задаём имя
+    clip.SetTexture(ResourceManager::LoadTexture(texturePath));            // загружаем текстуру
+    clip.GenerateHorizontal(frameCount, frameWidth, frameHeight, frameDuration); // нарезаем кадры по горизонтали
+    clip.SetLoop(loop);                                                    // зацикливание
     return clip;
 }
 
-// ---------- Игрок (player.json) ----------
+// =================== ФУНКЦИИ СОЗДАНИЯ ИГРОВЫХ ОБЪЕКТОВ ===================
+
+// ---------- Игрок ----------
 static void Player(Scene* scene, float x, float y)
 {
     auto obj = std::make_unique<GameObject>();
-    obj->SetName("Player");
-    obj->SetTag("Player");
-    obj->GetTransform().Position = V2(x, y);
-    obj->GetTransform().Size = V2(160.0f, 160.0f);
+    obj->SetName("Player");                               // Имя (по нему ищем через FindByName)
+    obj->SetTag("Player");                                // Тег (группировка, быстрый поиск)
+    obj->GetTransform().Position = V2(x, y);              // Стартовая позиция в мире
+    obj->GetTransform().Size = V2(160.0f, 160.0f);     // Размер спрайта (и коллайдера)
 
-    auto sprite = obj->AddComponent<SpriteComponent>(); // будет управляться анимацией
+    // Спрайт – будет заменяться анимацией, но нужен как базовый компонент
+    obj->AddComponent<SpriteComponent>();
 
+    // Анимации Idle и Walk
     auto anim = obj->AddComponent<AnimationComponent>();
     anim->AddAnimation(MakeClip("Idle", L"Idle-Sheet.png", 8, 64, 64, 0.12f, true));
     anim->AddAnimation(MakeClip("Walk", L"Walk-Sheet.png", 8, 64, 64, 0.08f, true));
-    anim->Play("Idle");
+    anim->Play("Idle");                                   // Запускаем Idle
 
-    auto rb = obj->AddComponent<RigidbodyComponent>();
-    rb->SetUseGravity(false);
-    rb->SetGravityScale(1.0f);
-    rb->SetMass(1.0f);
-    rb->SetKinematic(false);
-
+    // Коллайдер (прямоугольный)
     auto col = obj->AddComponent<BoxColliderComponent>();
-    col->SetSize(160.0f, 160.0f);
-    col->SetOffset(V2(0.0f, 0.0f));
-    col->SetLayer(CollisionLayer::Player);
+    col->SetSize(160.0f, 160.0f);                         // Размер коллайдера совпадает со спрайтом
+    col->SetOffset(V2(0.0f, 0.0f));                       // Без смещения
+    col->SetLayer(CollisionLayer::Player);                // Слой игрока (столкновения с Wall, Enemy и т.д.)
 
+    // Контроллер ввода (WASD, прыжок, анимации)
     auto ctrl = obj->AddComponent<PlayerControllerComponent>();
-    ctrl->SetMoveSpeed(300.0f);
+    ctrl->SetMoveSpeed(300.0f);                           // Максимальная скорость движения
+    ctrl->SetSideView(g_IsSideView);                      // Передаём текущий режим игры
 
+    // Физическое тело (Rigidbody)
+    auto rb = obj->AddComponent<RigidbodyComponent>();
+    rb->SetUseGravity(true);                              // Тело хочет гравитации (реально применится, если глобальный флаг разрешает)
+    rb->SetGravityScale(1.0f);                            // Обычная сила гравитации
+    rb->SetMass(1.0f);                                    // Масса (влияет на выталкивание других тел)
+    rb->SetKinematic(false);                              // Не кинематическое (двигаем скоростью)
+
+    // Здоровье
     auto health = obj->AddComponent<HealthComponent>();
     health->SetMaxHealth(100.0f);
     health->SetHealth(100.0f);
 
-    scene->AddGameObject(std::move(obj));
+    scene->AddGameObject(std::move(obj));                 // Добавляем объект в сцену
 }
 
-// ---------- Враг (enemy.json) ----------
+// ---------- Враг ----------
 static void Enemy(Scene* scene, float x, float y,
     float speed, float viewRadius,
     const std::vector<Math::Vector2>& patrolPoints,
@@ -88,41 +110,45 @@ static void Enemy(Scene* scene, float x, float y,
     obj->GetTransform().Position = V2(x, y);
     obj->GetTransform().Size = V2(160.0f, 160.0f);
 
-    auto sprite = obj->AddComponent<SpriteComponent>();
-
+    // Спрайт и анимация Idle
+    obj->AddComponent<SpriteComponent>();
     auto anim = obj->AddComponent<AnimationComponent>();
     anim->AddAnimation(MakeClip("Idle", L"Idle-Sheet.png", 8, 64, 64, 0.12f, true));
     anim->Play("Idle");
 
+    // Физическое тело с гравитацией (как и игрок, подчиняется глобальному флагу)
     auto rb = obj->AddComponent<RigidbodyComponent>();
-    rb->SetUseGravity(false);
+    rb->SetUseGravity(true);
     rb->SetMass(1.0f);
     rb->SetKinematic(false);
 
+    // Коллайдер чуть меньше спрайта и со смещением для более комфортных столкновений
     auto col = obj->AddComponent<BoxColliderComponent>();
-    col->SetSize(140.0f, 140.0f);
-    col->SetOffset(V2(10.0f, 10.0f));
-    col->SetLayer(CollisionLayer::Default);
-
+    col->SetSize(110.0f, 110.0f);                     // высота коллайдера = 60 пикселей
+    col->SetOffset(V2(25.0f, 50.0f));
+    col->SetLayer(CollisionLayer::Enemy);                 // Слой врага
+    col->SetTrigger(false);
+    // Контроллер патруля и преследования
     auto ctrl = obj->AddComponent<EnemyControllerComponent>();
     ctrl->SetSpeed(speed);
     ctrl->SetViewRadius(viewRadius);
-    for (const auto& pt : patrolPoints)
-        ctrl->AddPoint(pt);
-    if (target)
-        ctrl->SetTarget(target);
+    for (const auto& pt : patrolPoints) ctrl->AddPoint(pt);
+    if (target) ctrl->SetTarget(target);
+    ctrl->SetJumpForce(400.0f);   // подберите значение под вашу физику
 
+    // Здоровье
     auto health = obj->AddComponent<HealthComponent>();
     health->SetMaxHealth(100.0f);
     health->SetHealth(100.0f);
 
-    auto dmg = obj->AddComponent<DamageComponent>();
+    // Урон при столкновении
+    auto dmg = obj->AddComponent<DamageOnCollisionComponent>();
     dmg->SetDamage(25.0f);
 
     scene->AddGameObject(std::move(obj));
 }
 
-// ---------- Стена (wall.json) ----------
+// ---------- Стена ----------
 static void Wall(Scene* scene, float x, float y, float w, float h,
     const std::wstring& texture = L"dirt.png")
 {
@@ -132,20 +158,23 @@ static void Wall(Scene* scene, float x, float y, float w, float h,
     obj->GetTransform().Position = V2(x, y);
     obj->GetTransform().Size = V2(w, h);
 
-    obj->AddComponent<SpriteComponent>()->LoadTexture(texture);
+    obj->AddComponent<SpriteComponent>()->LoadTexture(texture);  // Текстура стены
 
+    // Твёрдый коллайдер (не триггер)
     auto col = obj->AddComponent<BoxColliderComponent>();
     col->SetSize(w, h);
     col->SetOffset(V2(0.0f, 0.0f));
     col->SetLayer(CollisionLayer::Wall);
-    col->SetTrigger(true);          // обновлено: теперь триггер
+    col->SetTrigger(false);               // Твёрдое препятствие
 
-    auto dmg = obj->AddComponent<DamageOnCollisionComponent>();
-    dmg->SetDamage(25.0f);
+    // Урон при касании (если игрок всё же коснётся)
+  //  auto dmg = obj->AddComponent<DamageOnCollisionComponent>();
+   // dmg->SetDamage(25.0f);
 
     scene->AddGameObject(std::move(obj));
 }
-// ---------- Движущаяся платформа (MovingPlatform.json) ----------
+
+// ---------- Движущаяся платформа ----------
 static void MovingPlatform(Scene* scene, float x, float y, float w, float h,
     float speed, bool loop,
     const std::vector<Math::Vector2>& waypoints,
@@ -159,32 +188,31 @@ static void MovingPlatform(Scene* scene, float x, float y, float w, float h,
 
     obj->AddComponent<SpriteComponent>()->LoadTexture(texture);
 
-    // Коллизия – статическая, как в JSON (без Rigidbody)
+    // Статический коллайдер (без Rigidbody) – может выталкивать динамические тела
     auto col = obj->AddComponent<BoxColliderComponent>();
     col->SetSize(w, h);
     col->SetOffset(V2(0.0f, 0.0f));
-    col->SetLayer(CollisionLayer::Wall);
-    // Trigger = false по умолчанию
+    col->SetLayer(CollisionLayer::Wall);                  // Чтобы игрок мог стоять сверху
 
-    // Движение через компонент
+    // Компонент движения по точкам (кинематическое перемещение)
     auto moveComp = obj->AddComponent<MovingPlatformComponent>();
     moveComp->SetSpeed(speed);
     moveComp->SetLoop(loop);
     for (const auto& pt : waypoints)
         moveComp->AddPoint(pt);
 
-    // Здоровье и урон (как в JSON)
+    // Здоровье и урон (опционально, можно убрать)
     auto health = obj->AddComponent<HealthComponent>();
     health->SetMaxHealth(100.0f);
     health->SetHealth(100.0f);
 
-    auto dmg = obj->AddComponent<DamageComponent>();
+    auto dmg = obj->AddComponent<DamageOnCollisionComponent>();
     dmg->SetDamage(25.0f);
 
     scene->AddGameObject(std::move(obj));
 }
 
-// ---------- Динамический ящик (DynamicBox.json) ----------
+// ---------- Динамический ящик ----------
 static void DynamicBox(Scene* scene, float x, float y, float w, float h,
     const std::wstring& texture = L"grass.png")
 {
@@ -196,37 +224,24 @@ static void DynamicBox(Scene* scene, float x, float y, float w, float h,
 
     obj->AddComponent<SpriteComponent>()->LoadTexture(texture);
 
+    // Физическое тело с гравитацией (падает, можно толкать)
     auto rb = obj->AddComponent<RigidbodyComponent>();
     rb->SetUseGravity(true);
     rb->SetGravityScale(1.0f);
-    rb->SetMass(5.0f);
-    rb->SetVelocity(V2(0.0f, 0.0f));   // обновлено: начальная скорость 0
+    rb->SetMass(3.0f);                                    // Тяжелее игрока – медленнее толкается
+    rb->SetVelocity(V2(0.0f, 0.0f));                      // Начальная скорость нулевая
     rb->SetKinematic(false);
 
+    // Твёрдый коллайдер
     auto col = obj->AddComponent<BoxColliderComponent>();
     col->SetTrigger(false);
     col->SetSize(w, h);
-    col->SetLayer(CollisionLayer::Wall); // обновлено: слой Wall
+    col->SetLayer(CollisionLayer::Wall);                  // Слой Wall, чтобы сталкивался с Player и Enemy
 
     scene->AddGameObject(std::move(obj));
 }
 
-// ---------- Карта ----------
-static void LoadMap(Scene* scene, const std::string& mapFile)
-{
-    auto mapObject = std::make_unique<GameObject>();
-    auto tileMap = mapObject->AddComponent<TileMapComponent>();
-    static TileSet tileSet;
-    tileSet.Load(Assets::Textures::TILES, 32, 32);
-    tileMap->SetTileSet(&tileSet);
-    tileSet.GetTile(1).Solid = true;
-    MapLoader::Load(mapFile, tileMap->GetTileMap());
-
-    tileMap->CacheMap();   // ? обязательно!
-
-    scene->AddGameObject(std::move(mapObject));
-}
-// ---------- Падающая платформа (FallingPlatform.json) ----------
+// ---------- Падающая платформа ----------
 static void FallingPlatform(Scene* scene, float x, float y, float w, float h,
     const std::wstring& texture = L"player.png")
 {
@@ -238,54 +253,78 @@ static void FallingPlatform(Scene* scene, float x, float y, float w, float h,
 
     obj->AddComponent<SpriteComponent>()->LoadTexture(texture);
 
+    // Твёрдый коллайдер
     auto col = obj->AddComponent<BoxColliderComponent>();
     col->SetSize(w, h);
     col->SetOffset(V2(0.0f, 0.0f));
     col->SetLayer(CollisionLayer::Wall);
     col->SetTrigger(false);
 
-    // DestroyOnCollisionComponent (добавлен другом)
+    // Компонент самоуничтожения при касании игрока
     auto destroy = obj->AddComponent<DestroyOnCollisionComponent>();
-    destroy->SetDelay(2.0f);
-    destroy->SetOnlyPlayer(true);
+    destroy->SetDelay(2.0f);                              // Задержка 2 секунды перед исчезновением
+    destroy->SetOnlyPlayer(true);                         // Только игрок активирует уничтожение
 
     scene->AddGameObject(std::move(obj));
 }
-// ---------- Камера ----------
-static void SetupCamera(Scene* scene, float viewWidth, float viewHeight, const std::string& followTarget)
+
+// ---------- Карта (тайловая) ----------
+static void LoadMap(Scene* scene, const std::string& mapFile)
 {
-    scene->Init();
-    scene->GetCamera().SetViewportSize(viewWidth, viewHeight);
-    auto camObj = scene->GetMainCameraObject();
-    auto follow = camObj->AddComponent<CameraFollowComponent>();
-    follow->SetTarget(scene->FindByName(followTarget));
+    auto mapObject = std::make_unique<GameObject>();
+    auto tileMap = mapObject->AddComponent<TileMapComponent>();   // Компонент тайловой карты
+    static TileSet tileSet;
+    tileSet.Load(Assets::Textures::TILES, 32, 32);                // Загружаем атлас тайлов
+    tileMap->SetTileSet(&tileSet);                                // Передаём тайлсет в карту
+    tileSet.GetTile(1).Solid = true;                              // Тайл с ID=1 твёрдый
+    MapLoader::Load(mapFile, tileMap->GetTileMap());              // Загружаем карту из файла
+
+    tileMap->CacheMap();   // Кэшируем все тайлы в один битмап для быстрой отрисовки
+
+    scene->AddGameObject(std::move(mapObject));
 }
 
-// ==================== Game ====================
+// ---------- Камера (настройка) ----------
+static void SetupCamera(Scene* scene, float viewWidth, float viewHeight, const std::string& followTarget)
+{
+    scene->Init();                                                       // Создаём главную камеру внутри сцены
+    scene->GetCamera().SetViewportSize(viewWidth, viewHeight);           // Размер игрового экрана (обычно 1280x720)
+    auto camObj = scene->GetMainCameraObject();                         // Получаем объект камеры
+    auto follow = camObj->AddComponent<CameraFollowComponent>();        // Компонент слежения за целью
+    follow->SetTarget(scene->FindByName(followTarget));                 // Указываем цель (игрок)
+}
 
+// ==================== ИНИЦИАЛИЗАЦИЯ ИГРЫ ====================
 Game::Game() {}
 Game::~Game() {}
 
 void Game::Init()
 {
-    CollisionMatrix::Initialize();
+    CollisionMatrix::Initialize();                        // Настраиваем слои столкновений
+    
     m_Scene = std::make_unique<Scene>();
+    // Задаём глобальный режим игры (true – платформер, false – top?down)
+    g_IsSideView = true;                                 // пример для top?down, поменяйте на true для бокового вида
 
-    // 1. Карта
+    // Синхронизируем гравитацию с глобальным режимом
+    PhysicsWorld& physics = m_Scene->GetPhysics();
+    physics.SetGlobalGravity(g_IsSideView);
+
+    // 1. Загружаем тайловую карту
     LoadMap(m_Scene.get(), "test.map");
 
-    // 2. Игрок
+    // 2. Создаём игрока
     Player(m_Scene.get(), 0.0f, 0.0f);
 
-    // 3. Враги 
+    // 3. Создаём врагов
     GameObject* playerPtr = m_Scene->FindByName("Player");
 
-    // Враг с точным патрулём из enemy.json
+    // Один враг с конкретным маршрутом 
     Enemy(m_Scene.get(), 400.0f, 200.0f, 120.0f, 300.0f,
         { V2(800,300), V2(1000,300), V2(1000,500), V2(800,500) },
         playerPtr);
 
-    // Остальные 9 врагов
+    // Ещё 20 врагов, разбросанных по карте
     for (int i = 0; i < 20; ++i)
     {
         float sx = 400.0f + i * 150.0f;
@@ -295,26 +334,34 @@ void Game::Init()
             playerPtr);
     }
 
-    // 4. Стена (wall.json)
+    // 4. Стены (одна конкретная + 20 дополнительных)
     Wall(m_Scene.get(), 400.0f, 200.0f, 128.0f, 128.0f, L"dirt.png");
     for (int i = 0; i < 20; ++i)
     {
         float sx = 100.0f + i * 150.0f;
         float sy = 1200.0f - (i % 3) * 50.0f;
-        Wall(m_Scene.get(), sx, sy, 250, 100,
-            L"dirt.png");
+        Wall(m_Scene.get(), sx, sy, 250, 100, L"dirt.png");
     }
-    // 5. Движущаяся платформа (MovingPlatform.json)
+
+    // 5. Движущаяся платформа
     MovingPlatform(m_Scene.get(), 300.0f, 300.0f, 160.0f, 32.0f, 100.0f, true,
         { V2(300,300), V2(600,300), V2(600,500), V2(300,500) },
         L"stone.png");
 
-    // 6. Динамический ящик (DynamicBox.json)
+    // 6. Динамический ящик и падающая платформа
     DynamicBox(m_Scene.get(), 500.0f, 100.0f, 64.0f, 64.0f, L"grass.png");
     FallingPlatform(m_Scene.get(), 300.0f, 400.0f, 128.0f, 32.0f, L"player.png");
-    // 7. Камера
+
+    // 7. Настройка камеры (должна быть после всех объектов, чтобы FindByName нашёл Player)
     SetupCamera(m_Scene.get(), 1280.0f, 720.0f, "Player");
 }
 
-void Game::Update(float deltaTime) { if (m_Scene) m_Scene->Update(deltaTime); }
-void Game::Render(Renderer& renderer) { if (m_Scene) m_Scene->Render(renderer); }
+void Game::Update(float deltaTime)
+{
+    if (m_Scene) m_Scene->Update(deltaTime);
+}
+
+void Game::Render(Renderer& renderer)
+{
+    if (m_Scene) m_Scene->Render(renderer);
+}

@@ -353,3 +353,4 @@ void Renderer::DrawGrid(const Camera& camera, int cellSize)
         );
     }
 }
+

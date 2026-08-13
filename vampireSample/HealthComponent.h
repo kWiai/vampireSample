@@ -1,7 +1,7 @@
 #pragma once
-
+#include <cmath>
 #include "Component.h"
-
+#include "Vector2.h"
 class HealthComponent : public Component
 {
 public:
@@ -20,6 +20,7 @@ public:
 
     bool IsDead() const;
 
+    void DrawHealthBar(Renderer& renderer, const Camera& camera, const Math::Vector2& offset, const Math::Vector2& size, bool isPlayer = false);
 private:
 
     float m_MaxHealth;

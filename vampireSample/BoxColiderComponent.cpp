@@ -99,12 +99,12 @@ void BoxColliderComponent::Render(
     Math::Vector2 min =
         GetMin();
 
-    renderer.DrawRectangle(
-        min.X,
-        min.Y,
-        m_Size.X,
-        m_Size.Y,
-        camera);
+ //   renderer.DrawRectangle(
+ //       min.X,
+ //       min.Y,
+ //       m_Size.X,
+ //       m_Size.Y,
+ //       camera);
 }
 Physics::AABB
 BoxColliderComponent::GetBounds() const

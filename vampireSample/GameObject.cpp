@@ -272,6 +272,17 @@ bool GameObject::IsActive() const
     return m_IsActive;
 }
 
+void GameObject::Destroy()
+{
+    m_PendingDestroy = true;
+    SetActive(false);  
+}
+
+bool GameObject::IsPendingDestroy() const
+{
+    return m_PendingDestroy;
+}
+
 Transform& GameObject::GetTransform()
 {
     return m_Transform;

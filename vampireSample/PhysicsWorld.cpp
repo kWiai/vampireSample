@@ -19,6 +19,15 @@ PhysicsWorld::PhysicsWorld()
 PhysicsWorld::~PhysicsWorld()
 {
 }
+void PhysicsWorld::SetGlobalGravity(bool enable)
+{
+    m_GlobalGravityEnabled = enable;
+}
+
+bool PhysicsWorld::GetGlobalGravity() const
+{
+    return m_GlobalGravityEnabled;
+}
 void PhysicsWorld::MoveBodiesX(
     const std::vector<BoxColliderComponent*>& colliders,
     float deltaTime)
@@ -147,47 +156,34 @@ void PhysicsWorld::ResolveCollisionX(
     BoxColliderComponent* first,
     BoxColliderComponent* second)
 {
-    auto body =
-        first->GetOwner()->GetComponent<RigidbodyComponent>();
+    auto body = first->GetOwner()->GetComponent<RigidbodyComponent>();
+    if (body == nullptr) return;
+    if (second->GetOwner()->GetComponent<RigidbodyComponent>() != nullptr) return;
 
-    if (body == nullptr)
-        return;
+    Physics::AABB firstBounds = first->GetBounds();
+    Physics::AABB secondBounds = second->GetBounds();
+    if (!firstBounds.Intersects(secondBounds)) return;
 
-    if (second->GetOwner()->GetComponent<RigidbodyComponent>() != nullptr)
-        return;
+    float firstCenter = (firstBounds.Min.X + firstBounds.Max.X) * 0.5f;
+    float secondCenter = (secondBounds.Min.X + secondBounds.Max.X) * 0.5f;
 
-    Physics::AABB firstBounds =
-        first->GetBounds();
+    if (firstCenter < secondCenter)
+        body->GetTransform().Position.X -= firstBounds.Max.X - secondBounds.Min.X;
+    else
+        body->GetTransform().Position.X += secondBounds.Max.X - firstBounds.Min.X;
 
-    Physics::AABB secondBounds =
-        second->GetBounds();
-
-    if (!firstBounds.Intersects(secondBounds))
-        return;
-
-    float firstCenter =
-        (firstBounds.Min.X + firstBounds.Max.X) * 0.5f;
-
-    float secondCenter =
-        (secondBounds.Min.X + secondBounds.Max.X) * 0.5f;
+    Math::Vector2 velocity = body->GetVelocity();
 
     if (firstCenter < secondCenter)
     {
-        body->GetTransform().Position.X -=
-            firstBounds.Max.X -
-            secondBounds.Min.X;
+        // Тело слева ? обнуляем скорость вправо
+        if (velocity.X > 0.0f) velocity.X = 0.0f;
     }
     else
     {
-        body->GetTransform().Position.X +=
-            secondBounds.Max.X -
-            firstBounds.Min.X;
+        // Тело справа ? обнуляем скорость влево
+        if (velocity.X < 0.0f) velocity.X = 0.0f;
     }
-
-    auto velocity =
-        body->GetVelocity();
-
-    velocity.X = 0.0f;
 
     body->SetVelocity(velocity);
 }
@@ -196,51 +192,37 @@ void PhysicsWorld::ResolveCollisionY(
     BoxColliderComponent* first,
     BoxColliderComponent* second)
 {
-    auto body =
-        first->GetOwner()->GetComponent<RigidbodyComponent>();
+    auto body = first->GetOwner()->GetComponent<RigidbodyComponent>();
+    if (body == nullptr) return;
+    if (second->GetOwner()->GetComponent<RigidbodyComponent>() != nullptr) return;
 
-    if (body == nullptr)
-        return;
+    Physics::AABB firstBounds = first->GetBounds();
+    Physics::AABB secondBounds = second->GetBounds();
+    if (!firstBounds.Intersects(secondBounds)) return;
 
-    if (second->GetOwner()->GetComponent<RigidbodyComponent>() != nullptr)
-        return;
+    float firstCenter = (firstBounds.Min.Y + firstBounds.Max.Y) * 0.5f;
+    float secondCenter = (secondBounds.Min.Y + secondBounds.Max.Y) * 0.5f;
 
-    Physics::AABB firstBounds =
-        first->GetBounds();
+    if (firstCenter < secondCenter)
+        body->GetTransform().Position.Y -= firstBounds.Max.Y - secondBounds.Min.Y;
+    else
+        body->GetTransform().Position.Y += secondBounds.Max.Y - firstBounds.Min.Y;
 
-    Physics::AABB secondBounds =
-        second->GetBounds();
-
-    if (!firstBounds.Intersects(secondBounds))
-        return;
-
-    float firstCenter =
-        (firstBounds.Min.Y + firstBounds.Max.Y) * 0.5f;
-
-    float secondCenter =
-        (secondBounds.Min.Y + secondBounds.Max.Y) * 0.5f;
+    Math::Vector2 velocity = body->GetVelocity();
 
     if (firstCenter < secondCenter)
     {
-        body->GetTransform().Position.Y -=
-            firstBounds.Max.Y -
-            secondBounds.Min.Y;
+        // Тело снизу ? обнуляем скорость вверх
+        if (velocity.Y > 0.0f) velocity.Y = 0.0f;
     }
     else
     {
-        body->GetTransform().Position.Y +=
-            secondBounds.Max.Y -
-            firstBounds.Min.Y;
+        // Тело сверху ? обнуляем скорость вниз
+        if (velocity.Y < 0.0f) velocity.Y = 0.0f;
     }
 
-    auto velocity =
-        body->GetVelocity();
-
-    velocity.Y = 0.0f;
-
     body->SetVelocity(velocity);
-}
-TileMapComponent* PhysicsWorld::FindTileMap(Scene& scene)
+}TileMapComponent* PhysicsWorld::FindTileMap(Scene& scene)
 {
     const auto& objects =
         scene.GetGameObjects();
@@ -316,8 +298,8 @@ void PhysicsWorld::ResolveTileCollision(
                     y * tileHeight),
 
                 Math::Vector2(
-                    (x + 1) * tileWidth,
-                    (y + 1) * tileHeight));
+                    (x + 1.0f) * tileWidth,
+                    (y + 1.0f) * tileHeight));
 
             if (horizontal)
             {
@@ -618,36 +600,37 @@ void PhysicsWorld::ResolveStaticCollisionX(
     BoxColliderComponent* collider,
     const Physics::AABB& staticBounds)
 {
-    Physics::AABB bodyBounds =
-        collider->GetBounds();
-
+    Physics::AABB bodyBounds = collider->GetBounds();
     if (!bodyBounds.Intersects(staticBounds))
         return;
 
     float overlap;
-
     if ((bodyBounds.Min.X + bodyBounds.Max.X) * 0.5f <
         (staticBounds.Min.X + staticBounds.Max.X) * 0.5f)
     {
-        overlap =
-            bodyBounds.Max.X -
-            staticBounds.Min.X;
-
+        overlap = bodyBounds.Max.X - staticBounds.Min.X;
         body->GetTransform().Position.X -= overlap;
     }
     else
     {
-        overlap =
-            staticBounds.Max.X -
-            bodyBounds.Min.X;
-
+        overlap = staticBounds.Max.X - bodyBounds.Min.X;
         body->GetTransform().Position.X += overlap;
     }
 
-    Math::Vector2 velocity =
-        body->GetVelocity();
+    Math::Vector2 velocity = body->GetVelocity();
 
-    velocity.X = 0.0f;
+    // Обнуляем скорость только если она направлена в сторону препятствия
+    if ((bodyBounds.Min.X + bodyBounds.Max.X) * 0.5f <
+        (staticBounds.Min.X + staticBounds.Max.X) * 0.5f)
+    {
+        // Тело слева ? препятствие справа ? обнуляем скорость вправо
+        if (velocity.X > 0.0f) velocity.X = 0.0f;
+    }
+    else
+    {
+        // Тело справа ? препятствие слева ? обнуляем скорость влево
+        if (velocity.X < 0.0f) velocity.X = 0.0f;
+    }
 
     body->SetVelocity(velocity);
 }
@@ -656,36 +639,36 @@ void PhysicsWorld::ResolveStaticCollisionY(
     BoxColliderComponent* collider,
     const Physics::AABB& staticBounds)
 {
-    Physics::AABB bodyBounds =
-        collider->GetBounds();
-
+    Physics::AABB bodyBounds = collider->GetBounds();
     if (!bodyBounds.Intersects(staticBounds))
         return;
 
     float overlap;
-
     if ((bodyBounds.Min.Y + bodyBounds.Max.Y) * 0.5f <
         (staticBounds.Min.Y + staticBounds.Max.Y) * 0.5f)
     {
-        overlap =
-            bodyBounds.Max.Y -
-            staticBounds.Min.Y;
-
+        overlap = bodyBounds.Max.Y - staticBounds.Min.Y;
         body->GetTransform().Position.Y -= overlap;
     }
     else
     {
-        overlap =
-            staticBounds.Max.Y -
-            bodyBounds.Min.Y;
-
+        overlap = staticBounds.Max.Y - bodyBounds.Min.Y;
         body->GetTransform().Position.Y += overlap;
     }
 
-    Math::Vector2 velocity =
-        body->GetVelocity();
+    Math::Vector2 velocity = body->GetVelocity();
 
-    velocity.Y = 0.0f;
+    if ((bodyBounds.Min.Y + bodyBounds.Max.Y) * 0.5f <
+        (staticBounds.Min.Y + staticBounds.Max.Y) * 0.5f)
+    {
+        // Тело снизу ? препятствие сверху (потолок) ? обнуляем скорость вверх
+        if (velocity.Y > 0.0f) velocity.Y = 0.0f;
+    }
+    else
+    {
+        // Тело сверху ? препятствие снизу (пол) ? обнуляем скорость вниз
+        if (velocity.Y < 0.0f) velocity.Y = 0.0f;
+    }
 
     body->SetVelocity(velocity);
 }
@@ -993,24 +976,15 @@ void PhysicsWorld::IntegrateBodies(
 {
     for (auto* collider : colliders)
     {
-        auto body =
-            collider->GetOwner()->GetComponent<RigidbodyComponent>();
+        auto body = collider->GetOwner()->GetComponent<RigidbodyComponent>();
+        if (!body || body->IsKinematic()) continue;
 
-        if (body == nullptr)
-            continue;
+        Math::Vector2 velocity = body->GetVelocity();
 
-        if (body->IsKinematic())
-            continue;
-
-        Math::Vector2 velocity =
-            body->GetVelocity();
-
-        if (body->GetUseGravity())
+        // Гравитация действует, только если глобальный флаг включён И у тела включена гравитация
+        if (m_GlobalGravityEnabled && body->GetUseGravity())
         {
-            velocity.Y +=
-                980.0f *
-                body->GetGravityScale() *
-                deltaTime;
+            velocity.Y += 980.0f * body->GetGravityScale() * deltaTime;
         }
 
         body->SetVelocity(velocity);
@@ -1023,7 +997,8 @@ bool PhysicsWorld::Raycast(
     float maxDistance,
     RaycastHit& hit,
     Scene& scene,
-    GameObject* ignoreObject)
+    GameObject* ignoreObject,
+    uint32_t ignoreLayers)
 {
     DebugRay ray;
 
@@ -1050,6 +1025,13 @@ bool PhysicsWorld::Raycast(
             collider->GetOwner() == ignoreObject)
         {
             continue;
+        }
+
+        if (ignoreLayers != 0)
+        {
+            uint32_t layerBit = 1 << static_cast<int>(collider->GetLayer());
+            if (ignoreLayers & layerBit)
+                continue;
         }
 
         float distance;
@@ -1160,8 +1142,8 @@ bool PhysicsWorld::Raycast(
                             y * tileHeight),
 
                         Math::Vector2(
-                            (x + 1) * tileWidth,
-                            (y + 1) * tileHeight));
+                            (x + 1.0f) * tileWidth,
+                            (y + 1.0f) * tileHeight));
 
                     float distance;
                     Math::Vector2 normal;

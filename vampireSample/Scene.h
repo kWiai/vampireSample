@@ -45,9 +45,11 @@ public:
     std::vector<GameObject*> FindAllByTag(const std::string& tag);
 
     void AddGameObject(std::unique_ptr<GameObject> object);
+    void RemoveGameObject(GameObject* obj);
 
     const std::vector<std::unique_ptr<GameObject>>&
         GetGameObjects() const;
+    void ProcessDestroyQueue();
 
 private:
     GameObject* m_MainCamera;

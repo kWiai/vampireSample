@@ -40,6 +40,26 @@ void Scene::AddGameObject(std::unique_ptr<GameObject> object)
     m_GameObjects.push_back(std::move(object));
 }
 
+void Scene::ProcessDestroyQueue()
+{
+    auto it = m_GameObjects.begin();
+    while (it != m_GameObjects.end())
+    {
+        if ((*it)->IsPendingDestroy())
+            it = m_GameObjects.erase(it);
+        else
+            ++it;
+    }
+}
+
+void Scene::RemoveGameObject(GameObject* obj)
+{
+    auto it = std::find_if(m_GameObjects.begin(), m_GameObjects.end(),
+        [obj](const std::unique_ptr<GameObject>& ptr) { return ptr.get() == obj; });
+    if (it != m_GameObjects.end())
+        m_GameObjects.erase(it);
+}
+
 const std::vector<std::unique_ptr<GameObject>>&
 Scene::GetGameObjects() const
 {
@@ -74,7 +94,7 @@ void Scene::Update(float deltaTime)
 
     // 3. ѕроверка и разрешение столкновений
     m_Physics.Update(*this, deltaTime);
-
+    ProcessDestroyQueue();
     m_Events.Update();
     m_Events.Clear();
 
@@ -130,19 +150,6 @@ GameObject* Scene::FindByName(const std::string& name)
     return nullptr;
 }
 
-GameObject* Scene::FindByTag(const std::string& tag)
-{
-    for (auto& object : m_GameObjects)
-    {
-        if (object->GetTag() == tag)
-        {
-            return object.get();
-        }
-    }
-
-    return nullptr;
-}
-
 std::vector<GameObject*> Scene::FindAllByTag(const std::string& tag)
 {
     std::vector<GameObject*> result;
@@ -157,6 +164,8 @@ std::vector<GameObject*> Scene::FindAllByTag(const std::string& tag)
 
     return result;
 }
+
+
 
 Camera& Scene::GetCamera()
 {

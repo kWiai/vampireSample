@@ -24,15 +24,15 @@ public:
 
     PhysicsWorld();
     ~PhysicsWorld();
-
+   
     struct DebugRay
     {
         Math::Vector2 Origin;
         Math::Vector2 End;
-
         bool Hit;
     };
-
+    void SetGlobalGravity(bool enable);
+    bool GetGlobalGravity() const;
     void Update(
         Scene& scene,
         float deltaTime);
@@ -45,12 +45,13 @@ public:
         float maxDistance,
         RaycastHit& hit,
         Scene& scene,
-        GameObject* ignoreObject);
+        GameObject* ignoreObject,
+        uint32_t ignoreLayers = 0);
 
 private:
 
     // ---------- Scene ----------
-
+    bool m_GlobalGravityEnabled = true;
     void CollectSceneColliders(
         Scene& scene,
         std::vector<BoxColliderComponent*>& colliders);
