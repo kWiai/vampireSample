@@ -103,7 +103,6 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -119,7 +118,6 @@
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -127,135 +125,123 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Resource.h" />
-    <ClInclude Include="src\components\AnimationClip.h" />
-    <ClInclude Include="src\components\AnimationComponent.h" />
-    <ClInclude Include="src\components\AnimationFrame.h" />
-    <ClInclude Include="src\components\Assets.h" />
-    <ClInclude Include="src\components\BoxColliderComponent.h" />
-    <ClInclude Include="src\components\ButtonComponent.h" />
-    <ClInclude Include="src\components\CameraComponent.h" />
-    <ClInclude Include="src\components\CameraFollowComponent.h" />
-    <ClInclude Include="src\components\DamageComponent.h" />
-    <ClInclude Include="src\components\DamageOnCollisionComponent.h" />
-    <ClInclude Include="src\components\DestroyOnCollisionComponent.h" />
-    <ClInclude Include="src\components\EnemyControllerComponent.h" />
-    <ClInclude Include="src\components\HealthComponent.h" />
-    <ClInclude Include="src\components\MovingPlatformComponent.h" />
-    <ClInclude Include="src\components\PlayerControllerComponent.h" />
-    <ClInclude Include="src\components\ProjectileComponent.h" />
-    <ClInclude Include="src\components\RigidbodyComponent.h" />
-    <ClInclude Include="src\components\SpriteComponent.h" />
-    <ClInclude Include="src\components\TestDamageComponent.h" />
-    <ClInclude Include="src\core\Application.h" />
-    <ClInclude Include="src\core\Component.h" />
-    <ClInclude Include="src\core\Event.h" />
-    <ClInclude Include="src\core\EventManager.h" />
-    <ClInclude Include="src\core\Game.h" />
-    <ClInclude Include="src\core\GameObject.h" />
-    <ClInclude Include="src\core\Player.h" />
-    <ClInclude Include="src\core\PlayerAnimations.h" />
-    <ClInclude Include="src\core\Scene.h" />
-    <ClInclude Include="src\core\Time.h" />
-    <ClInclude Include="src\core\Transform.h" />
-    <ClInclude Include="src\core\Window.h" />
-    <ClInclude Include="src\entities\EntityDefinition.h" />
-    <ClInclude Include="src\entities\EntityFactory.h" />
-    <ClInclude Include="src\entities\EntityLoader.h" />
-    <ClInclude Include="src\entities\EntityManager.h" />
-    <ClInclude Include="src\entities\Prefab.h" />
-    <ClInclude Include="src\input\InputManager.h" />
-    <ClInclude Include="src\physics\AABB.h" />
-    <ClInclude Include="src\physics\Collision.h" />
-    <ClInclude Include="src\physics\CollisionLayer.h" />
-    <ClInclude Include="src\physics\CollisionMatrix.h" />
-    <ClInclude Include="src\physics\Damage.h" />
-    <ClInclude Include="src\physics\PhysicsMaterial.h" />
-    <ClInclude Include="src\physics\PhysicsWorld.h" />
-    <ClInclude Include="src\physics\RaycastHit.h" />
-    <ClInclude Include="src\physics\SpatialHash.h" />
-    <ClInclude Include="src\physics\StaticCollider.h" />
-    <ClInclude Include="src\rendering\Camera.h" />
-    <ClInclude Include="src\rendering\MapLoader.h" />
-    <ClInclude Include="src\rendering\Rectangle.h" />
-    <ClInclude Include="src\rendering\Render.h" />
-    <ClInclude Include="src\rendering\Sprite.h" />
-    <ClInclude Include="src\rendering\Texture2D.h" />
-    <ClInclude Include="src\rendering\Tile.h" />
-    <ClInclude Include="src\rendering\TileMap.h" />
-    <ClInclude Include="src\rendering\TileMapComponent.h" />
-    <ClInclude Include="src\rendering\TileSet.h" />
-    <ClInclude Include="src\utilits\DebugSettings.h" />
-    <ClInclude Include="src\utilits\Globals.h" />
-    <ClInclude Include="src\utilits\ResourceManager.h" />
-    <ClInclude Include="src\utilits\targetver.h" />
-    <ClInclude Include="src\utilits\Vector2.h" />
-    <ClInclude Include="targetver.h" />
+    <ClInclude Include="AABB.h" />
+    <ClInclude Include="AnimationClip.h" />
+    <ClInclude Include="AnimationComponent.h" />
+    <ClInclude Include="AnimationFrame.h" />
+    <ClInclude Include="Application.h" />
+    <ClInclude Include="Assets.h" />
+    <ClInclude Include="BoxColliderComponent.h" />
+    <ClInclude Include="ButtonComponent.h" />
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="CameraComponent.h" />
+    <ClInclude Include="CameraFollowComponent.h" />
+    <ClInclude Include="Collision.h" />
+    <ClInclude Include="CollisionLayer.h" />
+    <ClInclude Include="CollisionMatrix.h" />
+    <ClInclude Include="Component.h" />
+    <ClInclude Include="Damage.h" />
+    <ClInclude Include="DamageComponent.h" />
+    <ClInclude Include="DebugSettings.h" />
+    <ClInclude Include="DamageOnCollisionComponent.h" />
+    <ClInclude Include="DestroyOnCollisionComponent.h" />
+    <ClInclude Include="EnemyControllerComponent.h" />
+    <ClInclude Include="EntityDefinition.h" />
+    <ClInclude Include="EntityFactory.h" />
+    <ClInclude Include="EntityLoader.h" />
+    <ClInclude Include="Event.h" />
+    <ClInclude Include="EventManager.h" />
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="GameObject.h" />
+    <ClInclude Include="Globals.h" />
+    <ClInclude Include="EntityManager.h" />
+    <ClInclude Include="HealthComponent.h" />
+    <ClInclude Include="InputManager.h" />
+    <ClInclude Include="MapLoader.h" />
+    <ClInclude Include="MovingPlatformComponent.h" />
+    <ClInclude Include="PhysicsMaterial.h" />
+    <ClInclude Include="PhysicsWorld.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="PlayerAnimations.h" />
+    <ClInclude Include="PlayerControllerComponent.h" />
+    <ClInclude Include="Prefab.h" />
+    <ClInclude Include="ProjectileComponent.h" />
+    <ClInclude Include="RaycastHit.h" />
+    <ClInclude Include="Rectangle.h" />
+    <ClInclude Include="Render.h" />
+    <ClInclude Include="ResourceManager.h" />
+    <ClInclude Include="RigidbodyComponent.h" />
+    <ClInclude Include="Scene.h" />
+    <ClInclude Include="SpatialHash.h" />
+    <ClInclude Include="Sprite.h" />
+    <ClInclude Include="SpriteComponent.h" />
+    <ClInclude Include="StaticCollider.h" />
+    <ClInclude Include="TestDamageComponent.h" />
+    <ClInclude Include="Texture2D.h" />
+    <ClInclude Include="Tile.h" />
+    <ClInclude Include="TileMap.h" />
+    <ClInclude Include="TileMapComponent.h" />
+    <ClInclude Include="TileSet.h" />
+    <ClInclude Include="Time.h" />
+    <ClInclude Include="Transform.h" />
+    <ClInclude Include="Vector2.h" />
+    <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\components\AnimationClip.cpp" />
-    <ClCompile Include="src\components\AnimationComponent.cpp" />
-    <ClCompile Include="src\components\BoxColiderComponent.cpp" />
-    <ClCompile Include="src\components\ButtonComponent.cpp" />
-    <ClCompile Include="src\components\CameraComponent.cpp" />
-    <ClCompile Include="src\components\CameraFollowComponent.cpp" />
-    <ClCompile Include="src\components\DamageComponent.cpp" />
-    <ClCompile Include="src\components\DamageOnCollisionComponent.cpp" />
-    <ClCompile Include="src\components\DestroyOnCollisionComponent.cpp" />
-    <ClCompile Include="src\components\EnemyControllerComponent.cpp" />
-    <ClCompile Include="src\components\HealthComponent.cpp" />
-    <ClCompile Include="src\components\MovingPlatformComponent.cpp" />
-    <ClCompile Include="src\components\PlayerControllerComponent.cpp" />
-    <ClCompile Include="src\components\ProjectileComponent.cpp" />
-    <ClCompile Include="src\components\RigidbodyComponent.cpp" />
-    <ClCompile Include="src\components\SpriteComponent.cpp" />
-    <ClCompile Include="src\components\TestDamageComponent.cpp" />
-    <ClCompile Include="src\core\Application.cpp" />
-    <ClCompile Include="src\core\Component.cpp" />
-    <ClCompile Include="src\core\EventManager.cpp" />
-    <ClCompile Include="src\core\Game.cpp" />
-    <ClCompile Include="src\core\GameObject.cpp" />
-    <ClCompile Include="src\core\Player.cpp" />
-    <ClCompile Include="src\core\PlayerAnimations.cpp" />
-    <ClCompile Include="src\core\Scene.cpp" />
-    <ClCompile Include="src\core\Time.cpp" />
-    <ClCompile Include="src\core\Transform.cpp" />
-    <ClCompile Include="src\core\Window.cpp" />
-    <ClCompile Include="src\entities\EntityFactory.cpp" />
-    <ClCompile Include="src\entities\EntityLoader.cpp" />
-    <ClCompile Include="src\entities\EntityManager.cpp" />
-    <ClCompile Include="src\entities\Prefab.cpp" />
-    <ClCompile Include="src\input\InputManager.cpp" />
-    <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\physics\AABB.cpp" />
-    <ClCompile Include="src\physics\CollisionMatrix.cpp" />
-    <ClCompile Include="src\physics\Damage.cpp" />
-    <ClCompile Include="src\physics\PhysicsMaterial.cpp" />
-    <ClCompile Include="src\physics\PhysicsWorld.cpp" />
-    <ClCompile Include="src\physics\SpatialHash.cpp" />
-    <ClCompile Include="src\rendering\Camera.cpp" />
-    <ClCompile Include="src\rendering\MapLoader.cpp" />
-    <ClCompile Include="src\rendering\Rectangle.cpp" />
-    <ClCompile Include="src\rendering\Render.cpp" />
-    <ClCompile Include="src\rendering\Sprite.cpp" />
-    <ClCompile Include="src\rendering\Texture2D.cpp" />
-    <ClCompile Include="src\rendering\TileMap.cpp" />
-    <ClCompile Include="src\rendering\TileMapComponent.cpp" />
-    <ClCompile Include="src\rendering\TileSet.cpp" />
-    <ClCompile Include="src\utilits\DebugSettings.cpp" />
-    <ClCompile Include="src\utilits\ResorceManager.cpp" />
-    <ClCompile Include="src\utilits\Vector2.cpp" />
+    <ClCompile Include="AABB.cpp" />
+    <ClCompile Include="AnimationClip.cpp" />
+    <ClCompile Include="AnimationComponent.cpp" />
+    <ClCompile Include="Application.cpp" />
+    <ClCompile Include="BoxColiderComponent.cpp" />
+    <ClCompile Include="ButtonComponent.cpp" />
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="CameraComponent.cpp" />
+    <ClCompile Include="CameraFollowComponent.cpp" />
+    <ClCompile Include="CollisionMatrix.cpp" />
+    <ClCompile Include="Component.cpp" />
+    <ClCompile Include="Damage.cpp" />
+    <ClCompile Include="DamageComponent.cpp" />
+    <ClCompile Include="DebugSettings.cpp" />
+    <ClCompile Include="DamageOnCollisionComponent.cpp" />
+    <ClCompile Include="DestroyOnCollisionComponent.cpp" />
+    <ClCompile Include="EnemyControllerComponent.cpp" />
+    <ClCompile Include="EntityFactory.cpp" />
+    <ClCompile Include="EntityLoader.cpp" />
+    <ClCompile Include="EntityManager.cpp" />
+    <ClCompile Include="EventManager.cpp" />
+    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="HealthComponent.cpp" />
+    <ClCompile Include="InputManager.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="MapLoader.cpp" />
+    <ClCompile Include="MovingPlatformComponent.cpp" />
+    <ClCompile Include="PhysicsMaterial.cpp" />
+    <ClCompile Include="PhysicsWorld.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PlayerAnimations.cpp" />
+    <ClCompile Include="PlayerControllerComponent.cpp" />
+    <ClCompile Include="Prefab.cpp" />
+    <ClCompile Include="ProjectileComponent.cpp" />
+    <ClCompile Include="Rectangle.cpp" />
+    <ClCompile Include="Render.cpp" />
+    <ClCompile Include="ResorceManager.cpp" />
+    <ClCompile Include="RigidbodyComponent.cpp" />
+    <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="SpatialHash.cpp" />
+    <ClCompile Include="Sprite.cpp" />
+    <ClCompile Include="SpriteComponent.cpp" />
+    <ClCompile Include="TestDamageComponent.cpp" />
+    <ClCompile Include="Texture2D.cpp" />
+    <ClCompile Include="TileMap.cpp" />
+    <ClCompile Include="TileMapComponent.cpp" />
+    <ClCompile Include="TileSet.cpp" />
+    <ClCompile Include="Time.cpp" />
+    <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="Vector2.cpp" />
+    <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="assets\textures\dirt.png" />
-    <Image Include="assets\textures\grass.png" />
-    <Image Include="assets\textures\Idle-Sheet.png" />
-    <Image Include="assets\textures\player.png" />
-    <Image Include="assets\textures\stone.png" />
-    <Image Include="assets\textures\tilemap.png" />
-    <Image Include="assets\textures\Walk-Sheet.png" />
-    <Image Include="build\small.ico" />
-    <Image Include="build\vampireSample.ico" />
     <Image Include="dirt.png" />
     <Image Include="grass.png" />
     <Image Include="Idle-Sheet.png" />
@@ -265,25 +251,14 @@
     <Image Include="Walk-Sheet.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="assets\json\DynamicBox.json" />
-    <None Include="assets\json\Enemy.json" />
-    <None Include="assets\json\FallingPlatform.json" />
-    <None Include="assets\json\Moving_platform.json" />
-    <None Include="assets\json\Player.json" />
-    <None Include="assets\json\Wall.json" />
-    <None Include="assets\test.map" />
-    <None Include="build\packages.config" />
-    <None Include="build\vampireSample.vcxproj.user" />
     <None Include="DynamicBox.json" />
     <None Include="Enemy.json" />
     <None Include="FallingPlatform.json" />
     <None Include="Moving_platform.json" />
+    <None Include="packages.config" />
     <None Include="Player.json" />
     <None Include="test.map" />
     <None Include="Wall.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="build\vampireSample.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -15,354 +15,345 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\utilits\DebugSettings.h">
+    <ClInclude Include="Application.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\utilits\Globals.h">
+    <ClInclude Include="Game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\utilits\ResourceManager.h">
+    <ClInclude Include="GameObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\utilits\targetver.h">
+    <ClInclude Include="Globals.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\utilits\Vector2.h">
+    <ClInclude Include="Render.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\Camera.h">
+    <ClInclude Include="Time.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\MapLoader.h">
+    <ClInclude Include="Window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\Rectangle.h">
+    <ClInclude Include="Transform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\Render.h">
+    <ClInclude Include="Vector2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\Sprite.h">
+    <ClInclude Include="Texture2D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\Texture2D.h">
+    <ClInclude Include="Sprite.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\Tile.h">
+    <ClInclude Include="ResourceManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\TileMap.h">
+    <ClInclude Include="Assets.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\TileMapComponent.h">
+    <ClInclude Include="Component.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\TileSet.h">
+    <ClInclude Include="Rectangle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\physics\AABB.h">
+    <ClInclude Include="SpriteComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\physics\Collision.h">
+    <ClInclude Include="Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\physics\CollisionLayer.h">
+    <ClInclude Include="InputManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\physics\CollisionMatrix.h">
+    <ClInclude Include="Player.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\physics\Damage.h">
+    <ClInclude Include="PlayerControllerComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\physics\PhysicsMaterial.h">
+    <ClInclude Include="Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\physics\PhysicsWorld.h">
+    <ClInclude Include="CameraComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\physics\RaycastHit.h">
+    <ClInclude Include="CameraFollowComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\physics\SpatialHash.h">
+    <ClInclude Include="TileSet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\physics\StaticCollider.h">
+    <ClInclude Include="Tile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\input\InputManager.h">
+    <ClInclude Include="TileMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\entities\EntityDefinition.h">
+    <ClInclude Include="TileMapComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\entities\EntityFactory.h">
+    <ClInclude Include="MapLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\entities\EntityLoader.h">
+    <ClInclude Include="AnimationFrame.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\entities\EntityManager.h">
+    <ClInclude Include="AnimationComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\entities\Prefab.h">
+    <ClInclude Include="AnimationClip.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\Application.h">
+    <ClInclude Include="PlayerAnimations.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\Component.h">
+    <ClInclude Include="BoxColliderComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\Event.h">
+    <ClInclude Include="PhysicsWorld.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\EventManager.h">
+    <ClInclude Include="AABB.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\Game.h">
+    <ClInclude Include="Collision.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\GameObject.h">
+    <ClInclude Include="RigidbodyComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\Player.h">
+    <ClInclude Include="StaticCollider.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\PlayerAnimations.h">
+    <ClInclude Include="CollisionLayer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\Scene.h">
+    <ClInclude Include="CollisionMatrix.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\Time.h">
+    <ClInclude Include="PhysicsMaterial.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\Transform.h">
+    <ClInclude Include="SpatialHash.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\Window.h">
+    <ClInclude Include="DebugSettings.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\components\AnimationClip.h">
+    <ClInclude Include="RaycastHit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\components\AnimationComponent.h">
+    <ClInclude Include="EntityDefinition.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\components\AnimationFrame.h">
+    <ClInclude Include="EntityFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\components\Assets.h">
+    <ClInclude Include="Prefab.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\components\BoxColliderComponent.h">
+    <ClInclude Include="EntityLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\components\ButtonComponent.h">
+    <ClInclude Include="EntityManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\components\CameraComponent.h">
+    <ClInclude Include="HealthComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\components\CameraFollowComponent.h">
+    <ClInclude Include="DamageComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\components\DamageComponent.h">
+    <ClInclude Include="Damage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\components\DamageOnCollisionComponent.h">
+    <ClInclude Include="Event.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\components\DestroyOnCollisionComponent.h">
+    <ClInclude Include="EventManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\components\EnemyControllerComponent.h">
+    <ClInclude Include="TestDamageComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\components\HealthComponent.h">
+    <ClInclude Include="DamageOnCollisionComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\components\MovingPlatformComponent.h">
+    <ClInclude Include="MovingPlatformComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\components\PlayerControllerComponent.h">
+    <ClInclude Include="EnemyControllerComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\components\ProjectileComponent.h">
+    <ClInclude Include="DestroyOnCollisionComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\components\RigidbodyComponent.h">
+    <ClInclude Include="ButtonComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\components\SpriteComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\components\TestDamageComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="targetver.h">
+    <ClInclude Include="ProjectileComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\main.cpp">
+    <ClCompile Include="Application.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\utilits\DebugSettings.cpp">
+    <ClCompile Include="Game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\utilits\ResorceManager.cpp">
+    <ClCompile Include="GameObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\utilits\Vector2.cpp">
+    <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\rendering\Camera.cpp">
+    <ClCompile Include="Render.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\rendering\MapLoader.cpp">
+    <ClCompile Include="Time.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\rendering\Rectangle.cpp">
+    <ClCompile Include="Window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\rendering\Render.cpp">
+    <ClCompile Include="Transform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\rendering\Sprite.cpp">
+    <ClCompile Include="Vector2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\rendering\Texture2D.cpp">
+    <ClCompile Include="Texture2D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\rendering\TileMap.cpp">
+    <ClCompile Include="Sprite.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\rendering\TileMapComponent.cpp">
+    <ClCompile Include="ResorceManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\rendering\TileSet.cpp">
+    <ClCompile Include="Component.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\physics\AABB.cpp">
+    <ClCompile Include="Rectangle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\physics\CollisionMatrix.cpp">
+    <ClCompile Include="SpriteComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\physics\Damage.cpp">
+    <ClCompile Include="Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\physics\PhysicsMaterial.cpp">
+    <ClCompile Include="InputManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\physics\PhysicsWorld.cpp">
+    <ClCompile Include="Player.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\physics\SpatialHash.cpp">
+    <ClCompile Include="PlayerControllerComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\input\InputManager.cpp">
+    <ClCompile Include="Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\entities\EntityFactory.cpp">
+    <ClCompile Include="CameraComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\entities\EntityLoader.cpp">
+    <ClCompile Include="CameraFollowComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\entities\EntityManager.cpp">
+    <ClCompile Include="TileSet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\entities\Prefab.cpp">
+    <ClCompile Include="TileMap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\Application.cpp">
+    <ClCompile Include="TileMapComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\Component.cpp">
+    <ClCompile Include="MapLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\EventManager.cpp">
+    <ClCompile Include="AnimationComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\Game.cpp">
+    <ClCompile Include="AnimationClip.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\GameObject.cpp">
+    <ClCompile Include="PlayerAnimations.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\Player.cpp">
+    <ClCompile Include="BoxColiderComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\PlayerAnimations.cpp">
+    <ClCompile Include="PhysicsWorld.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\Scene.cpp">
+    <ClCompile Include="AABB.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\Time.cpp">
+    <ClCompile Include="RigidbodyComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\Transform.cpp">
+    <ClCompile Include="CollisionMatrix.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\Window.cpp">
+    <ClCompile Include="PhysicsMaterial.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\components\AnimationClip.cpp">
+    <ClCompile Include="SpatialHash.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\components\AnimationComponent.cpp">
+    <ClCompile Include="DebugSettings.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\components\BoxColiderComponent.cpp">
+    <ClCompile Include="EntityFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\components\ButtonComponent.cpp">
+    <ClCompile Include="Prefab.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\components\CameraComponent.cpp">
+    <ClCompile Include="EntityLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\components\CameraFollowComponent.cpp">
+    <ClCompile Include="EntityManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\components\DamageComponent.cpp">
+    <ClCompile Include="HealthComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\components\DamageOnCollisionComponent.cpp">
+    <ClCompile Include="DamageComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\components\DestroyOnCollisionComponent.cpp">
+    <ClCompile Include="Damage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\components\EnemyControllerComponent.cpp">
+    <ClCompile Include="EventManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\components\HealthComponent.cpp">
+    <ClCompile Include="TestDamageComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\components\MovingPlatformComponent.cpp">
+    <ClCompile Include="DamageOnCollisionComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\components\PlayerControllerComponent.cpp">
+    <ClCompile Include="MovingPlatformComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\components\ProjectileComponent.cpp">
+    <ClCompile Include="EnemyControllerComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\components\RigidbodyComponent.cpp">
+    <ClCompile Include="DestroyOnCollisionComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\components\SpriteComponent.cpp">
+    <ClCompile Include="ButtonComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\components\TestDamageComponent.cpp">
+    <ClCompile Include="ProjectileComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -388,38 +379,12 @@
     <Image Include="Walk-Sheet.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="build\small.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="build\vampireSample.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="assets\textures\dirt.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="assets\textures\grass.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="assets\textures\Idle-Sheet.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="assets\textures\player.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="assets\textures\stone.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="assets\textures\tilemap.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="assets\textures\Walk-Sheet.png">
-      <Filter>Resource Files</Filter>
-    </Image>
   </ItemGroup>
   <ItemGroup>
     <None Include="test.map">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="packages.config" />
     <None Include="Player.json">
       <Filter>Resource Files</Filter>
     </None>
@@ -438,19 +403,5 @@
     <None Include="FallingPlatform.json">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="build\packages.config" />
-    <None Include="build\vampireSample.vcxproj.user" />
-    <None Include="assets\test.map" />
-    <None Include="assets\json\DynamicBox.json" />
-    <None Include="assets\json\Enemy.json" />
-    <None Include="assets\json\FallingPlatform.json" />
-    <None Include="assets\json\Moving_platform.json" />
-    <None Include="assets\json\Player.json" />
-    <None Include="assets\json\Wall.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="build\vampireSample.rc">
-      <Filter>Resource Files</Filter>
-    </ResourceCompile>
   </ItemGroup>
 </Project>

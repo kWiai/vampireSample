@@ -1,0 +1,356 @@
+#include "Render.h"
+#include "Sprite.h"
+#include "src/core/Transform.h"
+#include "Camera.h"
+#include <iostream>
+#include "TileSet.h"
+
+
+Renderer::Renderer()
+{
+    m_hWnd = nullptr;
+
+    m_WindowDC = nullptr;
+    m_BackDC = nullptr;
+
+    m_BackBitmap = nullptr;
+    m_OldBitmap = nullptr;
+
+    m_Graphics = nullptr;
+
+    m_GdiToken = 0;
+
+    m_Width = 0;
+    m_Height = 0;
+
+    m_ShowColliders = true;
+}
+
+Renderer::~Renderer()
+{
+    if (m_Graphics)
+        delete m_Graphics;
+
+    if (m_BackDC && m_OldBitmap)
+        SelectObject(m_BackDC, m_OldBitmap);
+
+    if (m_BackBitmap)
+        DeleteObject(m_BackBitmap);
+
+    if (m_BackDC)
+        DeleteDC(m_BackDC);
+
+    if (m_WindowDC)
+        ReleaseDC(m_hWnd, m_WindowDC);
+
+    GdiplusShutdown(m_GdiToken);
+}
+
+bool Renderer::Initialize(HWND hwnd, int width, int height)
+{
+
+    m_Width = width;
+    m_Height = height;
+
+    GdiplusStartupInput gdiplusStartupInput;
+
+    GdiplusStartup(
+        &m_GdiToken,
+        &gdiplusStartupInput,
+        nullptr
+    );
+
+    m_WindowDC = GetDC(hwnd);
+
+    m_BackDC = CreateCompatibleDC(m_WindowDC);
+
+    m_BackBitmap = CreateCompatibleBitmap(
+        m_WindowDC,
+        width,
+        height
+    );
+
+    m_OldBitmap =
+        (HBITMAP)SelectObject(
+            m_BackDC,
+            m_BackBitmap
+        );
+
+    m_Graphics = new Graphics(m_BackDC);
+    m_Graphics->SetInterpolationMode(InterpolationModeNearestNeighbor);
+    m_Graphics->SetPixelOffsetMode(PixelOffsetModeHalf);
+    m_Graphics->SetSmoothingMode(SmoothingModeNone);
+    m_Graphics->SetCompositingQuality(CompositingQualityHighSpeed);
+
+
+    return true;
+}
+
+void Renderer::BeginFrame()
+{
+    m_Graphics->Clear(Color(30, 30, 30));
+}
+
+void Renderer::EndFrame()
+{
+    BitBlt(
+        m_WindowDC,
+        0,
+        0,
+        m_Width,
+        m_Height,
+        m_BackDC,
+        0,
+        0,
+        SRCCOPY
+    );
+}
+void Renderer::DrawTextureRegion(
+    Image* image,
+    const Math::Rectangle& source,
+    const RectF& destination)
+{
+    if (image == nullptr)
+        return;
+
+    m_Graphics->DrawImage(
+        image,
+        destination,
+        source.x,
+        source.y,
+        source.width,
+        source.height,
+        UnitPixel);
+}
+void Renderer::DrawSprite(
+    const Sprite& sprite,
+    const Transform& transform,
+    const Camera& camera)
+{
+    auto texture = sprite.GetTexture();
+
+    if (!texture)
+        return;
+
+    if (!texture->IsLoaded())
+        return;
+
+    Image* image = texture->GetImage();
+
+    if (!image)
+        return;
+
+    Math::Vector2 screen =
+        camera.WorldToScreen(transform.Position);
+
+    RectF destination(
+        screen.X,
+        screen.Y,
+        transform.Size.X,
+        transform.Size.Y);
+
+    Math::Rectangle source;
+
+    if (sprite.GetSourceRect().width == 0 ||
+        sprite.GetSourceRect().height == 0)
+    {
+        source = Math::Rectangle(
+            0,
+            0,
+            static_cast<float>(image->GetWidth()),
+            static_cast<float>(image->GetHeight()));
+    }
+    else
+    {
+        source = sprite.GetSourceRect();
+    }
+
+    DrawTextureRegion(
+        image,
+        source,
+        destination);
+}
+void Renderer::DrawTile(
+    const TileSet& tileSet,
+    int tileId,
+    int tileX,
+    int tileY,
+    const Camera& camera)
+{
+    auto texture =
+        tileSet.GetTexture();
+
+    if (!texture)
+        return;
+
+    if (!texture->IsLoaded())
+        return;
+
+    Image* image =
+        texture->GetImage();
+
+    if (!image)
+        return;
+
+    Math::Vector2 world(
+        tileX * tileSet.GetTileWidth(),
+        tileY * tileSet.GetTileHeight());
+
+    Math::Vector2 screen =
+        camera.WorldToScreen(world);
+
+    RectF destination(
+        screen.X,
+        screen.Y,
+        static_cast<float>(tileSet.GetTileWidth()),
+        static_cast<float>(tileSet.GetTileHeight()));
+
+    DrawTextureRegion(
+        image,
+        tileSet.GetSourceRect(tileId),
+        destination);
+}
+Graphics* Renderer::GetGraphics()
+{
+    return m_Graphics;
+}
+
+void Renderer::SetShowColliders(bool value)
+{
+    m_ShowColliders = value;
+}
+
+bool Renderer::IsShowingColliders() const
+{
+    return m_ShowColliders;
+}
+
+void Renderer::DrawLine(
+    float x1,
+    float y1,
+    float x2,
+    float y2,
+    const Camera& camera,
+    BYTE r,
+    BYTE g,
+    BYTE b,
+    float thickness)
+{
+    Math::Vector2 start =
+        camera.WorldToScreen(
+            Math::Vector2(x1, y1));
+
+    Math::Vector2 finish =
+        camera.WorldToScreen(
+            Math::Vector2(x2, y2));
+
+    Pen pen(
+        Color(255, r, g, b),
+        thickness);
+
+    m_Graphics->DrawLine(
+        &pen,
+        start.X,
+        start.Y,
+        finish.X,
+        finish.Y);
+}
+
+void Renderer::DrawFilledRectangle(
+    float x,
+    float y,
+    float width,
+    float height,
+    const Camera& camera,
+    BYTE r,
+    BYTE g,
+    BYTE b,
+    BYTE alpha)
+{
+    Math::Vector2 screen =
+        camera.WorldToScreen(
+            Math::Vector2(x, y));
+
+    SolidBrush brush(
+        Color(alpha, r, g, b));
+
+    m_Graphics->FillRectangle(
+        &brush,
+        screen.X,
+        screen.Y,
+        width,
+        height);
+}
+
+void Renderer::DrawRectangle(
+    float x,
+    float y,
+    float width,
+    float height,
+    const Camera& camera,
+    BYTE r,
+    BYTE g,
+    BYTE b,
+    float thickness)
+{
+    Math::Vector2 screen =
+        camera.WorldToScreen(
+            Math::Vector2(x, y));
+
+    Pen pen(
+        Color(255, r, g, b),
+        thickness);
+
+    m_Graphics->DrawRectangle(
+        &pen,
+        screen.X,
+        screen.Y,
+        width,
+        height);
+}
+
+void Renderer::DrawGrid(const Camera& camera, int cellSize)
+{
+    Pen pen(Color(70, 70, 70));
+
+    Math::Vector2 cameraPos = camera.GetPosition();
+
+    int startX = static_cast<int>(cameraPos.X) / cellSize - 1;
+    int endX = startX + 40;
+
+    int startY = static_cast<int>(cameraPos.Y) / cellSize - 1;
+    int endY = startY + 25;
+
+    for (int x = startX; x <= endX; x++)
+    {
+        float worldX = x * cellSize;
+
+        Math::Vector2 a =
+            camera.WorldToScreen(Math::Vector2(worldX, cameraPos.Y));
+
+        m_Graphics->DrawLine(
+            &pen,
+            (REAL)a.X,
+            (REAL)0.0f,
+            (REAL)a.X,
+            (REAL)m_Height
+        );
+    }
+
+    for (int y = startY; y <= endY; y++)
+    {
+        float worldY = y * cellSize;
+
+        Math::Vector2 a =
+            camera.WorldToScreen(Math::Vector2(cameraPos.X, worldY));
+
+        m_Graphics->DrawLine(
+            &pen,
+            (REAL)0.0f,
+            (REAL)a.Y,
+            (REAL)m_Width,
+            (REAL)a.Y
+        );
+    }
+}
+
