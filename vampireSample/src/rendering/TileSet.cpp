@@ -1,7 +1,5 @@
 #include "src/rendering/TileSet.h"
-#include <filesystem>
-#include <iostream>
-#include <string>
+
 TileSet::TileSet()
 {
     m_TileWidth = 0;
@@ -16,24 +14,16 @@ TileSet::~TileSet()
 
 }
 
-bool TileSet::Load(const std::wstring& filePath, int tileWidth, int tileHeight)
+bool TileSet::Load(
+    const std::wstring& filePath,
+    int tileWidth,
+    int tileHeight)
 {
-    // Выводим путь в окно Output
-    std::wstring msg = L"TileSet::Load: " + filePath + L"\n";
-    OutputDebugStringW(msg.c_str());
-    std::string narrowPath(filePath.begin(), filePath.end());
-    if (!std::filesystem::exists(filePath))
-    {
-        std::string pathStr = "File not found: " + narrowPath + "\n";
-        OutputDebugStringW(msg.c_str());
-        return false;
-    }
-    
+    m_Texture =
+        std::make_shared<Texture2D>(filePath);
 
-    m_Texture = std::make_shared<Texture2D>(filePath);
     if (!m_Texture->IsLoaded())
     {
-        OutputDebugStringW(L"Texture2D failed to load!\n");
         return false;
     }
 

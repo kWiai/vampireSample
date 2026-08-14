@@ -19,7 +19,6 @@
 #include "src/components/PlayerControllerComponent.h"
 #include "src/components/DamageOnCollisionComponent.h"   // компонент урона при столкновении/триггере
 #include "src/components/DestroyOnCollisionComponent.h" // компонент самоуничтожения при касании
-#include <filesystem>
 #include <iostream>
 #include <string>
 using namespace Gdiplus;
@@ -313,11 +312,6 @@ void Game::Init()
     physics.SetGlobalGravity(g_IsSideView);
 
 
-
-    std::filesystem::path currentPath = std::filesystem::current_path();
-    std::string pathStr = "Current working directory: " + currentPath.string() + "\n";
-    OutputDebugStringA(pathStr.c_str());
-    // 1. Загружаем тайловую карту
     LoadMap(m_Scene.get(), "assets/test.map");
 
     // 2. Создаём игрока
