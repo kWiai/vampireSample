@@ -10,6 +10,7 @@
 #include "src/components/RigidbodyComponent.h"
 #include "Scene.h"
 #include "src/rendering/TileMapComponent.h"
+#include "src/utilits/Globals.h"
 
 GameObject::GameObject()
 {
@@ -110,6 +111,9 @@ void GameObject::RenderDebug(
     Renderer& renderer,
     const Camera& camera)
 {
+    if (!DEBUG) {
+        return;
+    }
     if (DebugSettings::DrawPhysics)
     {
         auto tileMap =
@@ -154,29 +158,30 @@ void GameObject::RenderDebug(
             }
         }
     }
+    if (DebugSettings::DrawPivot) {
+        const auto& pos =
+            GetTransform().Position;
 
-    const auto& pos =
-        GetTransform().Position;
+        renderer.DrawLine(
+            pos.X - 4.0f,
+            pos.Y,
+            pos.X + 4.0f,
+            pos.Y,
+            camera,
+            255,
+            255,
+            0);
 
-    renderer.DrawLine(
-        pos.X - 4.0f,
-        pos.Y,
-        pos.X + 4.0f,
-        pos.Y,
-        camera,
-        255,
-        255,
-        0);
-
-    renderer.DrawLine(
-        pos.X,
-        pos.Y - 4.0f,
-        pos.X,
-        pos.Y + 4.0f,
-        camera,
-        255,
-        255,
-        0);
+        renderer.DrawLine(
+            pos.X,
+            pos.Y - 4.0f,
+            pos.X,
+            pos.Y + 4.0f,
+            camera,
+            255,
+            255,
+            0);
+    }
 
     if (DebugSettings::DrawPhysics)
     {

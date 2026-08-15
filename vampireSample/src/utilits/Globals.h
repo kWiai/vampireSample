@@ -7,7 +7,7 @@
 constexpr int WINDOW_WIDTH = 1280;
 constexpr int WINDOW_HEIGHT = 720;
 
-constexpr wchar_t WINDOW_TITLE[] = L"2D Game Platform";
+constexpr wchar_t WINDOW_TITLE[] = L"ENGINE";
 
 //==================================================
 //              Engine Settings
@@ -22,6 +22,14 @@ constexpr float TARGET_FRAME_TIME = 1.0f / TARGET_FPS;
 //==================================================
 
 constexpr bool DEBUG = true;
+
+constexpr bool GRID = true;
+
+//==================================================
+//              GAME Settings
+//==================================================
+
+constexpr bool GRAVITY = false;
 
 //==================================================
 //              Game States

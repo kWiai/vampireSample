@@ -27,20 +27,56 @@ int Application::Run(HINSTANCE hInstance, int nCmdShow)
     Time::Init();
     m_Game.Init();
 
-    while (m_IsRunning && m_Window.ProcessMessages())
+    while (
+        m_IsRunning &&
+        m_Window.ProcessMessages())
     {
+        if (m_Window.WasResized())
+        {
+            int width =
+                m_Window.GetWidth();
+
+            int height =
+                m_Window.GetHeight();
+
+            // Изменяем размер back buffer
+            m_Renderer.Resize(
+                width,
+                height);
+
+            // Обновляем размер viewport камеры
+            Scene* scene =
+                m_Game.GetScene();
+
+            if (scene != nullptr)
+            {
+                scene->GetCamera()
+                    .SetViewportSize(
+                        static_cast<float>(width),
+                        static_cast<float>(height));
+            }
+        }
+
         Time::Update();
-        std::wstring title = L"FPS: " + std::to_wstring(Time::FPS());
-        SetWindowText(m_Window.GetHWND(), title.c_str());
+
+        std::wstring title =
+            L"FPS: " +
+            std::to_wstring(
+                Time::FPS());
+
+        SetWindowText(
+            m_Window.GetHWND(),
+            title.c_str());
+
         InputManager::Update();
 
-        m_Game.Update(Time::DeltaTime());
+        m_Game.Update(
+            Time::DeltaTime());
 
         m_Renderer.BeginFrame();
 
-        m_Game.Render(m_Renderer);
-
-
+        m_Game.Render(
+            m_Renderer);
 
         m_Renderer.EndFrame();
     }

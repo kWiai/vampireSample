@@ -153,7 +153,6 @@
     <ClInclude Include="src\core\EventManager.h" />
     <ClInclude Include="src\core\Game.h" />
     <ClInclude Include="src\core\GameObject.h" />
-    <ClInclude Include="src\core\Player.h" />
     <ClInclude Include="src\core\PlayerAnimations.h" />
     <ClInclude Include="src\core\Scene.h" />
     <ClInclude Include="src\core\Time.h" />
@@ -215,7 +214,6 @@
     <ClCompile Include="src\core\EventManager.cpp" />
     <ClCompile Include="src\core\Game.cpp" />
     <ClCompile Include="src\core\GameObject.cpp" />
-    <ClCompile Include="src\core\Player.cpp" />
     <ClCompile Include="src\core\PlayerAnimations.cpp" />
     <ClCompile Include="src\core\Scene.cpp" />
     <ClCompile Include="src\core\Time.cpp" />

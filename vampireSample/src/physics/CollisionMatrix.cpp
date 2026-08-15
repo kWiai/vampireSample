@@ -10,8 +10,6 @@ bool CollisionMatrix::m_Matrix
 
 void CollisionMatrix::Initialize()
 {
-    // По умолчанию запрещаем всё
-
     for (int i = 0; i < (int)CollisionLayer::COUNT; i++)
     {
         for (int j = 0; j < (int)CollisionLayer::COUNT; j++)
@@ -28,11 +26,13 @@ void CollisionMatrix::Initialize()
     m_Matrix[(int)CollisionLayer::Wall]
         [(int)CollisionLayer::Player] = true;
 
+
     m_Matrix[(int)CollisionLayer::Player]
-        [(int)CollisionLayer::Enemy] = false;
+        [(int)CollisionLayer::Enemy] = true;
 
     m_Matrix[(int)CollisionLayer::Enemy]
         [(int)CollisionLayer::Player] = true;
+
 
     // ---------- ENEMY ----------
 
@@ -41,11 +41,6 @@ void CollisionMatrix::Initialize()
 
     m_Matrix[(int)CollisionLayer::Wall]
         [(int)CollisionLayer::Enemy] = true;
-
-    // Потом будем добавлять
-    // Projectile
-    // Loot
-    // Trigger
 }
 
 bool CollisionMatrix::CanCollide(
@@ -53,6 +48,6 @@ bool CollisionMatrix::CanCollide(
     CollisionLayer b)
 {
     return
-        m_Matrix[(int)a]
-        [(int)b];
+        m_Matrix[(int)a][(int)b] ||
+        m_Matrix[(int)b][(int)a];
 }

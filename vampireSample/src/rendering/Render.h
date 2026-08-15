@@ -21,7 +21,9 @@ public:
     ~Renderer();
 
     bool Initialize(HWND hwnd, int width, int height);
-
+    void Resize(
+        int width,
+        int height);
     void BeginFrame();
     void EndFrame();
 
@@ -78,8 +80,10 @@ public:
 
     void SetShowColliders(bool value);
 
-
     bool IsShowingColliders() const;
+
+    int GetWidth() const;
+    int GetHeight() const;
 
 private:
 

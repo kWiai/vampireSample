@@ -4,6 +4,7 @@
 #include "Camera.h"
 #include <iostream>
 #include "TileSet.h"
+#include "src/utilits/Globals.h"
 
 
 Renderer::Renderer()
@@ -29,21 +30,55 @@ Renderer::Renderer()
 Renderer::~Renderer()
 {
     if (m_Graphics)
+    {
         delete m_Graphics;
+        m_Graphics = nullptr;
+    }
 
-    if (m_BackDC && m_OldBitmap)
-        SelectObject(m_BackDC, m_OldBitmap);
+    if (m_BackDC &&
+        m_OldBitmap)
+    {
+        SelectObject(
+            m_BackDC,
+            m_OldBitmap);
+    }
 
     if (m_BackBitmap)
+    {
         DeleteObject(m_BackBitmap);
+        m_BackBitmap = nullptr;
+    }
 
     if (m_BackDC)
+    {
         DeleteDC(m_BackDC);
+        m_BackDC = nullptr;
+    }
 
     if (m_WindowDC)
-        ReleaseDC(m_hWnd, m_WindowDC);
+    {
+        ReleaseDC(
+            m_hWnd,
+            m_WindowDC);
 
-    GdiplusShutdown(m_GdiToken);
+        m_WindowDC = nullptr;
+    }
+
+    if (m_GdiToken != 0)
+    {
+        GdiplusShutdown(
+            m_GdiToken);
+    }
+}
+
+int Renderer::GetWidth() const
+{
+    return m_Width;
+}
+
+int Renderer::GetHeight() const
+{
+    return m_Height;
 }
 
 bool Renderer::Initialize(HWND hwnd, int width, int height)
@@ -84,6 +119,80 @@ bool Renderer::Initialize(HWND hwnd, int width, int height)
 
 
     return true;
+}
+
+void Renderer::Resize(
+    int width,
+    int height)
+{
+    if (width <= 0 || height <= 0)
+        return;
+
+    if (width == m_Width &&
+        height == m_Height)
+    {
+        return;
+    }
+
+    m_Width = width;
+    m_Height = height;
+
+    // Удаляем Graphics,
+    // потому что он использует старый BackDC
+    if (m_Graphics)
+    {
+        delete m_Graphics;
+        m_Graphics = nullptr;
+    }
+
+    // Возвращаем старый bitmap обратно в DC
+    if (m_BackDC &&
+        m_OldBitmap)
+    {
+        SelectObject(
+            m_BackDC,
+            m_OldBitmap);
+    }
+
+    // Удаляем старый back buffer
+    if (m_BackBitmap)
+    {
+        DeleteObject(
+            m_BackBitmap);
+
+        m_BackBitmap = nullptr;
+    }
+
+    // Создаём новый bitmap
+    // под текущий размер окна
+    m_BackBitmap =
+        CreateCompatibleBitmap(
+            m_WindowDC,
+            m_Width,
+            m_Height);
+
+    // Выбираем его в BackDC
+    m_OldBitmap =
+        (HBITMAP)SelectObject(
+            m_BackDC,
+            m_BackBitmap);
+
+    // Создаём новый Graphics
+    m_Graphics =
+        new Graphics(
+            m_BackDC);
+
+    m_Graphics->SetInterpolationMode(
+        InterpolationModeNearestNeighbor);
+
+    m_Graphics->SetPixelOffsetMode(
+        PixelOffsetModeHalf);
+
+    m_Graphics->SetSmoothingMode(
+        SmoothingModeNone);
+
+    m_Graphics->SetCompositingQuality(
+        CompositingQualityHighSpeed);
 }
 
 void Renderer::BeginFrame()
@@ -311,15 +420,30 @@ void Renderer::DrawRectangle(
 
 void Renderer::DrawGrid(const Camera& camera, int cellSize)
 {
+    if (!GRID) {
+        return;
+    }
     Pen pen(Color(70, 70, 70));
 
     Math::Vector2 cameraPos = camera.GetPosition();
 
-    int startX = static_cast<int>(cameraPos.X) / cellSize - 1;
-    int endX = startX + 40;
+    int startX =
+        static_cast<int>(
+            cameraPos.X) /
+        cellSize - 1;
 
-    int startY = static_cast<int>(cameraPos.Y) / cellSize - 1;
-    int endY = startY + 25;
+    int endX =
+        startX +
+        m_Width / cellSize + 2;
+
+    int startY =
+        static_cast<int>(
+            cameraPos.Y) /
+        cellSize - 1;
+
+    int endY =
+        startY +
+        m_Height / cellSize + 2;
 
     for (int x = startX; x <= endX; x++)
     {

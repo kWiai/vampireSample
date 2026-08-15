@@ -19,6 +19,7 @@
 #include "src/components/PlayerControllerComponent.h"
 #include "src/components/DamageOnCollisionComponent.h"   // компонент урона при столкновении/триггере
 #include "src/components/DestroyOnCollisionComponent.h" // компонент самоуничтожения при касании
+#include "src/utilits/Globals.h"
 #include <iostream>
 #include <string>
 using namespace Gdiplus;
@@ -75,7 +76,7 @@ static void Player(Scene* scene, float x, float y)
 
     // Коллайдер (прямоугольный)
     auto col = obj->AddComponent<BoxColliderComponent>();
-    col->SetSize(160.0f, 160.0f);                         // Размер коллайдера совпадает со спрайтом
+    col->SetSize(160.0f, 160.0f);                         // Размер коллайдера совпадает со спрайтом (необязательно)
     col->SetOffset(V2(0.0f, 0.0f));                       // Без смещения
     col->SetLayer(CollisionLayer::Player);                // Слой игрока (столкновения с Wall, Enemy и т.д.)
 
@@ -299,13 +300,18 @@ static void SetupCamera(Scene* scene, float viewWidth, float viewHeight, const s
 Game::Game() {}
 Game::~Game() {}
 
+Scene* Game::GetScene()
+{
+    return m_Scene.get();
+}
+
 void Game::Init()
 {
     CollisionMatrix::Initialize();                        // Настраиваем слои столкновений
     
     m_Scene = std::make_unique<Scene>();
     // Задаём глобальный режим игры (true – платформер, false – top?down)
-    g_IsSideView = true;                                 // пример для top?down, поменяйте на true для бокового вида
+    g_IsSideView = GRAVITY;                                 // пример для top?down, поменяйте на true для бокового вида
 
     // Синхронизируем гравитацию с глобальным режимом
     PhysicsWorld& physics = m_Scene->GetPhysics();
@@ -354,7 +360,7 @@ void Game::Init()
     FallingPlatform(m_Scene.get(), 300.0f, 400.0f, 128.0f, 32.0f, L"assets/textures/player.png");
 
     // 7. Настройка камеры (должна быть после всех объектов, чтобы FindByName нашёл Player)
-    SetupCamera(m_Scene.get(), 1280.0f, 720.0f, "Player");
+    SetupCamera(m_Scene.get(), WINDOW_WIDTH, WINDOW_HEIGHT, "Player");
 }
 
 void Game::Update(float deltaTime)

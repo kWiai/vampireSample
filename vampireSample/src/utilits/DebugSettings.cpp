@@ -7,3 +7,5 @@ bool DebugSettings::DrawSpatialHash = true;
 bool DebugSettings::DrawTriggers = true;
 
 bool DebugSettings::DrawRaycasts = true;
+
+bool DebugSettings::DrawPivot = true;

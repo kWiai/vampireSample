@@ -21,13 +21,17 @@ public:
     void SetLoop(bool loop);
     bool GetLoop() const;
 
+    const Math::Vector2& GetPreviousPosition() const;
+    const Math::Vector2& GetDelta() const;
+
 private:
+
+    int m_CurrentPoint;
+    float m_Speed;
+    bool m_Loop;
 
     std::vector<Math::Vector2> m_Points;
 
-    int m_CurrentPoint;
-
-    float m_Speed;
-
-    bool m_Loop;
+    Math::Vector2 m_PreviousPosition;
+    Math::Vector2 m_Delta;
 };

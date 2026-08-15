@@ -12,6 +12,7 @@
 #include "src/rendering/TileMapComponent.h"
 #include "CollisionMatrix.h"
 #include "src/utilits/DebugSettings.h"
+#include "src/components/MovingPlatformComponent.h"
 
 PhysicsWorld::PhysicsWorld()
 {
@@ -156,33 +157,83 @@ void PhysicsWorld::ResolveCollisionX(
     BoxColliderComponent* first,
     BoxColliderComponent* second)
 {
-    auto body = first->GetOwner()->GetComponent<RigidbodyComponent>();
-    if (body == nullptr) return;
-    if (second->GetOwner()->GetComponent<RigidbodyComponent>() != nullptr) return;
+    auto body =
+        first->GetOwner()
+        ->GetComponent<RigidbodyComponent>();
 
-    Physics::AABB firstBounds = first->GetBounds();
-    Physics::AABB secondBounds = second->GetBounds();
-    if (!firstBounds.Intersects(secondBounds)) return;
+    if (body == nullptr)
+        return;
 
-    float firstCenter = (firstBounds.Min.X + firstBounds.Max.X) * 0.5f;
-    float secondCenter = (secondBounds.Min.X + secondBounds.Max.X) * 0.5f;
+    if (second->GetOwner()
+        ->GetComponent<RigidbodyComponent>() != nullptr)
+    {
+        return;
+    }
 
-    if (firstCenter < secondCenter)
-        body->GetTransform().Position.X -= firstBounds.Max.X - secondBounds.Min.X;
-    else
-        body->GetTransform().Position.X += secondBounds.Max.X - firstBounds.Min.X;
+    Physics::AABB firstBounds =
+        first->GetBounds();
 
-    Math::Vector2 velocity = body->GetVelocity();
+    Physics::AABB secondBounds =
+        second->GetBounds();
+
+    if (!firstBounds.Intersects(secondBounds))
+        return;
+
+    Math::Vector2 overlap =
+        firstBounds.GetOverlap(secondBounds);
+
+    if (overlap.X <= 0.0f ||
+        overlap.Y <= 0.0f)
+    {
+        return;
+    }
+
+    // -------------------------------------------------
+    // X-разрешение выполняем только если минимальное
+    // проникновение находится по X
+    // -------------------------------------------------
+
+    if (overlap.X > overlap.Y)
+        return;
+
+    float firstCenter =
+        (firstBounds.Min.X +
+            firstBounds.Max.X) * 0.5f;
+
+    float secondCenter =
+        (secondBounds.Min.X +
+            secondBounds.Max.X) * 0.5f;
+
+    Math::Vector2 velocity =
+        body->GetVelocity();
 
     if (firstCenter < secondCenter)
     {
-        // Тело слева ? обнуляем скорость вправо
-        if (velocity.X > 0.0f) velocity.X = 0.0f;
+        float correction =
+            firstBounds.Max.X -
+            secondBounds.Min.X;
+
+        body->GetTransform().Position.X -=
+            correction;
+
+        if (velocity.X > 0.0f)
+        {
+            velocity.X = 0.0f;
+        }
     }
     else
     {
-        // Тело справа ? обнуляем скорость влево
-        if (velocity.X < 0.0f) velocity.X = 0.0f;
+        float correction =
+            secondBounds.Max.X -
+            firstBounds.Min.X;
+
+        body->GetTransform().Position.X +=
+            correction;
+
+        if (velocity.X < 0.0f)
+        {
+            velocity.X = 0.0f;
+        }
     }
 
     body->SetVelocity(velocity);
@@ -192,37 +243,261 @@ void PhysicsWorld::ResolveCollisionY(
     BoxColliderComponent* first,
     BoxColliderComponent* second)
 {
-    auto body = first->GetOwner()->GetComponent<RigidbodyComponent>();
-    if (body == nullptr) return;
-    if (second->GetOwner()->GetComponent<RigidbodyComponent>() != nullptr) return;
+    auto body =
+        first->GetOwner()
+        ->GetComponent<RigidbodyComponent>();
 
-    Physics::AABB firstBounds = first->GetBounds();
-    Physics::AABB secondBounds = second->GetBounds();
-    if (!firstBounds.Intersects(secondBounds)) return;
+    if (body == nullptr)
+        return;
 
-    float firstCenter = (firstBounds.Min.Y + firstBounds.Max.Y) * 0.5f;
-    float secondCenter = (secondBounds.Min.Y + secondBounds.Max.Y) * 0.5f;
+    if (second->GetOwner()
+        ->GetComponent<RigidbodyComponent>() != nullptr)
+    {
+        return;
+    }
 
-    if (firstCenter < secondCenter)
-        body->GetTransform().Position.Y -= firstBounds.Max.Y - secondBounds.Min.Y;
-    else
-        body->GetTransform().Position.Y += secondBounds.Max.Y - firstBounds.Min.Y;
+    Physics::AABB firstBounds =
+        first->GetBounds();
 
-    Math::Vector2 velocity = body->GetVelocity();
+    Physics::AABB secondBounds =
+        second->GetBounds();
+
+    if (!firstBounds.Intersects(secondBounds))
+        return;
+
+    // -------------------------------------------------
+    // Проверяем, является ли статический объект
+    // движущейся платформой
+    // -------------------------------------------------
+
+    auto movingPlatform =
+        second->GetOwner()
+        ->GetComponent<MovingPlatformComponent>();
+
+    if (movingPlatform != nullptr)
+    {
+        Math::Vector2 platformDelta =
+            movingPlatform->GetDelta();
+
+        // Предыдущая позиция платформы
+        Math::Vector2 previousPosition =
+            movingPlatform->GetPreviousPosition();
+
+        Math::Vector2 currentPosition =
+            second->GetOwner()
+            ->GetTransform().Position;
+
+        // Смещение коллайдера платформы
+        Math::Vector2 offset =
+            second->GetOffset();
+
+        Math::Vector2 size =
+            second->GetSize();
+
+        Physics::AABB previousPlatformBounds(
+            previousPosition + offset,
+            previousPosition + offset + size);
+
+        // Если до движения платформы тело было сверху
+        if (firstBounds.Max.Y <=
+            previousPlatformBounds.Min.Y +
+            1.0f)
+        {
+            // Ставим тело сверху платформы
+            float correction =
+                secondBounds.Min.Y -
+                firstBounds.Max.Y;
+
+            body->GetTransform().Position.Y +=
+                correction;
+
+            Math::Vector2 velocity =
+                body->GetVelocity();
+
+            if (velocity.Y > 0.0f)
+            {
+                velocity.Y = 0.0f;
+            }
+
+            body->SetVelocity(velocity);
+
+            return;
+        }
+
+        // Если тело было снизу платформы
+        if (firstBounds.Min.Y >=
+            previousPlatformBounds.Max.Y -
+            1.0f)
+        {
+            float correction =
+                secondBounds.Max.Y -
+                firstBounds.Min.Y;
+
+            body->GetTransform().Position.Y +=
+                correction;
+
+            Math::Vector2 velocity =
+                body->GetVelocity();
+
+            if (velocity.Y < 0.0f)
+            {
+                velocity.Y = 0.0f;
+            }
+
+            body->SetVelocity(velocity);
+
+            return;
+        }
+    }
+
+    // -------------------------------------------------
+    // Обычное статическое столкновение
+    // -------------------------------------------------
+
+    float firstCenter =
+        (firstBounds.Min.Y +
+            firstBounds.Max.Y) * 0.5f;
+
+    float secondCenter =
+        (secondBounds.Min.Y +
+            secondBounds.Max.Y) * 0.5f;
 
     if (firstCenter < secondCenter)
     {
-        // Тело снизу ? обнуляем скорость вверх
-        if (velocity.Y > 0.0f) velocity.Y = 0.0f;
+        body->GetTransform().Position.Y -=
+            firstBounds.Max.Y -
+            secondBounds.Min.Y;
+
+        Math::Vector2 velocity =
+            body->GetVelocity();
+
+        if (velocity.Y > 0.0f)
+        {
+            velocity.Y = 0.0f;
+        }
+
+        body->SetVelocity(velocity);
     }
     else
     {
-        // Тело сверху ? обнуляем скорость вниз
-        if (velocity.Y < 0.0f) velocity.Y = 0.0f;
-    }
+        body->GetTransform().Position.Y +=
+            secondBounds.Max.Y -
+            firstBounds.Min.Y;
 
-    body->SetVelocity(velocity);
-}TileMapComponent* PhysicsWorld::FindTileMap(Scene& scene)
+        Math::Vector2 velocity =
+            body->GetVelocity();
+
+        if (velocity.Y < 0.0f)
+        {
+            velocity.Y = 0.0f;
+        }
+
+        body->SetVelocity(velocity);
+    }
+}
+void PhysicsWorld::CarryBodiesByMovingPlatforms(
+    const std::vector<BoxColliderComponent*>& colliders)
+{
+    constexpr float contactTolerance = 2.0f;
+
+    for (auto* collider : colliders)
+    {
+        if (collider == nullptr)
+            continue;
+
+        auto body =
+            collider->GetOwner()
+            ->GetComponent<RigidbodyComponent>();
+
+        // Переносим только динамические тела
+        if (body == nullptr ||
+            body->IsKinematic())
+        {
+            continue;
+        }
+
+        Physics::AABB bodyBounds =
+            collider->GetBounds();
+
+        for (auto* platformCollider : colliders)
+        {
+            if (platformCollider == nullptr)
+                continue;
+
+            if (platformCollider == collider)
+                continue;
+
+            // У самой платформы Rigidbody быть не должно
+            auto platformBody =
+                platformCollider->GetOwner()
+                ->GetComponent<RigidbodyComponent>();
+
+            if (platformBody != nullptr)
+                continue;
+
+            auto movingPlatform =
+                platformCollider->GetOwner()
+                ->GetComponent<MovingPlatformComponent>();
+
+            if (movingPlatform == nullptr)
+                continue;
+
+            Math::Vector2 delta =
+                movingPlatform->GetDelta();
+
+            // Если платформа в этом кадре не двигалась —
+            // переносить некого
+            if (delta.X == 0.0f &&
+                delta.Y == 0.0f)
+            {
+                continue;
+            }
+
+            Physics::AABB platformBounds =
+                platformCollider->GetBounds();
+
+            // -------------------------------------------------
+            // Проверяем, стоит ли тело сверху платформы
+            // -------------------------------------------------
+
+            float verticalDistance =
+                platformBounds.Min.Y -
+                bodyBounds.Max.Y;
+
+            bool onTop =
+                verticalDistance >= -contactTolerance &&
+                verticalDistance <= contactTolerance;
+
+            if (!onTop)
+                continue;
+
+            // Проверяем пересечение по X
+            bool overlapX =
+                bodyBounds.Max.X >
+                platformBounds.Min.X +
+                contactTolerance &&
+                bodyBounds.Min.X <
+                platformBounds.Max.X -
+                contactTolerance;
+
+            if (!overlapX)
+                continue;
+
+            // -------------------------------------------------
+            // Тело действительно стоит сверху.
+            // Переносим его вместе с платформой.
+            // -------------------------------------------------
+
+            body->GetTransform().Position +=
+                delta;
+
+            // Одной платформы достаточно
+            break;
+        }
+    }
+}
+
+TileMapComponent* PhysicsWorld::FindTileMap(Scene& scene)
 {
     const auto& objects =
         scene.GetGameObjects();
@@ -703,29 +978,28 @@ void PhysicsWorld::ResolveDynamicCollisionX(
     if (!firstBounds.Intersects(secondBounds))
         return;
 
+    Math::Vector2 overlap =
+        firstBounds.GetOverlap(secondBounds);
+
+    if (overlap.X <= 0.0f ||
+        overlap.Y <= 0.0f)
+    {
+        return;
+    }
+
+    // X разрешаем только если пересечение по X меньше,
+    // чем по Y
+    if (overlap.X >= overlap.Y)
+        return;
+
     float firstCenter =
         (firstBounds.Min.X + firstBounds.Max.X) * 0.5f;
 
     float secondCenter =
         (secondBounds.Min.X + secondBounds.Max.X) * 0.5f;
 
-    float overlap = 0.0f;
-
-    if (firstCenter < secondCenter)
-    {
-        overlap =
-            firstBounds.Max.X -
-            secondBounds.Min.X;
-    }
-    else
-    {
-        overlap =
-            secondBounds.Max.X -
-            firstBounds.Min.X;
-    }
-
-    if (overlap <= 0.0f)
-        return;
+    bool firstOnLeft =
+        firstCenter < secondCenter;
 
     bool firstKinematic =
         firstBody->IsKinematic();
@@ -733,46 +1007,58 @@ void PhysicsWorld::ResolveDynamicCollisionX(
     bool secondKinematic =
         secondBody->IsKinematic();
 
+    // =================================================
+    // POSITION CORRECTION
+    // =================================================
+
+    float correction = overlap.X;
+
     if (firstKinematic)
     {
-        if (firstCenter < secondCenter)
+        if (firstOnLeft)
         {
-            secondBody->GetTransform().Position.X += overlap;
+            secondBody->GetTransform().Position.X += correction;
         }
         else
         {
-            secondBody->GetTransform().Position.X -= overlap;
+            secondBody->GetTransform().Position.X -= correction;
         }
     }
     else if (secondKinematic)
     {
-        if (firstCenter < secondCenter)
+        if (firstOnLeft)
         {
-            firstBody->GetTransform().Position.X -= overlap;
+            firstBody->GetTransform().Position.X -= correction;
         }
         else
         {
-            firstBody->GetTransform().Position.X += overlap;
+            firstBody->GetTransform().Position.X += correction;
         }
     }
     else
     {
-        float totalMass =
-            firstBody->GetMass() +
+        float firstMass =
+            firstBody->GetMass();
+
+        float secondMass =
             secondBody->GetMass();
+
+        float totalMass =
+            firstMass +
+            secondMass;
 
         if (totalMass <= 0.0f)
             return;
 
         float firstMove =
-            overlap *
-            (secondBody->GetMass() / totalMass);
+            correction *
+            (secondMass / totalMass);
 
         float secondMove =
-            overlap *
-            (firstBody->GetMass() / totalMass);
+            correction *
+            (firstMass / totalMass);
 
-        if (firstCenter < secondCenter)
+        if (firstOnLeft)
         {
             firstBody->GetTransform().Position.X -= firstMove;
             secondBody->GetTransform().Position.X += secondMove;
@@ -784,17 +1070,112 @@ void PhysicsWorld::ResolveDynamicCollisionX(
         }
     }
 
+    // =================================================
+    // VELOCITY RESOLUTION
+    // =================================================
+
     Math::Vector2 firstVelocity =
         firstBody->GetVelocity();
 
     Math::Vector2 secondVelocity =
         secondBody->GetVelocity();
 
-    if (!firstKinematic)
-        firstVelocity.X = 0.0f;
+    /*
+        first слева:
+            first движется вправо  -> +
+            second движется влево  -> -
 
-    if (!secondKinematic)
-        secondVelocity.X = 0.0f;
+        Если тела после столкновения всё ещё
+        движутся друг к другу — убираем только
+        скорость сближения.
+    */
+
+    if (firstOnLeft)
+    {
+        float relativeVelocity =
+            firstVelocity.X -
+            secondVelocity.X;
+
+        // Тела сближаются
+        if (relativeVelocity > 0.0f)
+        {
+            float firstInverseMass =
+                firstKinematic
+                ? 0.0f
+                : 1.0f / firstBody->GetMass();
+
+            float secondInverseMass =
+                secondKinematic
+                ? 0.0f
+                : 1.0f / secondBody->GetMass();
+
+            float inverseMassSum =
+                firstInverseMass +
+                secondInverseMass;
+
+            if (inverseMassSum > 0.0f)
+            {
+                float impulse =
+                    relativeVelocity /
+                    inverseMassSum;
+
+                if (!firstKinematic)
+                {
+                    firstVelocity.X -=
+                        impulse * firstInverseMass;
+                }
+
+                if (!secondKinematic)
+                {
+                    secondVelocity.X +=
+                        impulse * secondInverseMass;
+                }
+            }
+        }
+    }
+    else
+    {
+        float relativeVelocity =
+            secondVelocity.X -
+            firstVelocity.X;
+
+        // Тела сближаются
+        if (relativeVelocity > 0.0f)
+        {
+            float firstInverseMass =
+                firstKinematic
+                ? 0.0f
+                : 1.0f / firstBody->GetMass();
+
+            float secondInverseMass =
+                secondKinematic
+                ? 0.0f
+                : 1.0f / secondBody->GetMass();
+
+            float inverseMassSum =
+                firstInverseMass +
+                secondInverseMass;
+
+            if (inverseMassSum > 0.0f)
+            {
+                float impulse =
+                    relativeVelocity /
+                    inverseMassSum;
+
+                if (!firstKinematic)
+                {
+                    firstVelocity.X +=
+                        impulse * firstInverseMass;
+                }
+
+                if (!secondKinematic)
+                {
+                    secondVelocity.X -=
+                        impulse * secondInverseMass;
+                }
+            }
+        }
+    }
 
     firstBody->SetVelocity(firstVelocity);
     secondBody->SetVelocity(secondVelocity);
@@ -830,29 +1211,28 @@ void PhysicsWorld::ResolveDynamicCollisionY(
     if (!firstBounds.Intersects(secondBounds))
         return;
 
+    Math::Vector2 overlap =
+        firstBounds.GetOverlap(secondBounds);
+
+    if (overlap.X <= 0.0f ||
+        overlap.Y <= 0.0f)
+    {
+        return;
+    }
+
+    // Y разрешаем только если пересечение по Y меньше,
+    // чем по X
+    if (overlap.Y >= overlap.X)
+        return;
+
     float firstCenter =
         (firstBounds.Min.Y + firstBounds.Max.Y) * 0.5f;
 
     float secondCenter =
         (secondBounds.Min.Y + secondBounds.Max.Y) * 0.5f;
 
-    float overlap = 0.0f;
-
-    if (firstCenter < secondCenter)
-    {
-        overlap =
-            firstBounds.Max.Y -
-            secondBounds.Min.Y;
-    }
-    else
-    {
-        overlap =
-            secondBounds.Max.Y -
-            firstBounds.Min.Y;
-    }
-
-    if (overlap <= 0.0f)
-        return;
+    bool firstOnTop =
+        firstCenter < secondCenter;
 
     bool firstKinematic =
         firstBody->IsKinematic();
@@ -860,46 +1240,58 @@ void PhysicsWorld::ResolveDynamicCollisionY(
     bool secondKinematic =
         secondBody->IsKinematic();
 
+    // =================================================
+    // POSITION CORRECTION
+    // =================================================
+
+    float correction = overlap.Y;
+
     if (firstKinematic)
     {
-        if (firstCenter < secondCenter)
+        if (firstOnTop)
         {
-            secondBody->GetTransform().Position.Y += overlap;
+            secondBody->GetTransform().Position.Y += correction;
         }
         else
         {
-            secondBody->GetTransform().Position.Y -= overlap;
+            secondBody->GetTransform().Position.Y -= correction;
         }
     }
     else if (secondKinematic)
     {
-        if (firstCenter < secondCenter)
+        if (firstOnTop)
         {
-            firstBody->GetTransform().Position.Y -= overlap;
+            firstBody->GetTransform().Position.Y -= correction;
         }
         else
         {
-            firstBody->GetTransform().Position.Y += overlap;
+            firstBody->GetTransform().Position.Y += correction;
         }
     }
     else
     {
-        float totalMass =
-            firstBody->GetMass() +
+        float firstMass =
+            firstBody->GetMass();
+
+        float secondMass =
             secondBody->GetMass();
+
+        float totalMass =
+            firstMass +
+            secondMass;
 
         if (totalMass <= 0.0f)
             return;
 
         float firstMove =
-            overlap *
-            (secondBody->GetMass() / totalMass);
+            correction *
+            (secondMass / totalMass);
 
         float secondMove =
-            overlap *
-            (firstBody->GetMass() / totalMass);
+            correction *
+            (firstMass / totalMass);
 
-        if (firstCenter < secondCenter)
+        if (firstOnTop)
         {
             firstBody->GetTransform().Position.Y -= firstMove;
             secondBody->GetTransform().Position.Y += secondMove;
@@ -911,17 +1303,100 @@ void PhysicsWorld::ResolveDynamicCollisionY(
         }
     }
 
+    // =================================================
+    // VELOCITY RESOLUTION
+    // =================================================
+
     Math::Vector2 firstVelocity =
         firstBody->GetVelocity();
 
     Math::Vector2 secondVelocity =
         secondBody->GetVelocity();
 
-    if (!firstKinematic)
-        firstVelocity.Y = 0.0f;
+    if (firstOnTop)
+    {
+        float relativeVelocity =
+            firstVelocity.Y -
+            secondVelocity.Y;
 
-    if (!secondKinematic)
-        secondVelocity.Y = 0.0f;
+        if (relativeVelocity > 0.0f)
+        {
+            float firstInverseMass =
+                firstKinematic
+                ? 0.0f
+                : 1.0f / firstBody->GetMass();
+
+            float secondInverseMass =
+                secondKinematic
+                ? 0.0f
+                : 1.0f / secondBody->GetMass();
+
+            float inverseMassSum =
+                firstInverseMass +
+                secondInverseMass;
+
+            if (inverseMassSum > 0.0f)
+            {
+                float impulse =
+                    relativeVelocity /
+                    inverseMassSum;
+
+                if (!firstKinematic)
+                {
+                    firstVelocity.Y -=
+                        impulse * firstInverseMass;
+                }
+
+                if (!secondKinematic)
+                {
+                    secondVelocity.Y +=
+                        impulse * secondInverseMass;
+                }
+            }
+        }
+    }
+    else
+    {
+        float relativeVelocity =
+            secondVelocity.Y -
+            firstVelocity.Y;
+
+        if (relativeVelocity > 0.0f)
+        {
+            float firstInverseMass =
+                firstKinematic
+                ? 0.0f
+                : 1.0f / firstBody->GetMass();
+
+            float secondInverseMass =
+                secondKinematic
+                ? 0.0f
+                : 1.0f / secondBody->GetMass();
+
+            float inverseMassSum =
+                firstInverseMass +
+                secondInverseMass;
+
+            if (inverseMassSum > 0.0f)
+            {
+                float impulse =
+                    relativeVelocity /
+                    inverseMassSum;
+
+                if (!firstKinematic)
+                {
+                    firstVelocity.Y +=
+                        impulse * firstInverseMass;
+                }
+
+                if (!secondKinematic)
+                {
+                    secondVelocity.Y -=
+                        impulse * secondInverseMass;
+                }
+            }
+        }
+    }
 
     firstBody->SetVelocity(firstVelocity);
     secondBody->SetVelocity(secondVelocity);
@@ -976,18 +1451,54 @@ void PhysicsWorld::IntegrateBodies(
 {
     for (auto* collider : colliders)
     {
-        auto body = collider->GetOwner()->GetComponent<RigidbodyComponent>();
-        if (!body || body->IsKinematic()) continue;
+        auto body =
+            collider->GetOwner()
+            ->GetComponent<RigidbodyComponent>();
 
-        Math::Vector2 velocity = body->GetVelocity();
+        if (!body)
+            continue;
 
-        // Гравитация действует, только если глобальный флаг включён И у тела включена гравитация
-        if (m_GlobalGravityEnabled && body->GetUseGravity())
+        if (body->IsKinematic())
+            continue;
+
+        Math::Vector2 velocity =
+            body->GetVelocity();
+
+        // -----------------------------
+        // Gravity
+        // -----------------------------
+
+        if (m_GlobalGravityEnabled &&
+            body->GetUseGravity())
         {
-            velocity.Y += 980.0f * body->GetGravityScale() * deltaTime;
+            velocity.Y +=
+                980.0f *
+                body->GetGravityScale() *
+                deltaTime;
         }
 
-        body->SetVelocity(velocity);
+        // -----------------------------
+        // Linear Drag
+        // -----------------------------
+
+        float drag =
+            body->GetLinearDrag();
+
+        float damping =
+            1.0f /
+            (1.0f + drag * deltaTime);
+
+        velocity *= damping;
+
+        // Убираем микродвижения
+        if (std::abs(velocity.X) < 0.01f)
+            velocity.X = 0.0f;
+
+        if (std::abs(velocity.Y) < 0.01f)
+            velocity.Y = 0.0f;
+
+        body->SetVelocity(
+            velocity);
     }
 }
 
@@ -1251,6 +1762,12 @@ void PhysicsWorld::Update(
         scene,
         colliders);
 
+    // -------------------------------------------------
+    // Перенос тел движущимися платформами
+    // -------------------------------------------------
+
+    CarryBodiesByMovingPlatforms(
+        colliders);
 
     // -------------------------
     // Sub-stepping
@@ -1274,7 +1791,6 @@ void PhysicsWorld::Update(
 
         remainingTime -= step;
     }
-
 
     // -------------------------
     // Events

@@ -8,11 +8,21 @@ Window::Window()
 
     m_Width = WINDOW_WIDTH;
     m_Height = WINDOW_HEIGHT;
+    m_WasResized = false;
 }
 
 Window::~Window()
 {
 
+}
+bool Window::WasResized()
+{
+    if (!m_WasResized)
+        return false;
+
+    m_WasResized = false;
+
+    return true;
 }
 
 bool Window::Create(HINSTANCE hInstance, int nCmdShow)
@@ -64,7 +74,7 @@ bool Window::Create(HINSTANCE hInstance, int nCmdShow)
         nullptr,
         nullptr,
         hInstance,
-        nullptr
+        this
     );
 
     if (m_hWnd == nullptr)
@@ -116,21 +126,63 @@ LRESULT CALLBACK Window::WindowProc(
     LPARAM lParam
 )
 {
+    Window* window = nullptr;
+
+    if (msg == WM_NCCREATE)
+    {
+        CREATESTRUCT* createStruct =
+            reinterpret_cast<CREATESTRUCT*>(
+                lParam);
+
+        window =
+            static_cast<Window*>(
+                createStruct->lpCreateParams);
+
+        SetWindowLongPtr(
+            hwnd,
+            GWLP_USERDATA,
+            reinterpret_cast<LONG_PTR>(
+                window));
+    }
+    else
+    {
+        window =
+            reinterpret_cast<Window*>(
+                GetWindowLongPtr(
+                    hwnd,
+                    GWLP_USERDATA));
+    }
+
     switch (msg)
     {
+    case WM_SIZE:
+    {
+        if (window != nullptr)
+        {
+            window->m_Width =
+                LOWORD(lParam);
+
+            window->m_Height =
+                HIWORD(lParam);
+
+            window->m_WasResized =
+                true;
+        }
+
+        return 0;
+    }
+
     case WM_DESTROY:
 
         PostQuitMessage(0);
 
         return 0;
-
-    default:
-
-        return DefWindowProc(
-            hwnd,
-            msg,
-            wParam,
-            lParam
-        );
     }
+
+    return DefWindowProc(
+        hwnd,
+        msg,
+        wParam,
+        lParam
+    );
 }

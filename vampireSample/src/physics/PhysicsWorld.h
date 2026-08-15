@@ -150,7 +150,8 @@ private:
     bool ContainsCollision(
         const std::vector<Collision>& list,
         const Collision& collision);
-
+    void CarryBodiesByMovingPlatforms(
+        const std::vector<BoxColliderComponent*>& colliders);
 
 private:
 

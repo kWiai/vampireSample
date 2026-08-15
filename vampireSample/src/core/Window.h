@@ -16,6 +16,7 @@ public:
 
     int GetWidth() const;
     int GetHeight() const;
+    bool WasResized();
 
 private:
 
@@ -23,6 +24,8 @@ private:
 
     int m_Width;
     int m_Height;
+
+    bool m_WasResized;
 
     static LRESULT CALLBACK WindowProc(
         HWND hwnd,

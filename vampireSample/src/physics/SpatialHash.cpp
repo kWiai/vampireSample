@@ -16,20 +16,24 @@ void SpatialHash::Insert(
         collider->GetBounds();
 
     int left =
-        static_cast<int>(bounds.Min.X) / CellSize;
+        static_cast<int>(
+            std::floor(bounds.Min.X / CellSize));
 
     int right =
-        static_cast<int>(bounds.Max.X - 1) / CellSize;
+        static_cast<int>(
+            std::floor((bounds.Max.X - 0.001f) / CellSize));
 
     int top =
-        static_cast<int>(bounds.Min.Y) / CellSize;
+        static_cast<int>(
+            std::floor(bounds.Min.Y / CellSize));
 
     int bottom =
-        static_cast<int>(bounds.Max.Y - 1) / CellSize;
+        static_cast<int>(
+            std::floor((bounds.Max.Y - 0.001f) / CellSize));
 
-    for (int y = top; y <= bottom; y++)
+    for (int y = top; y <= bottom; ++y)
     {
-        for (int x = left; x <= right; x++)
+        for (int x = left; x <= right; ++x)
         {
             Cell cell;
 
@@ -50,20 +54,24 @@ void SpatialHash::Query(
         collider->GetBounds();
 
     int left =
-        static_cast<int>(bounds.Min.X) / CellSize;
+        static_cast<int>(
+            std::floor(bounds.Min.X / CellSize));
 
     int right =
-        static_cast<int>(bounds.Max.X - 1) / CellSize;
+        static_cast<int>(
+            std::floor((bounds.Max.X - 0.001f) / CellSize));
 
     int top =
-        static_cast<int>(bounds.Min.Y) / CellSize;
+        static_cast<int>(
+            std::floor(bounds.Min.Y / CellSize));
 
     int bottom =
-        static_cast<int>(bounds.Max.Y - 1) / CellSize;
+        static_cast<int>(
+            std::floor((bounds.Max.Y - 0.001f) / CellSize));
 
-    for (int y = top; y <= bottom; y++)
+    for (int y = top; y <= bottom; ++y)
     {
-        for (int x = left; x <= right; x++)
+        for (int x = left; x <= right; ++x)
         {
             Cell cell;
 

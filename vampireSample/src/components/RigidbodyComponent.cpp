@@ -15,6 +15,8 @@ RigidbodyComponent::RigidbodyComponent()
     m_IsKinematic = false;
 
     m_Force = Math::Vector2(0, 0);
+
+    m_LinearDrag = 3.0f;
 }
 
 RigidbodyComponent::~RigidbodyComponent()
@@ -37,6 +39,19 @@ const Math::Vector2&
 RigidbodyComponent::GetVelocity() const
 {
     return m_Velocity;
+}
+
+void RigidbodyComponent::SetLinearDrag(float value)
+{
+    if (value < 0.0f)
+        value = 0.0f;
+
+    m_LinearDrag = value;
+}
+
+float RigidbodyComponent::GetLinearDrag() const
+{
+    return m_LinearDrag;
 }
 
 void RigidbodyComponent::AddForce(

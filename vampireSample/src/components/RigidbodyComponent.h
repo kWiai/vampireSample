@@ -29,6 +29,8 @@ public:
 
     void SetKinematic(bool value);
     bool IsKinematic() const;
+    void SetLinearDrag(float value);
+    float GetLinearDrag() const;
 
 private:
 
@@ -41,6 +43,8 @@ private:
     bool m_UseGravity;
 
     float m_GravityScale;
+
+    float m_LinearDrag;
 
     bool m_IsKinematic;
 };

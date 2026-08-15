@@ -19,6 +19,8 @@ public:
 
     void Render(Renderer& renderer);
 
+    Scene* GetScene();
+
 private:
 
     std::unique_ptr<Scene> m_Scene;
