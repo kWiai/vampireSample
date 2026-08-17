@@ -24,11 +24,6 @@
 #include <string>
 using namespace Gdiplus;
 
-// =================== ГЛОБАЛЬНЫЙ РЕЖИМ ИГРЫ ===================
-// true  = боковой вид (платформер) – гравитация работает, W – прыжок
-// false = вид сверху (top?down) – гравитация отключена, WASD – свободное перемещение
-bool g_IsSideView;
-
 // Вспомогательная функция для создания вектора (x, y) одной строкой
 static Math::Vector2 V2(float x, float y) { return Math::Vector2(x, y); }
 
@@ -83,7 +78,7 @@ static void Player(Scene* scene, float x, float y)
     // Контроллер ввода (WASD, прыжок, анимации)
     auto ctrl = obj->AddComponent<PlayerControllerComponent>();
     ctrl->SetMoveSpeed(300.0f);                           // Максимальная скорость движения
-    ctrl->SetSideView(g_IsSideView);                      // Передаём текущий режим игры
+    ctrl->SetSideView(GRAVITY);                      // Передаём текущий режим игры
 
     // Физическое тело (Rigidbody)
     auto rb = obj->AddComponent<RigidbodyComponent>();
@@ -91,7 +86,7 @@ static void Player(Scene* scene, float x, float y)
     rb->SetGravityScale(1.0f);                            // Обычная сила гравитации
     rb->SetMass(1.0f);                                    // Масса (влияет на выталкивание других тел)
     rb->SetKinematic(false);                              // Не кинематическое (двигаем скоростью)
-
+    rb->SetLinearDrag(0.01);
     // Здоровье
     auto health = obj->AddComponent<HealthComponent>();
     health->SetMaxHealth(100.0f);
@@ -123,11 +118,11 @@ static void Enemy(Scene* scene, float x, float y,
     rb->SetUseGravity(true);
     rb->SetMass(1.0f);
     rb->SetKinematic(false);
-
+    rb->SetLinearDrag(2);
     // Коллайдер чуть меньше спрайта и со смещением для более комфортных столкновений
     auto col = obj->AddComponent<BoxColliderComponent>();
-    col->SetSize(110.0f, 110.0f);                     // высота коллайдера = 60 пикселей
-    col->SetOffset(V2(25.0f, 50.0f));
+    col->SetSize(110.0f, 110.0f);                     // высота и ширина
+    col->SetOffset(V2(25.0f, 50.0f));                    
     col->SetLayer(CollisionLayer::Enemy);                 // Слой врага
     col->SetTrigger(false);
     // Контроллер патруля и преследования
@@ -136,7 +131,7 @@ static void Enemy(Scene* scene, float x, float y,
     ctrl->SetViewRadius(viewRadius);
     for (const auto& pt : patrolPoints) ctrl->AddPoint(pt);
     if (target) ctrl->SetTarget(target);
-    ctrl->SetJumpForce(400.0f);   // подберите значение под вашу физику
+    ctrl->SetJumpForce(400.0f);   
 
     // Здоровье
     auto health = obj->AddComponent<HealthComponent>();
@@ -168,10 +163,6 @@ static void Wall(Scene* scene, float x, float y, float w, float h,
     col->SetOffset(V2(0.0f, 0.0f));
     col->SetLayer(CollisionLayer::Wall);
     col->SetTrigger(false);               // Твёрдое препятствие
-
-    // Урон при касании (если игрок всё же коснётся)
-  //  auto dmg = obj->AddComponent<DamageOnCollisionComponent>();
-   // dmg->SetDamage(25.0f);
 
     scene->AddGameObject(std::move(obj));
 }
@@ -233,7 +224,7 @@ static void DynamicBox(Scene* scene, float x, float y, float w, float h,
     rb->SetMass(3.0f);                                    // Тяжелее игрока – медленнее толкается
     rb->SetVelocity(V2(0.0f, 0.0f));                      // Начальная скорость нулевая
     rb->SetKinematic(false);
-
+    rb->SetLinearDrag(2);
     // Твёрдый коллайдер
     auto col = obj->AddComponent<BoxColliderComponent>();
     col->SetTrigger(false);
@@ -310,12 +301,9 @@ void Game::Init()
     CollisionMatrix::Initialize();                        // Настраиваем слои столкновений
     
     m_Scene = std::make_unique<Scene>();
-    // Задаём глобальный режим игры (true – платформер, false – top?down)
-    g_IsSideView = GRAVITY;                                 // пример для top?down, поменяйте на true для бокового вида
-
     // Синхронизируем гравитацию с глобальным режимом
     PhysicsWorld& physics = m_Scene->GetPhysics();
-    physics.SetGlobalGravity(g_IsSideView);
+    physics.SetGlobalGravity(GRAVITY);
 
 
     LoadMap(m_Scene.get(), "assets/test.map");
@@ -331,7 +319,7 @@ void Game::Init()
         { V2(800,300), V2(1000,300), V2(1000,500), V2(800,500) },
         playerPtr);
 
-    // Ещё 20 врагов, разбросанных по карте
+    // Ещё 20 врагов
     for (int i = 0; i < 20; ++i)
     {
         float sx = 400.0f + i * 150.0f;
@@ -341,7 +329,7 @@ void Game::Init()
             playerPtr);
     }
 
-    // 4. Стены (одна конкретная + 20 дополнительных)
+    // 4. Стены
     Wall(m_Scene.get(), 400.0f, 200.0f, 128.0f, 128.0f, L"assets/textures/dirt.png");
     for (int i = 0; i < 20; ++i)
     {
@@ -355,11 +343,11 @@ void Game::Init()
         { V2(300,300), V2(600,300), V2(600,500), V2(300,500) },
         L"assets/textures/stone.png");
 
-    // 6. Динамический ящик и падающая платформа
+    // 6. Динамический ящик и исчезающая платформа
     DynamicBox(m_Scene.get(), 500.0f, 100.0f, 64.0f, 64.0f, L"assets/textures/grass.png");
     FallingPlatform(m_Scene.get(), 300.0f, 400.0f, 128.0f, 32.0f, L"assets/textures/player.png");
 
-    // 7. Настройка камеры (должна быть после всех объектов, чтобы FindByName нашёл Player)
+    // 7. Настройка камеры 
     SetupCamera(m_Scene.get(), WINDOW_WIDTH, WINDOW_HEIGHT, "Player");
 }
 

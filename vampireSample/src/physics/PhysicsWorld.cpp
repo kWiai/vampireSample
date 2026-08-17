@@ -1491,10 +1491,10 @@ void PhysicsWorld::IntegrateBodies(
         velocity *= damping;
 
         // Убираем микродвижения
-        if (std::abs(velocity.X) < 0.01f)
+        if (std::abs(velocity.X) < 0.11f)
             velocity.X = 0.0f;
 
-        if (std::abs(velocity.Y) < 0.01f)
+        if (std::abs(velocity.Y) < 0.11f)
             velocity.Y = 0.0f;
 
         body->SetVelocity(
