@@ -16,7 +16,7 @@ RigidbodyComponent::RigidbodyComponent()
 
     m_Force = Math::Vector2(0, 0);
 
-    m_LinearDrag = 3.0f;
+    m_LinearDrag = 0.01;
 }
 
 RigidbodyComponent::~RigidbodyComponent()

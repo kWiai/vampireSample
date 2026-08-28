@@ -7,9 +7,7 @@
 #include "src/physics/RaycastHit.h"
 #include <cmath>
 #include "HealthComponent.h"
-
-// Глобальный флаг (объявлен где-то в главном файле)
-extern bool g_IsSideView;
+#include "src/utilits/Globals.h"
 
 EnemyControllerComponent::EnemyControllerComponent()
 {
@@ -27,7 +25,7 @@ void EnemyControllerComponent::SetJumpForce(float force) { m_JumpForce = force; 
 // ---------- Определяем режим ----------
 bool EnemyControllerComponent::IsSideView() const
 {
-    return g_IsSideView;
+    return GRAVITY;
 }
 
 // ---------- Проверка земли (только для Side-View) ----------

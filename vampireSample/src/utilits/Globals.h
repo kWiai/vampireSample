@@ -4,8 +4,8 @@
 //              Window Settings
 //==================================================
 
-constexpr int WINDOW_WIDTH = 1280;
-constexpr int WINDOW_HEIGHT = 720;
+constexpr int WINDOW_WIDTH = 1600;
+constexpr int WINDOW_HEIGHT = 900;
 
 constexpr wchar_t WINDOW_TITLE[] = L"ENGINE";
 
