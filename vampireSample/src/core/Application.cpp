@@ -19,6 +19,9 @@ int Application::Run(HINSTANCE hInstance, int nCmdShow)
     if (!m_Window.Create(hInstance, nCmdShow))
         return -1;
 
+    InputManager::Initialize(
+        m_Window.GetHWND());
+
     m_Renderer.Initialize(
         m_Window.GetHWND(),
         m_Window.GetWidth(),

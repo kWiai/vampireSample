@@ -190,6 +190,11 @@
     <ClInclude Include="src\utilits\targetver.h" />
     <ClInclude Include="src\utilits\Vector2.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="src\ui\UIElement.h" />
+    <ClInclude Include="src\ui\UIRectangle.h" />
+    <ClInclude Include="src\ui\UIManager.h" />
+    <ClInclude Include="src\ui\UIImage.h" />
+    <ClInclude Include="src\ui\UIButton.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\components\AnimationClip.cpp" />
@@ -243,6 +248,11 @@
     <ClCompile Include="src\utilits\DebugSettings.cpp" />
     <ClCompile Include="src\utilits\ResorceManager.cpp" />
     <ClCompile Include="src\utilits\Vector2.cpp" />
+    <ClCompile Include="src\ui\UIElement.cpp" />
+    <ClCompile Include="src\ui\UIRectangle.cpp" />
+    <ClCompile Include="src\ui\UIManager.cpp" />
+    <ClCompile Include="src\ui\UIImage.cpp" />
+    <ClCompile Include="src\ui\UIButton.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="assets\textures\dirt.png" />

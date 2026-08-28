@@ -3,107 +3,191 @@
 bool InputManager::m_CurrentKeys[256] = {};
 bool InputManager::m_PreviousKeys[256] = {};
 
+HWND InputManager::m_Window = nullptr;
+
+
+// -------------------------------------------------
+// Initialize
+// -------------------------------------------------
+
+void InputManager::Initialize(HWND hwnd)
+{
+    m_Window = hwnd;
+}
+
+
+// -------------------------------------------------
+// Update
+// -------------------------------------------------
+
 void InputManager::Update()
 {
+    // Предыдущее состояние
     for (int i = 0; i < 256; i++)
     {
-        m_PreviousKeys[i] = m_CurrentKeys[i];
+        m_PreviousKeys[i] =
+            m_CurrentKeys[i];
     }
 
-    m_CurrentKeys['W'] = GetAsyncKeyState('W') & 0x8000;
-    m_CurrentKeys['A'] = GetAsyncKeyState('A') & 0x8000;
-    m_CurrentKeys['S'] = GetAsyncKeyState('S') & 0x8000;
-    m_CurrentKeys['D'] = GetAsyncKeyState('D') & 0x8000;
+    // Keyboard
 
-    m_CurrentKeys[VK_SPACE] = GetAsyncKeyState(VK_SPACE) & 0x8000;
-    m_CurrentKeys[VK_ESCAPE] = GetAsyncKeyState(VK_ESCAPE) & 0x8000;
+    m_CurrentKeys['W'] =
+        GetAsyncKeyState('W') & 0x8000;
 
-    m_CurrentKeys[VK_LBUTTON] = GetAsyncKeyState(VK_LBUTTON) & 0x8000;
-    m_CurrentKeys[VK_RBUTTON] = GetAsyncKeyState(VK_RBUTTON) & 0x8000;
+    m_CurrentKeys['A'] =
+        GetAsyncKeyState('A') & 0x8000;
+
+    m_CurrentKeys['S'] =
+        GetAsyncKeyState('S') & 0x8000;
+
+    m_CurrentKeys['D'] =
+        GetAsyncKeyState('D') & 0x8000;
+
+    // Space
+
+    m_CurrentKeys[VK_SPACE] =
+        GetAsyncKeyState(VK_SPACE) & 0x8000;
+
+    // Escape
+
+    m_CurrentKeys[VK_ESCAPE] =
+        GetAsyncKeyState(VK_ESCAPE) & 0x8000;
+
+    // Mouse
+
+    m_CurrentKeys[VK_LBUTTON] =
+        GetAsyncKeyState(VK_LBUTTON) & 0x8000;
+
+    m_CurrentKeys[VK_RBUTTON] =
+        GetAsyncKeyState(VK_RBUTTON) & 0x8000;
 }
-bool InputManager::GetKeyState(Key key)
+
+
+// -------------------------------------------------
+// GetKeyIndex
+// -------------------------------------------------
+
+int InputManager::GetKeyIndex(Key key)
 {
     switch (key)
     {
     case Key::W:
-        return m_CurrentKeys['W'];
+        return 'W';
 
     case Key::A:
-        return m_CurrentKeys['A'];
+        return 'A';
 
     case Key::S:
-        return m_CurrentKeys['S'];
+        return 'S';
 
     case Key::D:
-        return m_CurrentKeys['D'];
+        return 'D';
 
     case Key::Space:
-        return m_CurrentKeys[VK_SPACE];
+        return VK_SPACE;
 
     case Key::Escape:
-        return m_CurrentKeys[VK_ESCAPE];
+        return VK_ESCAPE;
 
     case Key::MouseLeft:
-        return m_CurrentKeys[VK_LBUTTON];
+        return VK_LBUTTON;
 
     case Key::MouseRight:
-        return m_CurrentKeys[VK_RBUTTON];
+        return VK_RBUTTON;
     }
 
-    return false;
+    return 0;
 }
+
+
+// -------------------------------------------------
+// GetKeyState
+// -------------------------------------------------
+
+bool InputManager::GetKeyState(Key key)
+{
+    int index =
+        GetKeyIndex(key);
+
+    return m_CurrentKeys[index];
+}
+
+
+// -------------------------------------------------
+// GetKey
+// -------------------------------------------------
+
 bool InputManager::GetKey(Key key)
 {
     return GetKeyState(key);
 }
 
+
+// -------------------------------------------------
+// GetKeyDown
+// -------------------------------------------------
+
 bool InputManager::GetKeyDown(Key key)
 {
-    bool current = GetKeyState(key);
+    int index =
+        GetKeyIndex(key);
 
-    bool previous = false;
-
-    switch (key)
-    {
-    case Key::W:
-        previous = m_PreviousKeys['W'];
-        break;
-
-    case Key::A:
-        previous = m_PreviousKeys['A'];
-        break;
-
-    case Key::S:
-        previous = m_PreviousKeys['S'];
-        break;
-
-    case Key::D:
-        previous = m_PreviousKeys['D'];
-        break;
-
-    case Key::Space:
-        previous = m_PreviousKeys[VK_SPACE];
-        break;
-
-    case Key::Escape:
-        previous = m_PreviousKeys[VK_ESCAPE];
-        break;
-
-    case Key::MouseLeft:
-        previous = m_PreviousKeys[VK_LBUTTON];
-        break;
-
-    case Key::MouseRight:
-        previous = m_PreviousKeys[VK_RBUTTON];
-        break;
-    }
-
-    return current && !previous;
+    return
+        m_CurrentKeys[index] &&
+        !m_PreviousKeys[index];
 }
+
+
+// -------------------------------------------------
+// GetKeyUp
+// -------------------------------------------------
 
 bool InputManager::GetKeyUp(Key key)
 {
-    bool current = GetKey(key);
+    int index =
+        GetKeyIndex(key);
 
-    return !current && GetKeyDown(key) == false;
+    return
+        !m_CurrentKeys[index] &&
+        m_PreviousKeys[index];
+}
+
+
+// -------------------------------------------------
+// GetMousePosition
+// -------------------------------------------------
+
+Math::Vector2 InputManager::GetMousePosition()
+{
+    if (m_Window == nullptr)
+    {
+        return Math::Vector2(
+            0.0f,
+            0.0f);
+    }
+
+    POINT point;
+
+    if (!GetCursorPos(&point))
+    {
+        return Math::Vector2(
+            0.0f,
+            0.0f);
+    }
+
+    // Переводим экранные координаты
+    // в координаты клиентской области окна
+
+    if (!ScreenToClient(
+        m_Window,
+        &point))
+    {
+        return Math::Vector2(
+            0.0f,
+            0.0f);
+    }
+
+    return Math::Vector2(
+        static_cast<float>(point.x),
+        static_cast<float>(point.y));
 }
