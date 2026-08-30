@@ -195,6 +195,7 @@
     <ClInclude Include="src\ui\UIManager.h" />
     <ClInclude Include="src\ui\UIImage.h" />
     <ClInclude Include="src\ui\UIButton.h" />
+    <ClInclude Include="src\ui\UIText.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\components\AnimationClip.cpp" />
@@ -253,6 +254,7 @@
     <ClCompile Include="src\ui\UIManager.cpp" />
     <ClCompile Include="src\ui\UIImage.cpp" />
     <ClCompile Include="src\ui\UIButton.cpp" />
+    <ClCompile Include="src\ui\UIText.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="assets\textures\dirt.png" />

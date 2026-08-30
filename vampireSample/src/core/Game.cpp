@@ -20,6 +20,10 @@
 #include "src/components/DamageOnCollisionComponent.h"   // компонент урона при столкновении/триггере
 #include "src/components/DestroyOnCollisionComponent.h" // компонент самоуничтожения при касании
 #include "src/utilits/Globals.h"
+#include "src/ui/UIButton.h"
+#include "src/ui/UIRectangle.h"
+#include "src/ui/UIImage.h"
+#include "src/ui/UIText.h"
 #include <iostream>
 #include <string>
 using namespace Gdiplus;
@@ -346,17 +350,147 @@ void Game::Init()
     // 6. Динамический ящик и исчезающая платформа
     DynamicBox(m_Scene.get(), 500.0f, 100.0f, 64.0f, 64.0f, L"assets/textures/grass.png");
     FallingPlatform(m_Scene.get(), 300.0f, 400.0f, 128.0f, 32.0f, L"assets/textures/player.png");
-
-    // 7. Настройка камеры 
+    
     SetupCamera(m_Scene.get(), WINDOW_WIDTH, WINDOW_HEIGHT, "Player");
+
+
+
+    // =====================================================
+// TEST UI
+// =====================================================
+
+// ---------- Панель ----------
+
+    auto panel =
+        m_UIManager.Create<UIRectangle>();
+
+    panel->SetPosition(
+        Math::Vector2(20.0f, 20.0f));
+
+    panel->SetSize(
+        Math::Vector2(300.0f, 180.0f));
+
+    panel->SetColor(
+        20,
+        20,
+        20);
+
+    panel->SetAlpha(220);
+
+
+    // ---------- Кнопка 1 ----------
+
+    auto button =
+        m_UIManager.Create<UIButton>();
+
+    button->SetPosition(
+        Math::Vector2(40.0f, 40.0f));
+
+    button->SetSize(
+        Math::Vector2(260.0f, 55.0f));
+
+    button->SetText(
+        L"TEST BUTTON");
+
+    button->SetNormalColor(
+        70,
+        70,
+        70);
+
+    button->SetHoverColor(
+        100,
+        100,
+        100);
+
+    button->SetPressedColor(
+        40,
+        40,
+        40);
+
+    button->SetTextColor(
+        255,
+        255,
+        255);
+
+    button->SetOnClick(
+        []()
+        {
+            MessageBox(
+                nullptr,
+                L"Button clicked!",
+                L"UI Test",
+                MB_OK);
+        });
+
+
+    // ---------- Кнопка 2 ----------
+
+    auto button2 =
+        m_UIManager.Create<UIButton>();
+
+    button2->SetPosition(
+        Math::Vector2(40.0f, 110.0f));
+
+    button2->SetSize(
+        Math::Vector2(260.0f, 55.0f));
+
+    button2->SetText(
+        L"SECOND BUTTON");
+
+    button2->SetNormalColor(
+        50,
+        80,
+        120);
+
+    button2->SetHoverColor(
+        70,
+        110,
+        160);
+
+    button2->SetPressedColor(
+        30,
+        50,
+        80);
+
+    button2->SetOnClick(
+        []()
+        {
+            MessageBox(
+                nullptr,
+                L"Second button clicked!",
+                L"UI Test",
+                MB_OK);
+        });
+    //m_UIManager.Clear();
+    auto title =
+        m_UIManager.Create<UIText>();
+
+    title->SetPosition(
+        Math::Vector2(40.0f, 200.0f));
+
+    title->SetSize(
+        Math::Vector2(500.0f, 60.0f));
+
+    title->SetText(
+        L"ABOBA");
+
+    title->SetFontSize(32.0f);
+
+    title->SetColor(
+        255,
+        255,
+        255);
 }
 
 void Game::Update(float deltaTime)
 {
     if (m_Scene) m_Scene->Update(deltaTime);
+    m_UIManager.Update(deltaTime);
 }
 
 void Game::Render(Renderer& renderer)
 {
     if (m_Scene) m_Scene->Render(renderer);
+
+    m_UIManager.Render(renderer);
 }

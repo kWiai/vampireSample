@@ -5,6 +5,7 @@
 #include <memory>
 #include "src/core/GameObject.h"
 #include "Scene.h"
+#include "src/ui/UIManager.h"
 
 class Game
 {
@@ -24,5 +25,6 @@ public:
 private:
 
     std::unique_ptr<Scene> m_Scene;
+    UIManager m_UIManager;
 };
 

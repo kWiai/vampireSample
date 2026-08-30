@@ -29,7 +29,7 @@ constexpr bool GRID = true;
 //              GAME Settings
 //==================================================
 
-constexpr bool GRAVITY = false;
+constexpr bool GRAVITY = true;
 
 //==================================================
 //              Game States
