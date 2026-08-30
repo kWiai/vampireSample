@@ -17,6 +17,7 @@
 #include "src/components/BoxColliderComponent.h"
 #include "src/components/MovingPlatformComponent.h"
 #include "src/components/PlayerControllerComponent.h"
+#include "src/components/ButtonComponent.h"
 #include "src/components/DamageOnCollisionComponent.h"   // компонент урона при столкновении/триггере
 #include "src/components/DestroyOnCollisionComponent.h" // компонент самоуничтожения при касании
 #include "src/utilits/Globals.h"
@@ -24,6 +25,7 @@
 #include "src/ui/UIRectangle.h"
 #include "src/ui/UIImage.h"
 #include "src/ui/UIText.h"
+
 #include <iostream>
 #include <string>
 using namespace Gdiplus;
@@ -289,6 +291,52 @@ static void SetupCamera(Scene* scene, float viewWidth, float viewHeight, const s
     auto camObj = scene->GetMainCameraObject();                         // Получаем объект камеры
     auto follow = camObj->AddComponent<CameraFollowComponent>();        // Компонент слежения за целью
     follow->SetTarget(scene->FindByName(followTarget));                 // Указываем цель (игрок)
+}
+// -------------Кнопка -----------------
+static void Button(
+    Scene* scene,
+    float x,
+    float y,
+    float w,
+    float h)
+{
+    auto obj =
+        std::make_unique<GameObject>();
+
+    obj->SetName("Button");
+    obj->SetTag("Button");
+
+    obj->GetTransform().Position =
+        V2(x, y);
+
+    obj->GetTransform().Size =
+        V2(w, h);
+
+    // Визуал
+    obj->AddComponent<SpriteComponent>()
+        ->LoadTexture(
+            L"assets/textures/stone.png");
+
+    // Коллайдер
+    auto col =
+        obj->AddComponent<BoxColliderComponent>();
+
+    col->SetSize(w, h);
+    col->SetOffset(V2(0.0f, 0.0f));
+
+    col->SetLayer(
+        CollisionLayer::Trigger);
+
+    col->SetTrigger(true);
+
+    // Логика кнопки
+    auto button =
+        obj->AddComponent<ButtonComponent>();
+
+    button->SetOnlyPlayer(true);
+
+    scene->AddGameObject(
+        std::move(obj));
 }
 
 // ==================== ИНИЦИАЛИЗАЦИЯ ИГРЫ ====================
